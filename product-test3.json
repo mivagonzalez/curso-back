@@ -1,0 +1,38 @@
+[
+  {
+    "title": "El CODIGO FUNCIONA BIEN2",
+    "description": "prod1",
+    "price": 200,
+    "thumbnail": "sin imagen",
+    "code": "12",
+    "stock": 25,
+    "id": 1
+  },
+  {
+    "title": "El CODIGO FUNCIONA BIEN",
+    "description": "prod3",
+    "price": 200,
+    "thumbnail": "sin imagen",
+    "code": "16",
+    "stock": 21,
+    "id": 3
+  },
+  {
+    "title": "producto prueba",
+    "description": "Este es un producto prueba",
+    "price": 200,
+    "thumbnail": "sin imagen",
+    "code": "abc123",
+    "stock": 25,
+    "id": 4
+  },
+  {
+    "title": "prod2",
+    "description": "prod2",
+    "price": 200,
+    "thumbnail": "sin imagen",
+    "code": "14",
+    "stock": 23,
+    "id": 5
+  }
+]
