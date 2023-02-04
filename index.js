@@ -1,6 +1,5 @@
 import Express from 'express';
 import Users from './users.json' assert { type: 'json' };
-
 const PORT = 8080;
 const app = Express();
 const generos = ["masculino", "femenino"];
@@ -77,4 +76,8 @@ app.get('/usuario', (req, res) => {
         queryParams: req.query,
         users: filteredList
     })
+});
+
+app.post("/usuario", (rez,res) => {
+
 });
