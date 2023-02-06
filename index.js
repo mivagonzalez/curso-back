@@ -1,12 +1,12 @@
 import Express from 'express';
 import Users from './users.json' assert { type: 'json' };
-const PORT = 8080;
+const PORT = 5000;
 const app = Express();
 const generos = ["masculino", "femenino"];
 app.listen(PORT, () => {
     console.log(`A;PI RUNNING ON PORT: ${PORT}`);
 });
-
+app.use(Express.json());
 app.use(Express.urlencoded({ extended: true}));
 
 app.get('/', (request, response) => {
@@ -78,6 +78,15 @@ app.get('/usuario', (req, res) => {
     })
 });
 
-app.post("/usuario", (rez,res) => {
-
+app.post("/usuario", (req,res) => {
+    const body =  req.body;
+    console.log("fule index asdafdasfsad", req.body);
+    const lastId = Users.usuarios[Users.usuarios.length -1].id;
+    const newUser = {id: lastId + 1, ...body}
+    
+    res.json({
+        ok: true,
+        message: "usuario correcto",
+        usuario: newUser
+    })
 });
