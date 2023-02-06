@@ -2,6 +2,7 @@ import Express from 'express';
 import TestProducts from '../entities/product-manager/mocks/test-products.json' assert { type: 'json' };
 import ProductManager from '../entities/product-manager/index.js'
 
+// Creada solo para correccion. Inicializa el Product Manager con productos de prueba.
 export const initializeProducts = async () => {
     const productManager = new ProductManager('product-test3.json');
     const products = await productManager.getProducts();
