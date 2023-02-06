@@ -1,0 +1,101 @@
+[
+  {
+    "title": "prod1",
+    "description": "prod1",
+    "price": 200,
+    "thumbnail": "sin imagen",
+    "code": "12",
+    "stock": 257,
+    "id": 1
+  },
+  {
+    "title": "prod2",
+    "description": "prod2",
+    "price": 200,
+    "thumbnail": "sin imagen",
+    "code": "14",
+    "stock": 236,
+    "id": 2
+  },
+  {
+    "title": "prod3",
+    "description": "prod3",
+    "price": 200,
+    "thumbnail": "sin imagen",
+    "code": "16",
+    "stock": 217,
+    "id": 3
+  },
+  {
+    "title": "prod3",
+    "description": "prod3",
+    "price": 200,
+    "thumbnail": "sin imagen",
+    "code": "162",
+    "stock": 216,
+    "id": 4
+  },
+  {
+    "title": "prod4",
+    "description": "prod4",
+    "price": 200,
+    "thumbnail": "sin imagen",
+    "code": "163",
+    "stock": 213,
+    "id": 5
+  },
+  {
+    "title": "prod3",
+    "description": "prod3",
+    "price": 200,
+    "thumbnail": "sin imagen",
+    "code": "164",
+    "stock": 214,
+    "id": 6
+  },
+  {
+    "title": "prod3",
+    "description": "prod3",
+    "price": 200,
+    "thumbnail": "sin imagen",
+    "code": "165",
+    "stock": 216,
+    "id": 7
+  },
+  {
+    "title": "prod3",
+    "description": "prod3",
+    "price": 200,
+    "thumbnail": "sin imagen",
+    "code": "166",
+    "stock": 215,
+    "id": 8
+  },
+  {
+    "title": "prod3",
+    "description": "prod3",
+    "price": 200,
+    "thumbnail": "sin imagen",
+    "code": "167",
+    "stock": 214,
+    "id": 9
+  },
+  {
+    "title": "prod3",
+    "description": "prod3",
+    "price": 200,
+    "thumbnail": "sin imagen",
+    "code": "168",
+    "stock": 213,
+    "id": 10
+  },
+  {
+    "title": "prod3",
+    "description": "prod3",
+    "price": 200,
+    "thumbnail": "sin imagen",
+    "code": "169",
+    "stock": 212,
+    "id": 11
+  }
+]

@@ -15,10 +15,11 @@ export class ProductManager {
         this.init()
     }
 
-
-    init = () => {
+    init = async () => {
         if(!fs.existsSync(this.path)){
-            console.log(`El archivo especificado ${this.path} no existe aun.`)
+            console.log(`El archivo especificado ${this.path} no existe aun. Creando...`);
+            await fs.promises.writeFile(this.path, "[]")
+            console.log(`Archivo ${this.path} Creado!`)
             return;
         }
         const readProducts = fs.readFileSync(this.path);
@@ -31,7 +32,6 @@ export class ProductManager {
         console.log('Product Manager inicializado correctamente')
     }
 
-    
     addProduct = async (title = this.isRequired(), description = this.isRequired(), price = this.isRequired(), thumbnail = this.isRequired(), code = this.isRequired(), stock = this.isRequired()) => {
         if(this.products.find(x => x.code === code)) {
             throw Error("El producto ya existe");
@@ -64,13 +64,14 @@ export class ProductManager {
     getProductById = async (id = '') => {
         if (!fs.existsSync(this.path)) {
             console.warn(`El archivo ${this.path} no existe`)
-            return {};
+            return null;
         }
         const readProducts = await fs.promises.readFile(this.path);
         const products = JSON.parse(readProducts);
         const product = products.find(p => p.id === id); 
         if(!product) {
-            throw Error("Producto no encontrado");
+            console.warn("Producto no encontrado");
+            return null
         };
         return product;
     }
@@ -103,7 +104,7 @@ export class ProductManager {
     }
 };
 
-const productManager = new ProductManager('product-test3.json');
+// const productManager = new ProductManager('product-test3.json');
 // const products = await productManager.getProducts();
 // console.log(products,'Products antes de agregar');
 // await productManager.addProduct("prod1", "prod1", 200, "sin imagen", "12",25);

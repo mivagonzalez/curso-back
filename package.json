@@ -6,13 +6,16 @@
   "main": "index.js",
   "scripts": {
     "test": "jest -i --watch --color product-manager",
-    "start": "node index",
+    "start": "node index.js",
     "start:nodemon": "nodemon index"
   },
   "keywords": [
     "product",
     "manager"
   ],
+  "nodemonConfig": {
+    "ignore": ["src/entities/product-manager/*.json"]
+  },
   "author": "mauricio",
   "license": "MIT",
   "devDependencies": {
