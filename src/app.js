@@ -1,5 +1,6 @@
 import Express from 'express';
 import UsersRouter from './routes/users.js'
+import CartsRouter from './routes/carts.js'
 const PORT = 8080;
 const app = Express();
 app.use(Express.json());
@@ -18,4 +19,4 @@ app.get('/', (_, res) => {
     });
 });
 app.use('/api/products', UsersRouter);
-// app.use('/api/cart', UsersRouter);
+app.use('/api/carts', CartsRouter);
