@@ -6,8 +6,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest -i --watch --color product-manager",
-    "start": "node index",
-    "start:nodemon": "nodemon index"
+    "start": "node src/app.js",
+    "start:nodemon": "nodemon src/app.js"
   },
   "keywords": [
     "product",
