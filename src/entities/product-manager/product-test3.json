@@ -1,8 +1,8 @@
 [
   {
-    "title": "prod1",
+    "title": "El CODIGO FUNCIONA BIEN2",
     "description": "prod1",
-    "price": 200,
+    "price": 321,
     "thumbnail": "sin imagen",
     "code": "12",
     "stock": 257,
@@ -25,15 +25,6 @@
     "code": "16",
     "stock": 217,
     "id": 3
-  },
-  {
-    "title": "prod3",
-    "description": "prod3",
-    "price": 200,
-    "thumbnail": "sin imagen",
-    "code": "162",
-    "stock": 216,
-    "id": 4
   },
   {
     "title": "prod4",

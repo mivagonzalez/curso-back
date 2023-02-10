@@ -32,7 +32,7 @@ export class ProductManager {
         console.log('Product Manager inicializado correctamente')
     }
 
-    addProduct = async (title = this.isRequired(), description = this.isRequired(), price = this.isRequired(), thumbnail = this.isRequired(), code = this.isRequired(), stock = this.isRequired()) => {
+    addProduct = async (title = this.isRequired(), description = this.isRequired(), price = this.isRequired(), thumbnails = [], code = this.isRequired(), stock = this.isRequired(), status = this.isRequired(), category = this.isRequired()) => {
         if(this.products.find(x => x.code === code)) {
             throw Error("El producto ya existe");
         }; 
@@ -40,10 +40,12 @@ export class ProductManager {
             title: title,
             description: description,
             price: price,
-            thumbnail: thumbnail,
+            thumbnails: thumbnails,
             code: code,
             stock: stock,
-            id: this.#currentId
+            status: status,
+            category: category,
+            id: this.#currentId,
         };
         
         this.products.push(newProduct);
@@ -79,7 +81,7 @@ export class ProductManager {
     deleteProduct = async (id = '') => {
         const newProducts = this.products.filter(product => product.id !== id);
         this.products = newProducts;
-        const writeProducts = JSON.stringify(newProducts);
+        const writeProducts = JSON.stringify(newProducts, null, 2);
         await fs.promises.writeFile(this.path, writeProducts);
     }
 

@@ -28,7 +28,6 @@ router.use(Express.json());
 router.use(Express.urlencoded({ extended: true }));
 const productManager = new ProductManager('product-test3.json');
 
-
 router.get('/', async (req, res) => {
     const { limit } = req.query;
     const products = await productManager.getProducts();
@@ -79,6 +78,79 @@ router.get('/:pid', async (req, res) => {
             ok: true,
             message: `usuario encontrado`,
             user: user
+        });
+    }
+});
+
+router.delete("/:pid", async (req, res) => {
+    const { pid } = req.params;
+
+    console.log(pid)
+    if (isNaN(pid)) {
+        res.status(400).json({
+            ok: false,
+            message: `Error el id ingresado ${pid}, es Invalido`,
+            user: {}
+        });
+    }
+    const user = await productManager.getProductById(Number(pid));
+    console.log(user)
+    if (!user) {
+        res.status(404).json({
+            ok: false,
+            message: `No se encontro ningun usuario con id: ${pid}`,
+            user: {}
+        });
+    }
+    await productManager.deleteProduct(Number(pid));
+    res.json({
+        ok: true,
+        message: "usuario eliminado",
+        usuario: user
+    })
+});
+
+router.put("/:pid", async (req, res) => {
+    const { pid } = req.params;
+    if (isNaN(pid)) {
+        res.status(400).json({
+            ok: false,
+            message: `Error el id ingresado ${pid}, es Invalido`,
+            user: {}
+        });
+    }
+    const user = await productManager.getProductById(Number(pid));
+    if (!user) {
+        res.status(404).json({
+            ok: false,
+            message: `No se encontro ningun usuario con id: ${pid}`,
+            user: {}
+        });
+    }
+
+    const modifications = req.body;
+    await productManager.updateProduct(Number(pid), modifications);
+    const newUser = await productManager.getProductById(Number(pid));
+    res.json({
+        ok: true,
+        message: "usuario modificado",
+        usuario: newUser
+    })
+});
+
+router.post("/", async (req, res) => {
+    const { title, description, code, price, status, stock, category, thumbnails } = req.body;
+    try {
+        await productManager.addProduct(title, description, price, thumbnails, code, stock, status, category);
+        res.status(200).json({
+            ok: true,
+            message: "usuario creado",
+        })
+    }
+    catch (e) {
+        res.status(404).json({
+            ok: false,
+            message: `No se pudo agregar el producto. Error: ${e}`,
         });
     }
 });

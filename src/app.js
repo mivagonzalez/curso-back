@@ -18,3 +18,4 @@ app.get('/', (_, res) => {
     });
 });
 app.use('/api/products', UsersRouter);
+// app.use('/api/cart', UsersRouter);
