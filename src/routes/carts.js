@@ -1,6 +1,7 @@
 import Express, { Router } from 'express';
 // import TestProducts from '../entities/product-manager/mocks/test-products.json' assert { type: 'json' };
 import ProductManager from '../entities/product-manager/index.js'
+import CartManager from '../entities/cart-manager/index.js'
 
 // Creada solo para correccion. Inicializa el Product Manager con productos de prueba.
 // export const initializeProducts = async () => {
@@ -27,129 +28,88 @@ const router = Router();
 router.use(Express.json());
 router.use(Express.urlencoded({ extended: true }));
 const productManager = new ProductManager('product-test3.json');
+const cartManager = new CartManager('cart-test3.json');
 
-router.get('/', async (req, res) => {
-    const { limit } = req.query;
-    const products = await productManager.getProducts();
-    const message = 'Lista de productos';
-    const erroMessage = `El limite ingresado: ${limit} es invalido`;
-    if (!limit) {
-        res.status(200).json({
-            ok: true,
-            message: message,
-            products: products
-        });
-    } else if (isNaN(limit) || Number(limit) < 0) {
+router.get('/:cid', async (req, res) => {
+    const { cid } = req.params;
+
+    if (isNaN(cid)) {
         res.status(400).json({
             ok: false,
-            message: erroMessage,
-            products: {}
-        });
-    }
-    else {
-        res.status(200).json({
-            ok: true,
-            message: message,
-            products: products.slice(0, Number(limit))
-        })
-    }
-});
-
-router.get('/:pid', async (req, res) => {
-    const { pid } = req.params;
-
-    if (isNaN(pid)) {
-        res.status(400).json({
-            ok: false,
-            message: `Error el id ingresado ${pid}, es Invalido`,
+            message: `Error el id ingresado ${cid}, es Invalido`,
             user: {}
         });
     }
-    const user = await productManager.getProductById(Number(pid));
-    if (!user) {
+    const products = await cartManager.getProductsByCartId(Number(cid));
+    if (!products) {
         res.status(404).json({
             ok: false,
-            message: `No se encontro ningun usuario con id: ${pid}`,
+            message: `No se encontro ningun producto para el carrito con id: ${cid}`,
             user: {}
         });
     }
     else {
         res.status(200).json({
             ok: true,
-            message: `usuario encontrado`,
-            user: user
+            message: `productos encontrados`,
+            user: products
         });
     }
 });
 
-router.delete("/:pid", async (req, res) => {
-    const { pid } = req.params;
 
-    if (isNaN(pid)) {
-        res.status(400).json({
-            ok: false,
-            message: `Error el id ingresado ${pid}, es Invalido`,
-            user: {}
-        });
-    }
-    const user = await productManager.getProductById(Number(pid));
-    if (!user) {
-        res.status(404).json({
-            ok: false,
-            message: `No se encontro ningun usuario con id: ${pid}`,
-            user: {}
-        });
-    }
-    await productManager.deleteProduct(Number(pid));
-    res.json({
-        ok: true,
-        message: "usuario eliminado",
-        usuario: user
-    })
-});
-
-router.put("/:pid", async (req, res) => {
-    const { pid } = req.params;
-    if (isNaN(pid)) {
-        res.status(400).json({
-            ok: false,
-            message: `Error el id ingresado ${pid}, es Invalido`,
-            user: {}
-        });
-    }
-    const user = await productManager.getProductById(Number(pid));
-    if (!user) {
-        res.status(404).json({
-            ok: false,
-            message: `No se encontro ningun usuario con id: ${pid}`,
-            user: {}
-        });
-    }
-
-    const modifications = req.body;
-    await productManager.updateProduct(Number(pid), modifications);
-    const newUser = await productManager.getProductById(Number(pid));
-    res.json({
-        ok: true,
-        message: "usuario modificado",
-        usuario: newUser
-    })
-});
-
-router.post("/", async (req, res) => {
-    const { title, description, code, price, status, stock, category, thumbnails } = req.body;
+router.post("/", async (_, res) => {
     try {
-        await productManager.addProduct(title, description, price, thumbnails, code, stock, status, category);
+        await cartManager.addCart();
         res.status(200).json({
             ok: true,
-            message: "usuario creado",
+            message: "Cart creado",
         })
     }
     catch (e) {
         res.status(404).json({
             ok: false,
-            message: `No se pudo agregar el producto. Error: ${e}`,
+            message: `No se pudo agregar el Cart. Error: ${e}`,
         });
+    }
+});
+
+router.post("/:cid/product/:pid", async (req, res) => {
+    const { cid, pid } = req.params;
+    if (isNaN(cid)) {
+        res.status(400).json({
+            ok: false,
+            message: `Error el id  del cart ingresado ${cid}, es Invalido`,
+            user: {}
+        });
+    }
+    else if (isNaN(pid)) {
+        res.status(400).json({
+            ok: false,
+            message: `Error el id del producto ingresado ${pid}, es Invalido`,
+            user: {}
+        });
+    }
+    const product = await productManager.getProductById(Number(pid));
+    const cart = await cartManager.getCartById(Number(cid));
+    if(!product){
+        res.status(400).json({
+            ok: false,
+            message: `Error el producto con id ${pid}, No existe`,
+            user: {}
+        });
+    }else if(!cart){
+        res.status(400).json({
+            ok: false,
+            message: `Error el cart con id ${cid}, No existe`,
+            user: {}
+        });
+    } else {
+        await cartManager.addProductToCart(Number(cid), Number(pid));
+        res.status(200).json({
+            ok: true,
+            message: "Producto Agregado",
+        })
     }
 });
 
