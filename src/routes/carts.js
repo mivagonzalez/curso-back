@@ -37,7 +37,7 @@ router.get('/:cid', async (req, res) => {
         res.status(400).json({
             ok: false,
             message: `Error el id ingresado ${cid}, es Invalido`,
-            user: {}
+            product: {}
         });
     }
     const products = await cartManager.getProductsByCartId(Number(cid));
@@ -45,14 +45,14 @@ router.get('/:cid', async (req, res) => {
         res.status(404).json({
             ok: false,
             message: `No se encontro ningun producto para el carrito con id: ${cid}`,
-            user: {}
+            product: {}
         });
     }
     else {
         res.status(200).json({
             ok: true,
             message: `productos encontrados`,
-            user: products
+            product: products
         });
     }
 });
@@ -80,14 +80,14 @@ router.post("/:cid/product/:pid", async (req, res) => {
         res.status(400).json({
             ok: false,
             message: `Error el id  del cart ingresado ${cid}, es Invalido`,
-            user: {}
+            product: {}
         });
     }
     else if (isNaN(pid)) {
         res.status(400).json({
             ok: false,
             message: `Error el id del producto ingresado ${pid}, es Invalido`,
-            user: {}
+            product: {}
         });
     }
     const product = await productManager.getProductById(Number(pid));
@@ -96,13 +96,13 @@ router.post("/:cid/product/:pid", async (req, res) => {
         res.status(400).json({
             ok: false,
             message: `Error el producto con id ${pid}, No existe`,
-            user: {}
+            product: {}
         });
     }else if(!cart){
         res.status(400).json({
             ok: false,
             message: `Error el cart con id ${cid}, No existe`,
-            user: {}
+            product: {}
         });
     } else {
         await cartManager.addProductToCart(Number(cid), Number(pid));

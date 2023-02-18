@@ -62,22 +62,22 @@ router.get('/:pid', async (req, res) => {
         res.status(400).json({
             ok: false,
             message: `Error el id ingresado ${pid}, es Invalido`,
-            user: {}
+            product: {}
         });
     }
-    const user = await productManager.getProductById(Number(pid));
-    if (!user) {
+    const product = await productManager.getProductById(Number(pid));
+    if (!product) {
         res.status(404).json({
             ok: false,
-            message: `No se encontro ningun usuario con id: ${pid}`,
-            user: {}
+            message: `No se encontro ningun producto con id: ${pid}`,
+            product: {}
         });
     }
     else {
         res.status(200).json({
             ok: true,
-            message: `usuario encontrado`,
-            user: user
+            message: `producto encontrado`,
+            product: product
         });
     }
 });
@@ -89,22 +89,22 @@ router.delete("/:pid", async (req, res) => {
         res.status(400).json({
             ok: false,
             message: `Error el id ingresado ${pid}, es Invalido`,
-            user: {}
+            product: {}
         });
     }
-    const user = await productManager.getProductById(Number(pid));
-    if (!user) {
+    const product = await productManager.getProductById(Number(pid));
+    if (!product) {
         res.status(404).json({
             ok: false,
-            message: `No se encontro ningun usuario con id: ${pid}`,
-            user: {}
+            message: `No se encontro ningun producto con id: ${pid}`,
+            product: {}
         });
     }
     await productManager.deleteProduct(Number(pid));
     res.json({
         ok: true,
-        message: "usuario eliminado",
-        usuario: user
+        message: "producto eliminado",
+        producto: product
     })
 });
 
@@ -114,25 +114,25 @@ router.put("/:pid", async (req, res) => {
         res.status(400).json({
             ok: false,
             message: `Error el id ingresado ${pid}, es Invalido`,
-            user: {}
+            product: {}
         });
     }
-    const user = await productManager.getProductById(Number(pid));
-    if (!user) {
+    const product = await productManager.getProductById(Number(pid));
+    if (!product) {
         res.status(404).json({
             ok: false,
-            message: `No se encontro ningun usuario con id: ${pid}`,
-            user: {}
+            message: `No se encontro ningun producto con id: ${pid}`,
+            product: {}
         });
     }
 
     const modifications = req.body;
     await productManager.updateProduct(Number(pid), modifications);
-    const newUser = await productManager.getProductById(Number(pid));
+    const newProduct = await productManager.getProductById(Number(pid));
     res.json({
         ok: true,
-        message: "usuario modificado",
-        usuario: newUser
+        message: "producto modificado",
+        producto: newProduct
     })
 });
 
@@ -142,7 +142,7 @@ router.post("/", async (req, res) => {
         await productManager.addProduct(title, description, price, thumbnails, code, stock, status, category);
         res.status(200).json({
             ok: true,
-            message: "usuario creado",
+            message: "producto creado",
         })
     }
     catch (e) {
