@@ -1,0 +1,36 @@
+h1 {
+    margin-block: 0px;
+    color: darkslategrey;
+}
+
+ul {
+    padding-inline: 0px;
+    margin-inline: 0px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0px, auto));
+    justify-content: center;
+    column-gap: 50px;
+}
+
+li {
+    border: 1px solid #d3c0c0;
+    margin-block: 20px;
+    text-decoration: none;
+    list-style: none;
+    width: 500px;
+    background-color: #e0e8ef;
+    display: flex;
+    flex-direction: column;
+}
+li p,h2 {
+    margin: auto;
+}
+
+body, html{
+    padding:0 !important;
+    margin:0px !important;
+}
+
+body {
+    background-color: #c1c0cda8;
+}

@@ -14,7 +14,9 @@
     "manager"
   ],
   "nodemonConfig": {
-    "ignore": ["src/entities/product-manager/*.json"]
+    "ignore": [
+      "src/entities/product-manager/*.json"
+    ]
   },
   "author": "mauricio",
   "license": "MIT",
@@ -22,6 +24,7 @@
     "nodemon": "^2.0.20"
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "express-handlebars": "^6.0.7"
   }
 }

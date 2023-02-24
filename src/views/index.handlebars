@@ -1,0 +1,17 @@
+<section class="productsSection">
+    <h1>Productos Disponibles</h1>
+    {{#if products}}
+        <ul class="producsList">
+            {{#each products}}
+                <li>
+                    <h2>{{this.title}}</h2>
+                    <p>Description: {{this.description}}</p>
+                    <p>Price: {{this.price}}</p>
+                    <p>Code: {{this.code}}</p>
+                    <p>Stock: {{this.stock}}</p>
+                </li>
+            {{/each}}
+        </ul>
+    {{/if}}
+</section>
+<script > </script>
