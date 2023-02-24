@@ -38,7 +38,7 @@ function onClick(event) {
     category.value = "";
 }
 
-socket.on("productAdded", ({added, _, product}) => {
+socket.on("productAdded", ({added, error, product}) => {
     if(added === true) {
 
         const { title, description, code, price, status, stock, category, thumbnails } = product;
@@ -48,6 +48,6 @@ socket.on("productAdded", ({added, _, product}) => {
         newProd.innerHTML = '<li><h2>' + title + '</h2><p>Description: ' + description + '</p><p>Price: ' + code + '</p><p>Code: ' + code + '</p><p>Stock: ' + stock + '</p><p>Price: ' + price + '</p><p>Status: ' + status + '</p><p>Category: ' + category + '</p><p>Thumbnails: ' + thumbnails + '</p></li>';
         const productsList = document.getElementById("productsList").append(newProd)
     }else {
-        console.log(data.error,'asssssssssssssssssssss<')
+        console.log('Error, producto no agregado. Descripcion del error: ', error)
     }
 })
