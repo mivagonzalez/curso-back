@@ -36,7 +36,6 @@ app.get('/usuarios', (req, res) => {
 });
 
 app.get('/usuario/:userId', (req, res) => {
-    console.log("query parameters", req.query);
     const userId = req.params.userId;
     const usuario = Users.usuarios.find((user) => {
         return user.id === Number(userId);
@@ -57,7 +56,6 @@ app.get('/usuario/:userId', (req, res) => {
 });
 
 app.get('/usuario', (req, res) => {
-    console.log("query parameters", req.query);
     const { sexo } = req.query;
     
     const userId = req.params.userId;
@@ -80,7 +78,6 @@ app.get('/usuario', (req, res) => {
 
 app.post("/usuario", (req,res) => {
     const body =  req.body;
-    console.log("fule index asdafdasfsad", req.body);
     const lastId = Users.usuarios[Users.usuarios.length -1].id;
     const newUser = {id: lastId + 1, ...body}
     
