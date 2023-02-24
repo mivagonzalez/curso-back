@@ -1,6 +1,7 @@
-h1 {
-    margin-block: 0px;
+h2 {
     color: darkslategrey;
+    margin-block: 15px;
+    margin-inline: auto;
 }
 
 ul {
@@ -22,7 +23,7 @@ li {
     display: flex;
     flex-direction: column;
 }
-li p,h2 {
+li p {
     margin: auto;
 }
 

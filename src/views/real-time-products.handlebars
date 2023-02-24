@@ -1,0 +1,45 @@
+<section id="addProductForm">
+    <h2>Add new Product</h2>
+    <form>
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title"><br><br>     
+        <label for="description">Description:</label><br>
+        <input type="text" id="description" name="description"><br><br>
+        <label for="code">Code:</label><br>
+        <input type="text" id="code" name="code"><br><br>
+        <label for="price">Price:</label><br>
+        <input type="text" id="price" name="price"><br><br>
+        <label for="stock">Stock:</label><br>
+        <input type="text" id="stock" name="stock"><br><br>
+        <label for="status">Status:</label><br>
+        <input type="text" id="status" name="status"><br><br>
+        <label for="category">Category:</label><br>
+        <input type="text" id="category" name="category"><br><br>
+        <label for="thumbnails">Thumbnails:</label><br>
+        <input type="text" id="thumbnails" name="thumbnails"><br><br>
+        <input id="submit" type="submit" value="Submit">
+    </form> 
+</section>
+
+<section class="productsSection">
+    <h2>Productos Disponibles</h2>
+    {{#if products}}
+        <ul class="products" id="productsList">
+            {{#each products}}
+                <li>
+                    <h2>{{this.title}}</h2>
+                    <p>Description: {{this.description}}</p>
+                    <p>Price: {{this.price}}</p>
+                    <p>Code: {{this.code}}</p>
+                    <p>Stock: {{this.stock}}</p>
+                    <p>Price: {{this.price}}</p>
+                    <p>Status: {{this.status}}</p>
+                    <p>Category: {{this.category}}</p>
+                    <p>Thumbnail: {{this.thumbnails}}</p>
+                </li>
+            {{/each}}
+        </ul>
+    {{/if}}
+</section>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/real-time-products.js" ></script>

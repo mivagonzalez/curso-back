@@ -32,7 +32,7 @@ export class ProductManager {
         console.log('Product Manager inicializado correctamente')
     }
 
-    addProduct = async (title = this.isRequired(), description = this.isRequired(), price = this.isRequired(), thumbnails = [], code = this.isRequired(), stock = this.isRequired(), status = this.isRequired(), category = this.isRequired()) => {
+    addProduct = async (title = isRequired(), description = isRequired(), price = isRequired(), thumbnails = [], code = isRequired(), stock = isRequired(), status = isRequired(), category = isRequired()) => {
         if(this.products.find(x => x.code === code)) {
             throw Error("El producto ya existe");
         }; 
