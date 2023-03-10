@@ -1,13 +1,12 @@
-
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const fs = require('fs');
+const path = require('path');
+const { fileURLToPath } = require('url');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const isRequired = () => { throw Error("Parametro faltante. No se puede crear un Cart si falta algun parametro.") };
 
-export class CartManager {
+class CartManager {
     #currentId = 1
     constructor(filePath = isRequired) {
         this.path = path.join(__dirname, filePath);
@@ -108,4 +107,4 @@ export class CartManager {
     }    
 };
 
-export default CartManager;
+module.exports = CartManager;

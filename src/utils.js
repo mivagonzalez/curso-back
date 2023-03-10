@@ -1,6 +1,21 @@
-import { fileURLToPath } from 'url';
-import { dirname } from 'path'; 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const path = require("path");
+const multer = require("multer");
 
-export default __dirname;
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(`${__dirname}/public/uploads/`));
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+const uploader = multer({
+  storage,
+  onError: function (err, next) {
+    console.log(err);
+    next();
+  },
+});
+
+module.exports = { uploader };

@@ -1,44 +1,142 @@
-import { ProductManager } from './entities/product-manager/product-manager.js';
-import Express from 'express';
-import ProductsRouter from './routes/products.js'
-import ViewsRouter from './routes/views.js'
-import CartsRouter from './routes/carts.js'
-import __dirname from './utils.js'
-import { Server } from 'socket.io'
+const { Server } = require('socket.io')
+const express = require("express");
+const cors = require("cors");
+const displayRoutes = require("express-routemap");
+const handlebars = require("express-handlebars");
 
-const PORT = 8080;
-const app = Express();
-app.use(Express.static(__dirname + '/public'))
+const corsConfig = require("./config/cors.config");
+const { mongoDBconnection } = require("./db/mongo.config");
 
-app.use(Express.json());
-app.use(Express.urlencoded({ extended: true }));
+const { PORT, NODE_ENV } = require("./config/config");
+const ProductManager = require("./dao/managers/product-manager-db");
+const messagesModel = require("./dao/models/messages.model");
+class App {
+  app;
+  env;
+  port;
+  server;
 
-const httpServer = app.listen(PORT, () => {
-    console.log(`API RUNNING ON PORT: ${PORT}`);
-});
+  constructor(routes) {
+    this.app = express();
+    this.env = NODE_ENV || "development";
+    this.port = Number(PORT) || 5000;
+    this.connectToDatabase();
+    this.initializeMiddlewares();
+    this.initializeRoutes(routes);
+    this.initHandlebars();
+  }
 
-const io = new Server(httpServer)
+  /**
+   * getServer
+   */
+  getServer() {
+    return this.app;
+  }
 
-io.on("connection", (socket) => {
-    const productManager = new ProductManager('product-test3.json');
+  closeServer(done) {
+    this.server = this.app.listen(this.port, () => {
+      done();
+    });
+  }
+
+  /**
+   * connectToDatabase
+   */
+  async connectToDatabase() {
+    // TODO: Inicializar la conexion
+    await mongoDBconnection();
+  }
+
+  initializeMiddlewares() {
+    this.app.use(cors(corsConfig));
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(express.static(`${__dirname}/public`));
+  }
+
+  /**
+   * initializeRoutes
+   */
+  initializeRoutes(routes) {
+    routes.forEach((route) => {
+      this.app.use(`/`, route.router);
+    });
+  }
+  
+  listenWs(httpServer) {
+    const io = new Server(httpServer);
+
+    io.on("connection", async (socket) => {
+      console.log(`New Socket Connection`)
+      const productManager = new ProductManager();
+      
+      socket.on("addNewProduct", async product => {
+          const { title='', description = '', code, price, status = true, stock, category = '', thumbnails = '' } = product;
+          if(! title || ! description || !code || !price || !status || !stock || !category || !thumbnails){
+            io.emit("productAdded", { added: false, product: null, error:'All fields are required to create a product' })
+          }
+          try {
+              var regexPattern = new RegExp("true");
+              const product = await productManager.addProduct(title.toString(), description.toString(), Number(price), thumbnails, code.toString(), Number(stock), regexPattern.test(status), category.toString());
+              if(product){
+                io.emit("productAdded", { added: true, product: product, error:null })
+              }
+          }
+          catch (e) {
+              io.emit("productAdded", { added: false, product: null, error:e })
+          }
+      });
+
+      socket.on("message", async(message) => {
+        console.log("🚀 ~ file: app.js:35 ~ socket.on ~ message", message,'user:', message.user,'mensaje:', message.message);
+        
+        const newMessage = await messagesModel.create({
+          user: message.user,
+          message: message.message,
+        });
+
+        if(newMessage) {
+          const messages = await messagesModel.find({})
+          console.log("🚀 ~ file: app.js:37 ~ socket.on ~ messages", messages);
+          io.emit("messageLogs", messages);
+        }
+      });
     
-    socket.on("addNewProduct", async product => {
-        const { title, description, code, price, status, stock, category, thumbnails } = product;
-        try {
-            await productManager.addProduct(title, description, price, thumbnails, code, stock, status, category);
-            io.emit("productAdded", { added: true, product: product, error:null })
-        }
-        catch (e) {
-            io.emit("productAdded", { added: false, product: null, error:e })
-        }
-    })
+      // authenticated channel
+      socket.on("authenticated", async (user) => {
+        console.log("🚀 ~ file: app.js:39 ~ socket.on ~ user", user);
+        const messages = await messagesModel.find({});
+        socket.broadcast.emit("newUserConnected", user);
+        io.emit("loadMessages", messages);
+      });
+  
+      // socket.emit("message", "comunicaicon 1 a 1 por canal message")
+      // socket.broadcast.emit("messageForEveryOne", "mensaje para todos")
+  
+      // io.emit("messageAll", "saludos desde el backend")
+  });
+  }
 
-    // socket.emit("message", "comunicaicon 1 a 1 por canal message")
-    // socket.broadcast.emit("messageForEveryOne", "mensaje para todos")
+  /**
+   * listen
+   */
+  listen() {
+    const httpServer = this.app.listen(this.port, () => {
+      displayRoutes(this.app);
+      console.log(`=================================`);
+      console.log(`======= ENV: ${this.env} =======`);
+      console.log(`🚀 App listening on the port ${this.port}`);
+      console.log(`=================================`);
+    });
+    this.listenWs(httpServer);
 
-    // io.emit("messageAll", "saludos desde el backend")
-});
+  }
 
-app.use('/api/products', ProductsRouter);
-app.use('/api/carts', CartsRouter);
-app.use('/', ViewsRouter);
+  initHandlebars() {
+    this.app.engine("handlebars", handlebars.engine());
+    this.app.set("views", __dirname + "/views");
+    this.app.set("view engine", "handlebars");
+  }
+}
+
+module.exports = App;
