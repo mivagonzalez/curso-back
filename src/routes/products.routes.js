@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const ProductManager = require("../dao/managers/product-manager-db");
-
+const productsModel = require("../dao/models/products.model");
+const productData = require("./mock-data")
 class ProductRoutes {
     path = "/api/v1/products";
     router = Router();
@@ -74,36 +75,123 @@ class ProductRoutes {
             }
         });
 
+        // this.router.get(`${this.path}`, async (req, res) => {
+        //     try {
+        //         const { limit } = req.query;
+        //         if (!limit) {
+        //             const products = await this.productManager.getProducts();
+        //             return res.json({
+        //                 message: `Products found successfully without limit`,
+        //                 products: products,
+        //                 ok: true
+        //             });
+        //         }
+        //         else if (isNaN(limit) || Number(limit) < 0) {
+        //             return res.status(400).json({
+        //                 ok: false,
+        //                 message: `El limite ingresado: ${limit} es invalido`,
+        //                 products: null
+        //             });
+        //         }
+        //         const products = await this.productManager.getProductsWithLimit(limit);
+        //         if (products) {
+        //             return res.json({
+        //                 message: `Products found successfully`,
+        //                 products: products,
+        //                 ok: true
+        //             });
+        //         }
+        //         return res.status(400).json({
+        //             ok: false,
+        //             message: `Products not found`,
+        //             products: null
+        //         });
+        //     } catch (error) {
+        //         console.log(
+        //             "🚀 ~ file: cart.routes.js:43 ~ CartRoutes ~ this.router.get ~ error:",
+        //             error
+        //         );
+        //     }
+        // });
         this.router.get(`${this.path}`, async (req, res) => {
             try {
-                const { limit } = req.query;
-                if (!limit) {
-                    const products = await this.productManager.getProducts();
-                    return res.json({
-                        message: `Products found successfully without limit`,
-                        products: products,
-                        ok: true
-                    });
-                }
-                else if (isNaN(limit) || Number(limit) < 0) {
+                const { limit = 10, page=1, sort, query } = req.query;
+                if (isNaN(limit) || Number(limit) < 0) {
                     return res.status(400).json({
                         ok: false,
                         message: `El limite ingresado: ${limit} es invalido`,
                         products: null
                     });
                 }
-                const products = await this.productManager.getProductsWithLimit(limit);
-                if (products) {
+                if (isNaN(page) || Number(page) < 0) {
+                    return res.status(400).json({
+                        ok: false,
+                        message: `El page ingresado: ${page} es invalido`,
+                        products: null
+                    });
+                }
+                if (sort && (sort !== 'asc' && sort !== 'desc') ) {
+                    return res.status(400).json({
+                        ok: false,
+                        message: `El sort ingresado: ${sort} es invalido`,
+                        products: null
+                    });
+                }
+                let queryObject = {};
+                if (query) {
+                    if (query === 'stock'){
+                        queryObject = {stock: { $gt: 0 }}
+                    }
+                    else if(query.length > 1 && isNaN(query)){
+                        queryObject = {
+                            category: query
+                        }
+                    }
+                    else return res.status(400).json({
+                        ok: false,
+                        message: `El query ingresado: ${query} es invalido`,
+                        products: null
+                    });
+                }
+                const sortQueryParam = sort && `&sort=${sort}` || '';
+                const {
+                    docs,
+                    totalDocs,
+                    limit: limitPag,
+                    totalPages,
+                    hasPrevPage,
+                    prevLink,
+
+                    hasNextPage,
+                    nextPage,
+                    prevPage,
+                    page: currentPage,
+                } = await this.productManager.getProducts(limit, page, sort, queryObject);
+                if (docs && docs.length > 0) {
                     return res.json({
-                        message: `Products found successfully`,
-                        products: products,
-                        ok: true
+                        status: 'success',
+                        payload: docs,
+                        totalPages: totalPages,
+                        prevPage: prevPage,
+                        nextPage: nextPage,
+                        page: currentPage,
+                        hasPrevPage: hasPrevPage,
+                        hasNextPage: hasNextPage,
+                        prevLink: hasPrevPage && `/api/v1/products?query=${query}&limit=${limit}${sortQueryParam}&page=${prevPage}` || null,
+                        nextLink: hasNextPage && `/api/v1/products?query=${query}&limit=${limit}${sortQueryParam}&page=${nextPage}` || null,
                     });
                 }
                 return res.status(400).json({
-                    ok: false,
-                    message: `Products not found`,
-                    products: null
+                        status: 'error',
+                        payload: null,
+                        totalPages: totalPages,
+                        prevPage: null,
+                        nextPage: null,
+                        page: currentPage,
+                        hasPrevPage: false,
+                        hasNextPage: false,
+                        prevLink: null,
+                        nextLink: null,
                 });
             } catch (error) {
                 console.log(
@@ -112,34 +200,17 @@ class ProductRoutes {
                 );
             }
         });
-        this.router.get(`${this.path}/:pid`, async (req, res) => {
+        
+        this.router.get(`${this.path}/insertion`, async (req, res) => {
             try {
-                const { pid } = req.params;
-                if(!pid || typeof(pid) != 'string'){
-                return res.status(400).json({
-                    message: `id type is not correct or its too short`,
-                    product: null,
-                    ok:false
-                });
-                }
-                
-                const product = await this.productManager.getProductById(pid);
-                if (product) {
-                    return res.json({
-                        message: `Product found successfully`,
-                        product: product,
-                        ok: true
-                    });
-                }
-                return res.status(400).json({
-                    ok: false,
-                    message: `Product not found`,
-                    product: null,
-                    ok: false
-                });
+                let result = await productsModel.insertMany(productData);
+                return res.json({
+                    message: "all the products are inserted succesfully",
+                    students: result,
+                  });
             } catch (error) {
                 console.log(
-                    "🚀 ~ file: cart.routes.js:43 ~ CartRoutes ~ this.router.get.pid ~ error:",
+                    "🚀 ~ file: products.routes.js:15 ~ router.get.insertion ~ error:",
                     error
                 );
             }

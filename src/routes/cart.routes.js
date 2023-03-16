@@ -97,7 +97,41 @@ class CartsRoute {
         );
       }
     });
+    
+    this.router.delete(`${this.path}/:cid/product/:pid`, async (req, res) => {
+      try {
+        const { cid, pid } = req.params;
 
+        if(!cid || typeof(cid) != 'string'){
+          return res.status(400).json({
+            message: `id type is not correct for cid`,
+            payload: null,
+          });
+        }
+        else if(!pid || typeof(pid) != 'string'){
+          return res.status(400).json({
+            message: `id type is not correct for pid`,
+            payload: null,
+          });
+        }
+
+        await this.cartManager.deleteProductFromCart(cid, pid);
+
+        const products = await this.cartManager.getProductsByCartId(cid);
+
+        
+        return res.status(400).json({
+          message: `product deleted Successfully`,
+          payload: products,
+        });
+        
+      } catch (error) {
+        console.log(
+          "🚀 ~ file: cart.routes.js:43 ~ CartsRoutes ~ this.router.post.cid.product.pid ~ error:",
+          error
+        );
+      }
+    });
     
   }
 }

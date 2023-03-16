@@ -61,9 +61,12 @@ class ProductManager {
 
     };
 
-    getProducts = async () => {
+    getProducts = async (limit=10, page=1, sort, query={}) => {
         try {
-            return await productsModel.find({}) ?? null;
+            if(sort && (sort === 'asc' || sort ==='desc')) {
+                return await productsModel.paginate(query, { limit: limit, page: page, sort:{"price": sort}, lean: true }) ?? null;
+            }
+            return await productsModel.paginate(query, { limit: limit, page: page, lean: true }) ?? null;
         } catch (error) {
             console.log(
                 "🚀 ~ file: product.manager.js:21 ~ ProductManager ~ getProducts= ~ error:",

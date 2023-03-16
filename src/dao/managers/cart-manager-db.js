@@ -109,6 +109,139 @@ class CartManager {
             );
         }
     }
+    updateProductQuantityForCart = async (cartId = '', productId, quantity=1) => {
+        if (!cartId || typeof (cartId) !== "string" || cartId.length < 1) {
+            throw Error("El id del cart ingresado es incorrecto");
+        }
+        else if (!productId || typeof (productId) !== "string" || productId.length < 1) {
+            throw Error("El id del product ingresado es incorrecto");
+        }
+        try {
+            const cart = await cartsModel.findOne({
+                cartId: cartId,
+            }) ?? null;
+
+            if (!cart) {
+                throw Error(`El cart con id ${cartId} no existe o no se pudo encontrar`);
+            }
+            const product = await productsModel.findOne({
+                productId: productId,
+            }) ?? null;
+
+            if (!product) {
+                throw Error(`El Product con id ${productId} no existe o no se pudo encontrar`);
+            }
+            console.log(cart)
+            if (cart.products.find(p => p.productId == productId)) {
+                return await cartsModel.updateOne(
+                    { cartId: cartId, "products.productId": productId},
+                    { $set: {"products.$.quantity": quantity } },
+                    )
+                } else {  
+                    throw Error(`El Product con id ${productId} no existe en el cart no se pudo encontrar`);
+            }
+        }catch(e) {
+            console.log(
+                "🚀 ~ file: cart.manager.js:45 ~ CartManager ~ addProductToCart=async ~ error:",
+                e
+            );
+        }
+    }
+
+    deleteProductFromCart = async (cartId = '', productId) => {
+        if (!cartId || typeof (cartId) !== "string" || cartId.length < 1) {
+            throw Error("El id del cart ingresado es incorrecto");
+        }
+        else if (!productId || typeof (productId) !== "string" || productId.length < 1) {
+            throw Error("El id del product ingresado es incorrecto");
+        }
+        try {
+            const cart = await cartsModel.findOne({
+                cartId: cartId,
+            }) ?? null;
+
+            if (!cart) {
+                throw Error(`El cart con id ${cartId} no existe o no se pudo encontrar`);
+            }
+            const product = await productsModel.findOne({
+                productId: productId,
+            }) ?? null;
+
+            if (!product) {
+                throw Error(`El Product con id ${productId} no existe o no se pudo encontrar`);
+            }
+
+            console.log(cart)
+            const currentProduct = cart.products.find(p => p.productId == productId)
+            if (currentProduct && currentProduct.quantity > 1) {
+                return await cartsModel.updateOne(
+                    { cartId: cartId, "products.productId": productId},
+                    { $inc: {"products.$.quantity": -1 } },
+                )
+            } else {
+                return await cartsModel.updateOne(
+                    { cartId: cartId },
+                    { products: [] }
+                )  
+            }
+        }catch(e) {
+            console.log(
+                "🚀 ~ file: cart.manager.js:45 ~ CartManager ~ addProductToCart=async ~ error:",
+                e
+            );
+        }
+    }
+    
+    deleteAllProductsFromCart = async (cartId = '') => {
+        if (!cartId || typeof (cartId) !== "string" || cartId.length < 1) {
+            throw Error("El id del cart ingresado es incorrecto");
+        }
+        try {
+            const cart = await cartsModel.findOne({
+                cartId: cartId,
+            }) ?? null;
+
+            if (!cart) {
+                throw Error(`El cart con id ${cartId} no existe o no se pudo encontrar`);
+            }
+            return await cartsModel.updateOne(
+                    { cartId: cartId},
+                    { products:[] },
+                )
+        }catch(e) {
+            console.log(
+                "🚀 ~ file: cart.manager.js:45 ~ CartManager ~ addProductToCart=async ~ error:",
+                e
+            );
+        }
+    }
+    updateProductsForCart = async (cartId = '', products = []) => {
+        if (!cartId || typeof (cartId) !== "string" || cartId.length < 1) {
+            throw Error("El id del cart ingresado es incorrecto");
+        }
+        else if (!products || products.length < 1) {
+            console.log('el array de productos recibido esta vacio')
+            return null
+        }
+        try {
+            const cart = await cartsModel.findOne({
+                cartId: cartId,
+            }) ?? null;
+
+            if (!cart) {
+                throw Error(`El cart con id ${cartId} no existe o no se pudo encontrar`);
+            }
+            return await cartsModel.updateOne(
+                    { cartId: cartId},
+                    { products:products },
+                )
+        }catch(e) {
+            console.log(
+                "🚀 ~ file: cart.manager.js:45 ~ CartManager ~ addProductToCart=async ~ error:",
+                e
+            );
+        }
+    }
 };
 
 module.exports = CartManager;
