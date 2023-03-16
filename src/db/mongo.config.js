@@ -1,9 +1,9 @@
 const { connect } = require("mongoose");
 
 const { DB_CNN } = require("../config/config");
-
+// const MONGO_CONNECTION='mongodb://127.0.0.1:27017/ecommerce'
 const configConnection = {
-  url: DB_CNN ?? `mongodb://127.0.0.1:27017/ecommerce`,
+  url: DB_CNN ?? `mongodb+srv://testdb:testdb123@ecommerce.aqkxapv.mongodb.net/ecommerce`,
   options: {
     useNewUrlParser: true,
     useUnifiedTopology: true,
