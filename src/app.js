@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const displayRoutes = require("express-routemap");
 const handlebars = require("express-handlebars");
-
+const path = require('path');
 const corsConfig = require("./config/cors.config");
 const { mongoDBconnection } = require("./db/mongo.config");
 
@@ -51,7 +51,7 @@ class App {
     this.app.use(cors(corsConfig));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
-    this.app.use(express.static(`${__dirname}/public`));
+    this.app.use(express.static(path.join(__dirname, '/public')));
   }
 
   /**

@@ -14,8 +14,56 @@ class ViewsRoutes {
   }
 
   initViewsRoutes() {
-    this.router.get(`${this.path}`, async (_, res) => {
-      const products = await this.productManager.getProducts();
+    this.router.get(`${this.path}carts/:cid`, async (req, res) => {
+      const { cid } = req.params;
+      if(!cid || !isNaN(cid) || cid.length < 1) {
+        console.log('error, invalid cid')
+        return res.render('products', {products: []});
+      }
+
+      const products = await this.cartManager.getProductsByCartId(cid)
+
+      const mappedProducts = products.map((prod) => {
+        return {
+          productId: prod.product.productId,
+          title: prod.product.title,
+          description: prod.product.description,
+          code: prod.product.code,
+          stock: prod.product.stock,
+          category: prod.product.category,
+          status: prod.product.status,
+          price: prod.product.price,
+          id: prod.product._id
+        };
+      });
+      let testProduct = {
+        style: 'index',
+        products:mappedProducts
+      }
+
+      return res.render('products', testProduct);
+    });
+
+
+    this.router.get(`${this.path}products`, async (req, res) => {
+      const { page: reqPage } = req.query;
+      let page;
+      if(!reqPage || isNaN(reqPage)) {
+        page = 1;
+      }else{
+        page = Number(reqPage)
+      }
+      
+      const {
+        docs: products,
+        limit: limitPag,
+        totalPages,
+        hasPrevPage,
+        hasNextPage,
+        nextPage,
+        prevPage,
+        page: currentPage
+      } = await this.productManager.getProducts(10,page,null,null);
       const mappedProducts = products.map((prod) => {
         return {
           id: prod.productId,
@@ -31,7 +79,18 @@ class ViewsRoutes {
       });
       let testProduct = {
         style: 'index',
-        products: mappedProducts
+        products: mappedProducts,
+        currentPage:currentPage,
+        firstPage: 1,
+        lastPage: totalPages,
+        hasNextPage: hasNextPage,
+        hasPrevPage: hasPrevPage,
+        nextPage: `/?page=${nextPage}`,
+        prevPage: `/?page=${prevPage}`,
+        lastPage: `/?page=${totalPages}`,
+        firstPage: `/?page=${1}`,
+        isNotInLastPage: currentPage !== totalPages,
+        isNotInFirstPage: currentPage !== 1
       }
 
       return res.render('products', testProduct);

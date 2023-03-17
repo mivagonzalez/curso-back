@@ -54,7 +54,7 @@ class CartManager {
         }
 
         try {
-            const cart = await cartsModel.findOne({ cartId: id }) ?? null;
+            const cart = await cartsModel.findOne({ cartId: id }).populate('products.product') ?? null;
             return cart?.products || null;
         } catch (error) {
             console.log(
@@ -86,7 +86,6 @@ class CartManager {
             if (!product) {
                 throw Error(`El Product con id ${productId} no existe o no se pudo encontrar`);
             }
-            console.log(cart)
             if (cart.products.find(p => p.productId == productId)) {
                 return await cartsModel.updateOne(
                     { cartId: cartId, "products.productId": productId},
@@ -95,8 +94,10 @@ class CartManager {
             } else {
                 const newProduct = {
                     productId: productId,
-                    quantity: 1
+                    quantity: 1,
+                    product: product._id
                 }
+                console.log(newProduct)
                 return await cartsModel.updateOne(
                     { cartId: cartId },
                     { $addToSet: {"products": newProduct } }
@@ -131,7 +132,6 @@ class CartManager {
             if (!product) {
                 throw Error(`El Product con id ${productId} no existe o no se pudo encontrar`);
             }
-            console.log(cart)
             if (cart.products.find(p => p.productId == productId)) {
                 return await cartsModel.updateOne(
                     { cartId: cartId, "products.productId": productId},
@@ -171,9 +171,8 @@ class CartManager {
                 throw Error(`El Product con id ${productId} no existe o no se pudo encontrar`);
             }
 
-            console.log(cart)
             const currentProduct = cart.products.find(p => p.productId == productId)
-            if (currentProduct && currentProduct.quantity > 1) {
+            if (currentProduct && currentProduct.quantity >= 1) {
                 return await cartsModel.updateOne(
                     { cartId: cartId, "products.productId": productId},
                     { $inc: {"products.$.quantity": -1 } },
@@ -181,7 +180,7 @@ class CartManager {
             } else {
                 return await cartsModel.updateOne(
                     { cartId: cartId },
-                    { products: [] }
+                    { products: cart.products.filter(p => p.productId !== currentProduct.productId) }
                 )  
             }
         }catch(e) {

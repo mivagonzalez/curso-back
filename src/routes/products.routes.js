@@ -16,19 +16,18 @@ class ProductRoutes {
         this.router.post(`${this.path}`, async (req, res) => {
             try {
                 const { title, description, code, price, status, stock, category, thumbnails } = req.body;
-
-                if (!title || !description || !code || !price || !status || !stock || !category || !thumbnails) {
+                if (!title || !description || !code || !price || (status!== true && status !== false) || !stock || !category || !thumbnails) {
                     return res.status(400).json({
-                        message: `Product not created`,
+                        message: `Product not created1`,
                         product: null,
                         error: "You forget to pass one of: title, description, code, price, status, stock, category, thumbnails ",
                         ok: false
                     });
                 }
-
+                
                 if (!Number.isInteger(price) || !Number.isInteger(stock)) {
                     return res.status(400).json({
-                        message: `Product not created`,
+                        message: `Product not created2`,
                         product: null,
                         error: "Stock and Price must be numbers",
                         ok: false
@@ -36,16 +35,16 @@ class ProductRoutes {
                 }
                 if (typeof (title) !== 'string' || typeof (description) !== 'string' || typeof (code) !== 'string' || typeof (category) !== 'string' || (typeof (thumbnails) !== 'string' && !Array.isArray(thumbnails))) {
                     return res.status(400).json({
-                        message: `Product not created`,
+                        message: `Product not created3`,
                         product: null,
                         error: "Title, description, code and category must be strings. Thumbnails can be a string or an array of strings",
                         ok: false
                     });
-
+                    
                 }
                 if (typeof (status) !== 'boolean') {
                     return res.status(400).json({
-                        message: `Product not created`,
+                        message: `Product not created4`,
                         product: null,
                         error: "Status must be a boolean",
                         ok: false,
@@ -61,14 +60,14 @@ class ProductRoutes {
                 }
 
                 return res.json({
-                    message: `Product not created`,
+                    message: `Product not created5`,
                     product: null,
                     ok: false,
                 });
             } catch (error) {
                 return res.status(400).json({
                     ok: false,
-                    message: `Product Not created`,
+                    message: `Product Not created6`,
                     product: null,
                     error: error.message
                 });
@@ -156,12 +155,9 @@ class ProductRoutes {
                 const sortQueryParam = sort && `&sort=${sort}` || '';
                 const {
                     docs,
-                    totalDocs,
                     limit: limitPag,
                     totalPages,
                     hasPrevPage,
-                    prevLink,
-
                     hasNextPage,
                     nextPage,
                     prevPage,

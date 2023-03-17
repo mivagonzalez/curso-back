@@ -1,17 +1,43 @@
 <section class="productsSection">
     <h1>Productos Disponibles</h1>
     {{#if products}}
-        <ul class="producsList">
-            {{#each products}}
-                <li>
-                    <h2>{{this.title}}</h2>
-                    <p>Description: {{this.description}}</p>
-                    <p>Price: {{this.price}}</p>
-                    <p>Code: {{this.code}}</p>
-                    <p>Stock: {{this.stock}}</p>
-                </li>
-            {{/each}}
-        </ul>
+    <ul class="producsList">
+        {{#each products}}
+        <li>
+            <div>
+                <div id="futurePic"></div>
+                <h2>{{this.title}}</h2>
+                <p>Product Id: {{this.productId}}</p>
+                <p>Description: {{this.description}}</p>
+                <p>Category: {{this.category}}</p>
+                <p>Code: {{this.code}}</p>
+                <p>Price: {{this.price}}</p>
+                <p>Stock: {{this.stock}}</p>
+                <p>status: {{this.status}}</p>
+                <a class="agregarAlCarrito" href="/products">Agregar al Carrito</a>  <!-- No se como hacer que se llame al metodo de cart addProductToCart, y se le pasen los parametros de el producto que se hzo click. -->
+            </div>
+        </li>
+        {{/each}}
+    </ul>
     {{/if}}
+    <div id="pagination">
+        {{#if this.isNotInFirstPage}}
+        <a role="link" href={{this.firstPage}}>
+            First Page
+        </a>
+        {{/if}}
+        {{#if this.hasPrevPage}}
+            <a role="link" href={{this.prevPage}}>< </a>
+        {{/if}}
+        <a href="">{{this.currentPage}}</a>
+        {{#if this.hasNextPage}}
+            <a role="link" aria-disabled="true" href={{this.nextPage}}>></a>
+        {{/if}}
+        {{#if this.isNotInLastPage}}
+            <a role="link" href={{this.lastPage}}>
+                Last Page
+            </a>
+        {{/if}}
+    </div>
 </section>
-<script > </script>
+<script src="/js/products.js"></script>
