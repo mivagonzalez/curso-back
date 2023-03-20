@@ -6,10 +6,13 @@ const handlebars = require("express-handlebars");
 const path = require('path');
 const corsConfig = require("./config/cors.config");
 const { mongoDBconnection } = require("./db/mongo.config");
-
+const {configConnection} = require('./db/mongo.config');
 const { PORT, NODE_ENV } = require("./config/config");
 const ProductManager = require("./dao/managers/product-manager-db");
 const messagesModel = require("./dao/models/messages.model");
+const cookieParser = require("cookie-parser");
+const mongoStore = require("connect-mongo");
+const session = require("express-session");
 class App {
   app;
   env;
@@ -48,6 +51,19 @@ class App {
   }
 
   initializeMiddlewares() {
+    this.app.use(cookieParser());
+    this.app.use(
+      session({
+        store: mongoStore.create({
+          mongoUrl: configConnection.url,
+          mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
+          ttl: 60 * 3600,
+        }),
+        secret: "secretSession",
+        resave: false,
+        saveUninitialized: false,
+      })
+    );
     this.app.use(cors(corsConfig));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));

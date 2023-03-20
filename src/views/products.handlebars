@@ -1,12 +1,20 @@
 <section class="productsSection">
-    <h1>Productos Disponibles</h1>
+    <div>
+    <form action="/api/v1/session/logout" method="get">
+    <label>You are currently logged in as {{this.email}}</label>
+      <br />
+      <button type="submit">logout</button>
+    </form>
+  </div>
+    <h1>Buenos dias {{this.first_name}} {{this.last_name}}</h1>
+    <h2>Productos Disponibles</h2>
     {{#if products}}
     <ul class="producsList">
         {{#each products}}
         <li>
             <div>
                 <div id="futurePic"></div>
-                <h2>{{this.title}}</h2>
+                <h3>{{this.title}}</h3>
                 <p>Product Id: {{this.productId}}</p>
                 <p>Description: {{this.description}}</p>
                 <p>Category: {{this.category}}</p>

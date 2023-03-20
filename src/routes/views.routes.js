@@ -2,6 +2,8 @@ const { Router } = require("express");
 const ProductManager = require("../dao/managers/product-manager-db");
 const CartManager = require("../dao/managers/cart-manager-db");
 const messagesModel = require("../dao/models/messages.model");
+const authMdw = require("../middleware/auth.middleware");
+
 class ViewsRoutes {
   path = "/";
   router = Router();
@@ -14,7 +16,7 @@ class ViewsRoutes {
   }
 
   initViewsRoutes() {
-    this.router.get(`${this.path}carts/:cid`, async (req, res) => {
+    this.router.get(`${this.path}carts/:cid`,authMdw, async (req, res) => {
       const { cid } = req.params;
       if(!cid || !isNaN(cid) || cid.length < 1) {
         console.log('error, invalid cid')
@@ -45,7 +47,7 @@ class ViewsRoutes {
     });
 
 
-    this.router.get(`${this.path}products`, async (req, res) => {
+    this.router.get(`${this.path}products`, authMdw, async (req, res) => {
       const { page: reqPage } = req.query;
       let page;
       if(!reqPage || isNaN(reqPage)) {
@@ -97,7 +99,7 @@ class ViewsRoutes {
     });
 
 
-    this.router.get('/realtimeproducts', async (_, res) => {
+    this.router.get('/realtimeproducts',authMdw, async (_, res) => {
       const products = await this.productManager.getProducts()
       const mappedProducts = products.map((prod) => {
         return {
@@ -119,7 +121,7 @@ class ViewsRoutes {
       return res.render('real-time-products', testProduct);
     });
 
-    this.router.get('/chat', async (_, res) => {
+    this.router.get('/chat',authMdw ,async (_, res) => {
       try {
         const messages = await messagesModel.find({});
         const mappedMessages = messages.map((message) => {
@@ -137,6 +139,20 @@ class ViewsRoutes {
         });
       }
     });
+    
+    this.router.get('/login', async (_, res) => {
+      try {
+        return res.render('login');
+      } catch (error) {
+        console.log("Error al ingresar al login")
+      }
+    });
+
+    this.router.get("/register", async (req, res) => {
+      res.render("register");
+    });
+
+
   }
 }
 
