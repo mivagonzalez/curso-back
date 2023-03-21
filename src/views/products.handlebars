@@ -1,12 +1,12 @@
 <section class="productsSection">
     <div>
     <form action="/api/v1/session/logout" method="get">
-    <label>You are currently logged in as {{this.email}}</label>
+    <label>You are currently logged in as {{email}}</label>
       <br />
       <button type="submit">logout</button>
     </form>
   </div>
-    <h1>Buenos dias {{this.first_name}} {{this.last_name}}</h1>
+    <h1>Buenos dias {{first_name}} {{last_name}}</h1>
     <h2>Productos Disponibles</h2>
     {{#if products}}
     <ul class="producsList">
@@ -22,7 +22,9 @@
                 <p>Price: {{this.price}}</p>
                 <p>Stock: {{this.stock}}</p>
                 <p>status: {{this.status}}</p>
-                <a class="agregarAlCarrito" href="/products">Agregar al Carrito</a>  <!-- No se como hacer que se llame al metodo de cart addProductToCart, y se le pasen los parametros de el producto que se hzo click. -->
+                <form id="agregarACarrito" action="/api/v1/carts/{{../cartId}}/product/{{this.id}}" method="post">
+                    <input type="submit" value="Agregar Al Carrito">
+                </form>
             </div>
         </li>
         {{/each}}
@@ -48,4 +50,4 @@
         {{/if}}
     </div>
 </section>
-<script src="/js/products.js"></script>
+<script src="/js/products.js" ></script>

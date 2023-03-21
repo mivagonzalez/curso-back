@@ -2,6 +2,7 @@ const { Router } = require("express");
 const ProductManager = require("../dao/managers/product-manager-db");
 const CartManager = require("../dao/managers/cart-manager-db");
 const messagesModel = require("../dao/models/messages.model");
+const userModel = require("../dao/models/user.model");
 const authMdw = require("../middleware/auth.middleware");
 
 class ViewsRoutes {
@@ -49,6 +50,8 @@ class ViewsRoutes {
 
     this.router.get(`${this.path}products`, authMdw, async (req, res) => {
       const { page: reqPage } = req.query;
+      const session = req.session;
+      const findUser = await userModel.findOne({ email: session.user._doc.email }).populate('cart','cart.products.product');
       let page;
       if(!reqPage || isNaN(reqPage)) {
         page = 1;
@@ -92,9 +95,14 @@ class ViewsRoutes {
         lastPage: `/?page=${totalPages}`,
         firstPage: `/?page=${1}`,
         isNotInLastPage: currentPage !== totalPages,
-        isNotInFirstPage: currentPage !== 1
+        isNotInFirstPage: currentPage !== 1,
+        first_name: req.session?.user?._doc?.first_name || findUser.first_name,
+        last_name: req.session?.user?._doc?.last_name || findUser.last_name,
+        email: req.session?.user?._doc?.email || email,
+        age: req.session?.user?._doc?.age || findUser.age,
+        cartId: req.session?.user?._doc?.cart?.cartId || findUser.cart.cartId
       }
-
+      console.log(req.session.user._doc.cart.car,'++++++')
       return res.render('products', testProduct);
     });
 
