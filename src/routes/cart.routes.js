@@ -85,7 +85,7 @@ class CartsRoute {
         const products = await this.cartManager.getProductsByCartId(cid)
 
         
-        return res.status(400).json({
+        return res.status(200).json({
           message: `Cart updated Successfully`,
           products: products,
         });
@@ -125,7 +125,7 @@ class CartsRoute {
         const products = await this.cartManager.getProductsByCartId(cid);
 
         
-        return res.status(400).json({
+        return res.status(200).json({
           message: `Quantity updated Successfully`,
           products: products,
         });
@@ -188,7 +188,7 @@ class CartsRoute {
         const products = await this.cartManager.getProductsByCartId(cid);
 
         
-        return res.status(400).json({
+        return res.status(200).json({
           message: `products deleted Successfully`,
           payload: products,
         });
@@ -235,7 +235,7 @@ class CartsRoute {
 
         const products = await this.cartManager.getProductsByCartId(cid);
 
-        return res.status(400).json({
+        return res.status(200).json({
           message: `products updated Successfully`,
           payload: products,
         });
