@@ -1,6 +1,6 @@
 const { Router } = require("express");
-const userModel = require("../dao/models/user.model");
 const ProductManager = require("../dao/managers/product-manager-db");
+const UserManager = require("../dao/managers/user-manager-db");
 const CartManager = require("../dao/managers/cart-manager-db");
 
 class SessionRoutes {
@@ -8,6 +8,7 @@ class SessionRoutes {
   router = Router();
   productManager = new ProductManager()
   cartManager = new CartManager();
+  userManager = new UserManager();
 
   constructor() {
       this.initCoursesRoutes();
@@ -30,7 +31,8 @@ class SessionRoutes {
           session
         );
     
-        const findUser = await userModel.findOne({ email }).populate('cart');
+        const findUser = await this.userManager.getUser(email);
+        console.log('++++++++++++++findUser', findUser)
         console.log(
           "🚀 ~ file: session.routes.js:18 ~ router.post ~ findUser:",
           findUser
@@ -81,7 +83,6 @@ class SessionRoutes {
         };
       });
       let total_cart_products = 0;
-      console.log(findUser.cart.products,'++++++++FINDUSER++++++++')
       findUser.cart.products.forEach(product => {
         total_cart_products += product.quantity
       }); 
@@ -123,8 +124,8 @@ class SessionRoutes {
         if(!newCart){
           return res.json({ message: `No se pudo crear el carrito de compras para este usuario` });
         }
-        const userAdd = { email, password, first_name, last_name, age, password, address, cart: newCart._id };
-        const newUser = await userModel.create(userAdd);
+        const userAdd = { email, password, first_name, last_name, age, address, cart: newCart._id };
+        const newUser = await this.userManager.addUser(userAdd);
         console.log(
           "🚀 ~ file: session.routes.js:61 ~ router.post ~ newUser:",
           newUser
