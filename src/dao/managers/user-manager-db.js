@@ -17,9 +17,9 @@ class UserManager {
             return null
         }
     }
-    addUser = async ({email, first_name, last_name, age, password, address, cart}) => {
+    addUser = async ({email, first_name, last_name, age, password, address, cart, role = 'user'}) => {
         try {
-            return await userModel.create({email, password, first_name, last_name, age, password, address, cart});
+            return await userModel.create({email, password, first_name, last_name, age, password, address, cart, role});
         } catch (error) {
             console.log(
                 "🚀 ~ file: User.manager.js:21 ~ UserManager ~ add=async ~ error:",

@@ -13,6 +13,7 @@ const schema = new mongoose.Schema({
   age: Number,
   address: String,
   password: String,
+  role: String,
   cart:{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Carts"

@@ -32,7 +32,6 @@ class SessionRoutes {
         );
     
         const findUser = await this.userManager.getUser(email);
-        console.log('++++++++++++++findUser', findUser)
         console.log(
           "🚀 ~ file: session.routes.js:18 ~ router.post ~ findUser:",
           findUser
@@ -105,7 +104,8 @@ class SessionRoutes {
         last_name: req.session?.user?._doc?.last_name || findUser.last_name,
         email: req.session?.user?._doc?.email || email,
         age: req.session?.user?._doc?.age || findUser.age,
-        total_cart_products: total_cart_products
+        total_cart_products: total_cart_products,
+        role: req.session?.user._doc.role || findUser.role
       }    
         return res.render('products', data);
       } catch (error) {
@@ -117,21 +117,22 @@ class SessionRoutes {
     });
     
     this.router.post(`${this.path}/register`, async (req, res) => {
+      console.log('a')
       try {
         console.log("BODY ****", req.body);
-        const { first_name, last_name, email, age, password, address } = req.body;
+        const { first_name, last_name, email, age, password, address, role = 'user' } = req.body;
         const newCart = await this.cartManager.addCart();
         if(!newCart){
           return res.json({ message: `No se pudo crear el carrito de compras para este usuario` });
         }
-        const userAdd = { email, password, first_name, last_name, age, address, cart: newCart._id };
+        const userAdd = { email, password, first_name, last_name, age, address, cart: newCart._id, role };
         const newUser = await this.userManager.addUser(userAdd);
         console.log(
           "🚀 ~ file: session.routes.js:61 ~ router.post ~ newUser:",
           newUser
         );
     
-        req.session.user = { email, first_name, last_name, age, address, cartId: newCart.cartId };
+        req.session.user = { email, first_name, last_name, age, address, cartId: newCart.cartId, role };
         return res.render(`login`);
       } catch (error) {
         console.log(
