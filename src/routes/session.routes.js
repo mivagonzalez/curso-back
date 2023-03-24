@@ -25,7 +25,6 @@ class SessionRoutes {
       try {
         const { email, password } = req.body;
         const session = req.session;
-        console.log(req.session)
         console.log(
           "🚀 ~ file: session.routes.js:17 ~ router.post ~ session:",
           session
@@ -81,7 +80,11 @@ class SessionRoutes {
           thumbnails: prod.thumbnails
         };
       });
-      const cart = findUser.cart.cartId;
+      let total_cart_products = 0;
+      console.log(findUser.cart.products,'++++++++FINDUSER++++++++')
+      findUser.cart.products.forEach(product => {
+        total_cart_products += product.quantity
+      }); 
       let data = {
         style: 'index',
         cartId: req.session?.user?._doc?.cart?.cartId || findUser.cart?.cartId,
@@ -101,8 +104,9 @@ class SessionRoutes {
         last_name: req.session?.user?._doc?.last_name || findUser.last_name,
         email: req.session?.user?._doc?.email || email,
         age: req.session?.user?._doc?.age || findUser.age,
+        total_cart_products: total_cart_products
       }    
-        return res.render("products", data);
+        return res.render('products', data);
       } catch (error) {
         console.log(
           "🚀 ~ file: session.routes.js:23 ~ router.post ~ error:",

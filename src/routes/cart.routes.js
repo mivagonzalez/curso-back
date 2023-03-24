@@ -80,14 +80,19 @@ class CartsRoute {
           });
         }
 
-        await this.cartManager.addProductToCart(cid, pid);
-
-        const products = await this.cartManager.getProductsByCartId(cid)
-
+        const updateDoc = await this.cartManager.addProductToCart(cid, pid);
+        if(updateDoc && updateDoc.modifiedCount > 0){
+          const products = await this.cartManager.getProductsByCartId(cid)
+          return res.status(200).json({
+            message: `Cart updated Successfully`,
+            products: products,
+          });
+        }
         
-        return res.status(200).json({
-          message: `Cart updated Successfully`,
-          products: products,
+        return res.status(400).json({
+          message: `Product not added. Cart or Product not found`,
+          products: null,
+          ok:false
         });
         
       } catch (error) {

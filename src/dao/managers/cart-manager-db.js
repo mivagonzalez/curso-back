@@ -105,9 +105,9 @@ class CartManager {
             }
         }catch(e) {
             console.log(
-                "🚀 ~ file: cart.manager.js:45 ~ CartManager ~ addProductToCart=async ~ error:",
-                e
+                'No se pudo agregar el producto. Error:',e
             );
+            return null;
         }
     }
     updateProductQuantityForCart = async (cartId = '', productId, quantity=1) => {

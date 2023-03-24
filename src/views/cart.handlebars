@@ -1,0 +1,33 @@
+<section class="productsSection">
+    <div id="productsToolbar">
+        <form action="/api/v1/session/logout" method="get">
+            <label>You are currently logged in as {{email}}</label>
+            <br />
+            <button type="submit">logout</button>
+        </form>    
+    </div>
+    <h1>Buenos dias {{first_name}} {{last_name}}</h1>
+    <h2>Productos en el Carrito</h2>
+    {{#if products}}
+    <ul class="producsList">
+        {{#each products}}
+        <li>
+            <div>
+                <div id="futurePic"></div>
+                <h3>{{this.title}}</h3>
+                <p>Description: {{this.description}}</p>
+                <p>Category: {{this.category}}</p>
+                <p>Code: {{this.code}}</p>
+                <p>Price: {{this.price}}</p>
+                <p>Stock: {{this.stock}}</p>
+                <p>status: {{this.status}}</p>
+                <p>Quantity: {{this.quantity}}</p>
+                {{!-- <form id="agregarACarrito" action="/api/v1/carts/{{../cartId}}/product/{{this.id}}" method="post">
+                    <input type="submit" value="Agregar Al Carrito">
+                </form> --}}
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+    {{/if}}
+</section>

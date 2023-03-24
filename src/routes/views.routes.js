@@ -23,9 +23,9 @@ class ViewsRoutes {
         console.log('error, invalid cid')
         return res.render('products', {products: []});
       }
-
+      const session = req.session;
+      const findUser = await userModel.findOne({ email: session.user._doc.email }).populate('cart');
       const products = await this.cartManager.getProductsByCartId(cid)
-
       const mappedProducts = products.map((prod) => {
         return {
           productId: prod.product.productId,
@@ -36,22 +36,26 @@ class ViewsRoutes {
           category: prod.product.category,
           status: prod.product.status,
           price: prod.product.price,
-          id: prod.product._id
+          id: prod.product._id,
+          quantity:prod.quantity
         };
       });
-      let testProduct = {
+      let cart = {
         style: 'index',
-        products:mappedProducts
+        products:mappedProducts,
+        first_name: req.session?.user?._doc?.first_name || findUser.first_name,
+        last_name: req.session?.user?._doc?.last_name || findUser.last_name,
+        email: req.session?.user?._doc?.email || email,
       }
 
-      return res.render('products', testProduct);
+      return res.render('cart', cart);
     });
 
 
     this.router.get(`${this.path}products`, authMdw, async (req, res) => {
       const { page: reqPage } = req.query;
       const session = req.session;
-      const findUser = await userModel.findOne({ email: session.user._doc.email }).populate('cart','cart.products.product');
+      const findUser = await userModel.findOne({ email: session.user._doc.email }).populate('cart');
       let page;
       if(!reqPage || isNaN(reqPage)) {
         page = 1;
@@ -69,6 +73,12 @@ class ViewsRoutes {
         prevPage,
         page: currentPage
       } = await this.productManager.getProducts(10,page,null,null);
+
+      let total_cart_products = 0;
+
+      findUser.cart.products.forEach(product => {
+        total_cart_products += product.quantity
+      });
       const mappedProducts = products.map((prod) => {
         return {
           id: prod.productId,
@@ -100,7 +110,8 @@ class ViewsRoutes {
         last_name: req.session?.user?._doc?.last_name || findUser.last_name,
         email: req.session?.user?._doc?.email || email,
         age: req.session?.user?._doc?.age || findUser.age,
-        cartId: req.session?.user?._doc?.cart?.cartId || findUser.cart.cartId
+        cartId: req.session?.user?._doc?.cart?.cartId || findUser.cart.cartId,
+        total_cart_products: total_cart_products
       }
       console.log(req.session.user._doc.cart.car,'++++++')
       return res.render('products', testProduct);
