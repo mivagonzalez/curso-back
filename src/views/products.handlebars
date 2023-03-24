@@ -22,9 +22,12 @@
                 <p>Price: {{this.price}}</p>
                 <p>Stock: {{this.stock}}</p>
                 <p>status: {{this.status}}</p>
-                <form id="agregarACarrito" action="/api/v1/carts/{{../cartId}}/product/{{this.id}}" method="post">
+                {{!-- <form id="agregarACarrito" action="/api/v1/carts/{{../cartId}}/product/{{this.id}}" method="post">
                     <input type="submit" value="Agregar Al Carrito">
-                </form>
+                </form> --}}
+                <button type="button" onclick="addProductToCart('{{this.id}}', '{{../cartId}}')">
+                    Agregar Al Carrito
+                </button>
             </div>
         </li>
         {{/each}}
