@@ -2,6 +2,7 @@ const { Router } = require("express");
 const ProductManager = require("../dao/managers/product-manager-db");
 const UserManager = require("../dao/managers/user-manager-db");
 const CartManager = require("../dao/managers/cart-manager-db");
+const {createHash, isValidPassword } = require('../utils');
 
 class SessionRoutes {
   path = "/api/v1/session";
@@ -41,10 +42,11 @@ class SessionRoutes {
           return res.json({ message: `este usuario no esta registrado` });
         }
     
-        if (findUser.password !== password) {
+        if (!isValidPassword(findUser, password)) {
           return res.json({ message: `password incorrecto` });
         }
-    
+        
+        delete findUser.password;
         req.session.user = {
           ...findUser,
         };
@@ -125,7 +127,7 @@ class SessionRoutes {
         if(!newCart){
           return res.json({ message: `No se pudo crear el carrito de compras para este usuario` });
         }
-        const userAdd = { email, password, first_name, last_name, age, address, cart: newCart._id, role };
+        const userAdd = { email, password: createHash(password), first_name, last_name, age, address, cart: newCart._id, role };
         const newUser = await this.userManager.addUser(userAdd);
         console.log(
           "🚀 ~ file: session.routes.js:61 ~ router.post ~ newUser:",
