@@ -8,7 +8,12 @@
 npm run start:dev
 ```
 
-* In order for you to run the application, you have to create a .env file in the root folder of the application, following the name convention: env.<environment>.local
+* In order for you to run the application, you have to create a .env file in the root folder of the application, following the name convention: 
+
+```JavaScript
+env.<environment>.local
+```
+
 * You can use the following snippet as an example of .env file.
 
 ```JavaScript
