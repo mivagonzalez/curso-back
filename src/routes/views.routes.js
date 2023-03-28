@@ -27,7 +27,7 @@ class ViewsRoutes {
         return res.render('products', {products: []});
       }
       const session = req.session;
-      const findUser = await this.userManager.getUser(session.user._doc.email);
+      const findUser = await this.userManager.getUser(session.user.email);
       const products = await this.cartManager.getProductsByCartId(cid)
       const mappedProducts = products.map((prod) => {
         return {
@@ -46,9 +46,9 @@ class ViewsRoutes {
       let cart = {
         style: 'index',
         products:mappedProducts,
-        first_name: req.session?.user?._doc?.first_name || findUser.first_name,
-        last_name: req.session?.user?._doc?.last_name || findUser.last_name,
-        email: req.session?.user?._doc?.email || email,
+        first_name: req.session?.user?.first_name || findUser.first_name,
+        last_name: req.session?.user?.last_name || findUser.last_name,
+        email: req.session?.user?.email || email,
       }
 
       return res.render('cart', cart);
@@ -58,7 +58,7 @@ class ViewsRoutes {
     this.router.get(`${this.path}products`, authMdw, async (req, res) => {
       const { page: reqPage } = req.query;
       const session = req.session;
-      const findUser = await this.userManager.getUser(session.user._doc.email);
+      const findUser = await this.userManager.getUser(session.user.email);
       let page;
       if(!reqPage || isNaN(reqPage)) {
         page = 1;
@@ -109,14 +109,13 @@ class ViewsRoutes {
         firstPage: `/products?page=${1}`,
         isNotInLastPage: currentPage !== totalPages,
         isNotInFirstPage: currentPage !== 1,
-        first_name: req.session?.user?._doc?.first_name || findUser.first_name,
-        last_name: req.session?.user?._doc?.last_name || findUser.last_name,
-        email: req.session?.user?._doc?.email || email,
-        age: req.session?.user?._doc?.age || findUser.age,
-        cartId: req.session?.user?._doc?.cart?.cartId || findUser.cart.cartId,
+        first_name: req.session?.user?.first_name || findUser.first_name,
+        last_name: req.session?.user?.last_name || findUser.last_name,
+        email: req.session?.user?.email || findUser.email,
+        age: req.session?.user?.age || findUser.age,
+        cartId: req.session?.user?.cart?.cartId || findUser.cart.cartId,
         total_cart_products: total_cart_products
       }
-      console.log(req.session.user._doc.cart.car,'++++++')
       return res.render('products', testProduct);
     });
 
