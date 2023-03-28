@@ -7,7 +7,6 @@ const path = require('path');
 const corsConfig = require("./config/cors.config");
 const { mongoDBconnection } = require("./db/mongo.config");
 const {configConnection} = require('./db/mongo.config');
-const { PORT, NODE_ENV } = require("./config/config");
 const ProductManager = require("./dao/managers/product-manager-db");
 const messagesModel = require("./dao/models/messages.model");
 const cookieParser = require("cookie-parser");
@@ -15,6 +14,8 @@ const mongoStore = require("connect-mongo");
 const session = require("express-session");
 const passport = require('passport');
 const { initializePassport } = require('./config/passport.config');
+
+const {NODE_ENV, PORT, SESSION_SECRET} = require('./config/config')
 class App {
   app;
   env;
@@ -61,7 +62,7 @@ class App {
           mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
           ttl: 60 * 3600,
         }),
-        secret: "secretSession",
+        secret: SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
       })
@@ -148,6 +149,7 @@ class App {
       console.log(`======= ENV: ${this.env} =======`);
       console.log(`🚀 App listening on the port ${this.port}`);
       console.log(`=================================`);
+
     });
     this.listenWs(httpServer);
 

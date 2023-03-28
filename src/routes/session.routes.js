@@ -2,11 +2,12 @@ const { Router } = require("express");
 const ProductManager = require("../dao/managers/product-manager-db");
 const UserManager = require("../dao/managers/user-manager-db");
 const CartManager = require("../dao/managers/cart-manager-db");
-const {createHash, isValidPassword } = require('../utils');
 const passport = require("passport");
+const { API_VERSION } = require('../config/config');
+
 
 class SessionRoutes {
-  path = "/api/v1/session";
+  path = `/api/${API_VERSION}/session`;
   router = Router();
   productManager = new ProductManager()
   cartManager = new CartManager();

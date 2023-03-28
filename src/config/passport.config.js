@@ -4,11 +4,11 @@ const UserManager = require("../dao/managers/user-manager-db");
 const CartManager = require("../dao/managers/cart-manager-db");
 const { isValidPassword,createHash } = require('../utils');
 const GithubStrategy = require("passport-github2");
-
+const { API_VERSION } = require('../config/config');
 const localStrategy = local.Strategy;
+const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, PORT, HOST } = require("../config/config");
 
-const GITHUB_CLIENT_ID = "Iv1.27f1c4cd901d66ef"; // USE VARIABLES DE ENTORNO
-const GITHUB_CLIENT_SECRET = "6e477bbdf62b6c3cea54fa629a144880b2e9dac3"; // USE VARIABLES DE ENTORNO
+
 
 const initializePassport = () => {
     const userManager = new UserManager();
@@ -20,11 +20,10 @@ const initializePassport = () => {
           {
             clientID: GITHUB_CLIENT_ID,
             clientSecret: GITHUB_CLIENT_SECRET,
-            callbackURL: "http://localhost:5000/api/v1/session/github/callback",
+            callbackURL: `http://${HOST}:${PORT}/api/${API_VERSION}/session/github/callback`,
           },
           async (accessToken, refreshToken, profile, done) => {
             try {
-              console.log("PROFILE INFO ******", profile);
               let user = await userManager.getUser(profile._json?.email);
               if (!user) {
                 const newCart = await cartManager.addCart();

@@ -2,8 +2,10 @@ const { Router } = require("express");
 const ProductManager = require("../dao/managers/product-manager-db");
 const productsModel = require("../dao/models/products.model");
 const productData = require("./mock-data")
+const { API_VERSION } = require('../config/config');
+
 class ProductRoutes {
-    path = "/api/v1/products";
+    path = `/api/${API_VERSION}/products`;
     router = Router();
     productManager = new ProductManager();
 
@@ -173,8 +175,8 @@ class ProductRoutes {
                         page: currentPage,
                         hasPrevPage: hasPrevPage,
                         hasNextPage: hasNextPage,
-                        prevLink: hasPrevPage && `/api/v1/products?query=${query}&limit=${limit}${sortQueryParam}&page=${prevPage}` || null,
-                        nextLink: hasNextPage && `/api/v1/products?query=${query}&limit=${limit}${sortQueryParam}&page=${nextPage}` || null,
+                        prevLink: hasPrevPage && `/api/${API_VERSION}/products?query=${query}&limit=${limit}${sortQueryParam}&page=${prevPage}` || null,
+                        nextLink: hasNextPage && `/api/${API_VERSION}/products?query=${query}&limit=${limit}${sortQueryParam}&page=${nextPage}` || null,
                     });
                 }
                 return res.status(400).json({
