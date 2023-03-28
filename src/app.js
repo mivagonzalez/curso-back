@@ -13,6 +13,8 @@ const messagesModel = require("./dao/models/messages.model");
 const cookieParser = require("cookie-parser");
 const mongoStore = require("connect-mongo");
 const session = require("express-session");
+const passport = require('passport');
+const { initializePassport } = require('./config/passport.config');
 class App {
   app;
   env;
@@ -64,6 +66,9 @@ class App {
         saveUninitialized: false,
       })
     );
+    initializePassport();
+    this.app.use(passport.initialize());
+    this.app.use(passport.session())
     this.app.use(cors(corsConfig));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));

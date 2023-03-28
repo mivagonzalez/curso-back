@@ -3,6 +3,7 @@ const ProductManager = require("../dao/managers/product-manager-db");
 const UserManager = require("../dao/managers/user-manager-db");
 const CartManager = require("../dao/managers/cart-manager-db");
 const {createHash, isValidPassword } = require('../utils');
+const passport = require("passport");
 
 class SessionRoutes {
   path = "/api/v1/session";
@@ -22,43 +23,21 @@ class SessionRoutes {
         return res.send({ message: `logout Error`, body: err });
       });
     });
-    
-    this.router.post(`${this.path}/login`, async (req, res) => {
+    this.router.get(`${this.path}/faillogin`, (req, res) => {
+      console.log("invalid credentials");
+      res.redirect('/login')
+    })
+    this.router.post(`${this.path}/login`,passport.authenticate('login',{failureRedirect:'faillogin'}), async (req, res) => {
       try {
-        const { email, password } = req.body;
-        const session = req.session;
-        console.log(
-          "🚀 ~ file: session.routes.js:17 ~ router.post ~ session:",
-          session
-        );
-    
-        const findUser = await this.userManager.getUser(email);
-        console.log(
-          "🚀 ~ file: session.routes.js:18 ~ router.post ~ findUser:",
-          findUser
-        );
-    
-        if (!findUser) {
-          return res.json({ message: `este usuario no esta registrado` });
+        if(!req.user) {
+          console.log(req);
+          return res.status(400).send({status: "error", error: "invalid credentials"});
         }
-    
-        if (!isValidPassword(findUser, password)) {
-          return res.json({ message: `password incorrecto` });
-        }
-        
-        delete findUser.password;
+        delete req.user.password
         req.session.user = {
-          ...findUser,
-        };
-        
-        const { page: reqPage } = req.query;
-      let page;
-      if(!reqPage || isNaN(reqPage)) {
-        page = 1;
-      }else{
-        page = Number(reqPage)
-      }
-      
+          ...req.user
+        }
+              
       const {
         docs: products,
         limit: limitPag,
@@ -68,7 +47,7 @@ class SessionRoutes {
         nextPage,
         prevPage,
         page: currentPage
-      } = await this.productManager.getProducts(10,page,null,null);
+      } = await this.productManager.getProducts(10,1,null,null);
       
       const mappedProducts = products.map((prod) => {
         return {
@@ -83,6 +62,14 @@ class SessionRoutes {
           thumbnails: prod.thumbnails
         };
       });
+      const findUser = await this.userManager.getUser(req.user.email)
+
+      if(!findUser) {
+        return res.json({ message: `invalid credentials` });
+      }
+
+      console.log(findUser)
+
       let total_cart_products = 0;
       findUser.cart.products.forEach(product => {
         total_cart_products += product.quantity
@@ -118,30 +105,13 @@ class SessionRoutes {
       }
     });
     
-    this.router.post(`${this.path}/register`, async (req, res) => {
-      console.log('a')
-      try {
-        console.log("BODY ****", req.body);
-        const { first_name, last_name, email, age, password, address, role = 'user' } = req.body;
-        const newCart = await this.cartManager.addCart();
-        if(!newCart){
-          return res.json({ message: `No se pudo crear el carrito de compras para este usuario` });
-        }
-        const userAdd = { email, password: createHash(password), first_name, last_name, age, address, cart: newCart._id, role };
-        const newUser = await this.userManager.addUser(userAdd);
-        console.log(
-          "🚀 ~ file: session.routes.js:61 ~ router.post ~ newUser:",
-          newUser
-        );
-    
-        req.session.user = { email, first_name, last_name, age, address, cartId: newCart.cartId, role };
-        return res.render(`login`);
-      } catch (error) {
-        console.log(
-          "🚀 ~ file: session.routes.js:36 ~ router.post ~ error:",
-          error
-        );
-      }
+    this.router.post(`${this.path}/register`,passport.authenticate('register', {failureRedirect: '/failRegister'}), async (req, res) => {
+      res.redirect('/login')
+    });
+
+    this.router.get(`${this.path}/failRegister`, async (req, res) => {
+      console.log("failed Strategy")
+      res.redirect('/register')
     });
   }
 }

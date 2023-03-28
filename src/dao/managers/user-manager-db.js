@@ -17,7 +17,23 @@ class UserManager {
             return null
         }
     }
+    getUserById = async (id = '') => {
+        if (!id || typeof (id) !== "string" || id.length < 5) {
+            throw Error("El id ingresado es incorrecto");
+        }
+        try {
+            return await userModel.findById(id).populate('cart');
+        } catch (error) {
+            console.log(
+                "🚀 ~ file: User.manager.js:21 ~ UserManager ~ getUserById=async ~ error:",
+                error
+            );
+            return null
+        }
+    }
+
     addUser = async ({email, first_name, last_name, age, password, address, cart, role = 'user'}) => {
+        console.log('--------------- add user', cart)
         try {
             return await userModel.create({email, password, first_name, last_name, age, password, address, cart, role});
         } catch (error) {
