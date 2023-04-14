@@ -8,8 +8,6 @@ const { API_VERSION } = require('../config/config');
 const localStrategy = local.Strategy;
 const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, PORT, HOST } = require("../config/config");
 
-
-
 const initializePassport = () => {
     const userManager = new UserManager();
     const cartManager = new CartManager();
