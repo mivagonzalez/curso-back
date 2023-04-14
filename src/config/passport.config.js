@@ -21,17 +21,19 @@ const initializePassport = () => {
             clientID: GITHUB_CLIENT_ID,
             clientSecret: GITHUB_CLIENT_SECRET,
             callbackURL: `http://${HOST}:${PORT}/api/${API_VERSION}/session/github/callback`,
+            // proxy: true,
+            scope: ['user:email']
           },
           async (accessToken, refreshToken, profile, done) => {
             try {
-              let user = await userManager.getUser(profile._json?.email);
+              let user = await userManager.getUser(profile.emails[0].value);
               if (!user) {
                 const newCart = await cartManager.addCart();
                 if(!newCart) {
                     console.log("Cant create a new cart");
                     return done(null, false);
                 }
-                const userData = { email: profile._json?.email, password: "", first_name: profile._json.name, last_name: "", age: 0, address: "", cart: newCart._id, role:"user" };
+                const userData = { email: profile.emails[0].value, password: "", first_name: profile._json.name, last_name: "", age: 0, address: "", cart: newCart._id, role:"user" };
 
                 let newUser = await userManager.addUser(userData);
                 done(null, newUser);

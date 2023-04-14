@@ -4,6 +4,7 @@ const userModel = require("../models/user.model");
 class UserManager {
 
     getUser = async (email = '') => {
+        console.log(email)
         if (!email || typeof (email) !== "string" || email.length < 5) {
             throw Error("El email ingresado es incorrecto");
         }

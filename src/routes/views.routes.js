@@ -172,6 +172,9 @@ class ViewsRoutes {
     this.router.get("/register", async (req, res) => {
       res.render("register");
     });
+    this.router.get("/faillogin", async (req, res) => {
+      res.render("fail-login");
+    });
 
 
   }

@@ -26,7 +26,7 @@ class SessionRoutes {
     });
     this.router.get(`${this.path}/faillogin`, (req, res) => {
       console.log("invalid credentials");
-      res.redirect('/login')
+      res.redirect('/faillogin')
     })
   
     
