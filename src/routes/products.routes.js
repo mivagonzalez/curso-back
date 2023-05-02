@@ -3,11 +3,13 @@ const ProductManager = require("../dao/managers/product-manager-db");
 const productsModel = require("../dao/models/products.model");
 const productData = require("./mock-data")
 const { API_VERSION } = require('../config/config');
+const ProductsController = require('../controllers/products.controller')
 
 class ProductRoutes {
     path = `/api/${API_VERSION}/products`;
     router = Router();
     productManager = new ProductManager();
+    controller = new ProductsController();
 
     constructor() {
         this.initCoursesRoutes();
@@ -15,43 +17,11 @@ class ProductRoutes {
 
     initCoursesRoutes() {
 
-        this.router.post(`${this.path}`, async (req, res) => {
+        this.router.param(`pid`, this.controller.validatePIDParam)
+
+        this.router.post(`${this.path}`, this.controller.validateBodyForAddProduct, async (req, res) => {
             try {
                 const { title, description, code, price, status, stock, category, thumbnails } = req.body;
-                if (!title || !description || !code || !price || (status!== true && status !== false) || !stock || !category || !thumbnails) {
-                    return res.status(400).json({
-                        message: `Product not created1`,
-                        product: null,
-                        error: "You forget to pass one of: title, description, code, price, status, stock, category, thumbnails ",
-                        ok: false
-                    });
-                }
-                
-                if (!Number.isInteger(price) || !Number.isInteger(stock)) {
-                    return res.status(400).json({
-                        message: `Product not created2`,
-                        product: null,
-                        error: "Stock and Price must be numbers",
-                        ok: false
-                    });
-                }
-                if (typeof (title) !== 'string' || typeof (description) !== 'string' || typeof (code) !== 'string' || typeof (category) !== 'string' || (typeof (thumbnails) !== 'string' && !Array.isArray(thumbnails))) {
-                    return res.status(400).json({
-                        message: `Product not created3`,
-                        product: null,
-                        error: "Title, description, code and category must be strings. Thumbnails can be a string or an array of strings",
-                        ok: false
-                    });
-                    
-                }
-                if (typeof (status) !== 'boolean') {
-                    return res.status(400).json({
-                        message: `Product not created4`,
-                        product: null,
-                        error: "Status must be a boolean",
-                        ok: false,
-                    });
-                }
                 const product = await this.productManager.addProduct(title, description, price, thumbnails, code, stock, status, category);
                 if (product) {
                     return res.json({
@@ -76,83 +46,20 @@ class ProductRoutes {
             }
         });
 
-        // this.router.get(`${this.path}`, async (req, res) => {
-        //     try {
-        //         const { limit } = req.query;
-        //         if (!limit) {
-        //             const products = await this.productManager.getProducts();
-        //             return res.json({
-        //                 message: `Products found successfully without limit`,
-        //                 products: products,
-        //                 ok: true
-        //             });
-        //         }
-        //         else if (isNaN(limit) || Number(limit) < 0) {
-        //             return res.status(400).json({
-        //                 ok: false,
-        //                 message: `El limite ingresado: ${limit} es invalido`,
-        //                 products: null
-        //             });
-        //         }
-        //         const products = await this.productManager.getProductsWithLimit(limit);
-        //         if (products) {
-        //             return res.json({
-        //                 message: `Products found successfully`,
-        //                 products: products,
-        //                 ok: true
-        //             });
-        //         }
-        //         return res.status(400).json({
-        //             ok: false,
-        //             message: `Products not found`,
-        //             products: null
-        //         });
-        //     } catch (error) {
-        //         console.log(
-        //             "🚀 ~ file: cart.routes.js:43 ~ CartRoutes ~ this.router.get ~ error:",
-        //             error
-        //         );
-        //     }
-        // });
-        this.router.get(`${this.path}`, async (req, res) => {
+        this.router.get(`${this.path}`, this.controller.validateGetProductsQueryParams,async (req, res) => {
             try {
-                const { limit = 10, page=1, sort, query } = req.query;
-                if (isNaN(limit) || Number(limit) < 0) {
-                    return res.status(400).json({
-                        ok: false,
-                        message: `El limite ingresado: ${limit} es invalido`,
-                        products: null
-                    });
-                }
-                if (isNaN(page) || Number(page) < 0) {
-                    return res.status(400).json({
-                        ok: false,
-                        message: `El page ingresado: ${page} es invalido`,
-                        products: null
-                    });
-                }
-                if (sort && (sort !== 'asc' && sort !== 'desc') ) {
-                    return res.status(400).json({
-                        ok: false,
-                        message: `El sort ingresado: ${sort} es invalido`,
-                        products: null
-                    });
-                }
+                const { limit = 10, page = 1, sort, query } = req.query;
                 let queryObject = {};
-                if (query) {
-                    if (query === 'stock'){
-                        queryObject = {stock: { $gt: 0 }}
+                if (query === 'stock') {
+                    queryObject = { stock: { $gt: 0 } }
+                }
+                else if (query.length > 1 && isNaN(query)) {
+                    queryObject = {
+                        category: query
                     }
-                    else if(query.length > 1 && isNaN(query)){
-                        queryObject = {
-                            category: query
-                        }
-                    }
-                    else return res.status(400).json({
-                        ok: false,
-                        message: `El query ingresado: ${query} es invalido`,
-                        products: null
-                    });
+                }
+                else {
+                    queryObject = {}
                 }
                 const sortQueryParam = sort && `&sort=${sort}` || '';
                 const {
@@ -180,16 +87,16 @@ class ProductRoutes {
                     });
                 }
                 return res.status(400).json({
-                        status: 'error',
-                        payload: null,
-                        totalPages: totalPages,
-                        prevPage: null,
-                        nextPage: null,
-                        page: currentPage,
-                        hasPrevPage: false,
-                        hasNextPage: false,
-                        prevLink: null,
-                        nextLink: null,
+                    status: 'error',
+                    payload: null,
+                    totalPages: totalPages,
+                    prevPage: null,
+                    nextPage: null,
+                    page: currentPage,
+                    hasPrevPage: false,
+                    hasNextPage: false,
+                    prevLink: null,
+                    nextLink: null,
                 });
             } catch (error) {
                 console.log(
@@ -198,14 +105,14 @@ class ProductRoutes {
                 );
             }
         });
-        
+
         this.router.get(`${this.path}/insertion`, async (req, res) => {
             try {
                 let result = await productsModel.insertMany(productData);
                 return res.json({
                     message: "all the products are inserted succesfully",
                     students: result,
-                  });
+                });
             } catch (error) {
                 console.log(
                     "🚀 ~ file: products.routes.js:15 ~ router.get.insertion ~ error:",
@@ -217,17 +124,8 @@ class ProductRoutes {
         this.router.delete(`${this.path}/:pid`, async (req, res) => {
             try {
                 const { pid } = req.params;
-
-                if (!pid || typeof(pid) !== 'string') {
-                    return res.status(400).json({
-                        ok: false,
-                        message: `product not deleted`,
-                        error: `Error el id ingresado ${pid}, es Invalido`
-                    });
-                }
-
                 const deletedProducts = await this.productManager.deleteProduct(pid);
-                if(deletedProducts && deletedProducts.deletedCount > 0) {
+                if (deletedProducts && deletedProducts.deletedCount > 0) {
                     return res.json({
                         ok: true,
                         message: `Product deleted`,
@@ -245,42 +143,18 @@ class ProductRoutes {
             }
         });
 
-        this.router.put(`${this.path}/:pid`, async (req, res) => {
+        this.router.put(`${this.path}/:pid`, this.controller.validateNewPropsForUpdateProducts, async (req, res) => {
             try {
                 const { pid } = req.params;
                 const newProps = req.body;
-                if (!pid || typeof(pid) !== 'string' || pid.length < 1) {
-                    return res.status(400).json({
-                        ok: false,
-                        message: `product not updated`,
-                        error: `Error el id ingresado ${pid}, es Invalido`
-                    });
-                }
-                
-                const propsArr = Object.keys(newProps);
-                if (propsArr.length === 0) {
-                    return res.status(400).json({
-                        ok: false,
-                        message: `product not updated`,
-                        error: `No hay props para actualizar`
-                    });
-                }
-                if(newProps['productId']) {
-                    return res.status(400).json({
-                        ok: false,
-                        message: `product not updated`,
-                        error: `No se puede actualizar el producto con productId ${productId}`
-                    });
-                }
-                
                 const productUpdated = await this.productManager.updateProduct(pid, newProps);
-                if(productUpdated && productUpdated.modifiedCount > 0) {
+                if (productUpdated && productUpdated.modifiedCount > 0) {
                     return res.json({
                         ok: true,
                         message: `product updated`
                     });
-                    
-                }                
+
+                }
                 return res.status(400).json({
                     ok: false,
                     message: `product not updated`,
@@ -292,7 +166,7 @@ class ProductRoutes {
                     error
                 );
             }
-        }); 
+        });
     }
 }
 
