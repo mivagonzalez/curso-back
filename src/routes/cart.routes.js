@@ -17,10 +17,10 @@ class CartsRoute {
     this.router.post(`${this.path}`, this.controller.createCart);
     this.router.param("pid", this.controller.validatePIDParam);
     this.router.post(`${this.path}/:cid/product/:pid`, this.controller.addProductToCart);
-    this.router.put(`${this.path}/:cid/products/:pid`, this.controller.updateProductQuantity);
+    this.router.put(`${this.path}/:cid/products/:pid`, this.controller.validateQuantity,this.controller.updateProductQuantity);
     this.router.delete(`${this.path}/:cid/product/:pid`, this.controller.deleteProductFromCart);
     this.router.delete(`${this.path}/:cid`, this.controller.deleteAllproductsFromCart);
-    this.router.put(`${this.path}/:cid`, this.controller.updateproductsFromCart);
+    this.router.put(`${this.path}/:cid`,this.controller.validateNewProducts,this.controller.updateproductsFromCart);
   }
 }
 
