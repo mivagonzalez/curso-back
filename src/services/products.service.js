@@ -3,71 +3,54 @@ module.exports = class ProductService {
     this.dao = dao;
   }
 
-  getProductsByCart = async id => {
+  addProduct = async ({ title, description, code, price, status, stock, category, thumbnails }) => {
     try {
-      const products = await this.dao.getProductsByCartId(id);
+      const product = await this.dao.addProduct(title, description, price, thumbnails, code, stock, status, category);
+      return product;
+    } catch (error) {
+        console.log('Error adding product', 'Error:', error)
+        return null;
+    }
+  };
+
+  getProducts = async (limit, page, sort, queryObject) => {
+    try {
+      const products = await this.dao.getProducts(limit, page, sort, queryObject);
       return products;
     } catch (error) {
-        console.log('Error getting products for cart', id, 'Error:', error)
+        console.log('Error getting products' ,'Error:', error)
         return null;
     }
   };
 
-  createCart = async () => {
+  deleteProduct = async (pid) => {
     try {
-        const cart = await this.dao.addCart()
-        return cart;
+      const deletedProducts = await this.dao.deleteProduct(pid);
+      return deletedProducts;
     } catch (error) {
-        console.log('Error creating cart' ,'Error:', error)
+        console.log('Error deleting product','Error: ', error)
         return null;
     }
   };
 
-  addProductToCart = async (cid, pid) => {
+  updateProduct = async (pid, newProps) => {
     try {
-        const cartUpdate = await this.dao.addProductToCart(cid, pid);
-        return cartUpdate;
+      const productUpdated = await this.dao.updateProduct(pid, newProps);
+      return productUpdated;
     } catch (error) {
-        console.log('Error adding product',pid,'to cart', cid,'Error:', error)
-        return null;
-    }
-  };
-
-  updateProductQuantity = async (cid, pid, quantity) => {
-    try {
-        const cartUpdate = await this.dao.updateProductQuantityForCart(cid, pid, quantity);
-        return cartUpdate;
-    } catch (error) {
-        console.log('Error updating quantity',quantity,'for product',pid,'to cart', cid,'Error:', error)
+        console.log('Error updating product',pid,'with new props',JSON.stringify(newProps),'Error:', error)
         return null;
     }
   };
   
-  deleteProductFromCart = async (cid, pid) => {
+  insertion = async (productData) => {
     try {
-        return await this.dao.deleteProductFromCart(cid, pid);
+      let result = await this.dao.insertMany(productData);
+      return result;
     } catch (error) {
-        console.log('Error deleting product',pid,'from cart', cid,'Error:', error)
+        console.log('Error inserting many products',JSON.stringify(productData),'Error:', error)
         return null;
     }
   };
   
-  deleteAllproductsFromCart = async cid => {
-    try {
-        return await this.dao.deleteAllProductsFromCart(cid);
-    } catch (error) {
-        console.log('Error deleting all products from cart', cid,'Error:', error)
-        return null;
-    }
-  };
-  
-  updateproductsFromCart = async (cid, newProducts) => {
-    try {
-        return await this.dao.updateProductsForCart(cid, newProducts);
-    } catch (error) {
-        console.log('Error updating products',newProducts,'for cart', cid,'Error:', error)
-        return null;
-    }
-  };
-
 }

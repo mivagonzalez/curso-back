@@ -1,7 +1,8 @@
-const ProductManager = require("../dao/managers/product-manager-db");
+const productData = require("../routes/mock-data")
+const { ProductsService } = require('../services')
+const { API_VERSION } = require('../config/config');
 
 class ProductsController {
-    productManager = new ProductManager();
 
     validateNewPropsForUpdateProducts = async (req, res, next) => {
         const newProps = req.body;
@@ -22,7 +23,7 @@ class ProductsController {
         }
         next();
     };
-    validateGetProductsQueryParams = async (_, res, next) => {
+    validateGetProductsQueryParams = async (req, res, next) => {
         const { limit = 10, page = 1, sort, query } = req.query;
         if (isNaN(limit) || Number(limit) < 0) {
             return res.status(400).json({
@@ -108,7 +109,7 @@ class ProductsController {
     addProduct = async (req, res) => {
         try {
             const { title, description, code, price, status, stock, category, thumbnails } = req.body;
-            const product = await this.productManager.addProduct(title, description, price, thumbnails, code, stock, status, category);
+            const product = await ProductsService.addProduct({title, description, price, thumbnails, code, stock, status, category});
             if (product) {
                 return res.json({
                     message: `Product created succesfully`,
@@ -134,12 +135,13 @@ class ProductsController {
 
     getProducts = async (req, res) => {
         try {
-            const { limit = 10, page = 1, sort, query } = req.query;
+            const { limit = 10, page = 1, sort, query={} } = req.query;
             let queryObject = {};
-            if (query === 'stock') {
+            if (query && query === 'stock') {
                 queryObject = { stock: { $gt: 0 } }
             }
-            else if (query.length > 1 && isNaN(query)) {
+            else if (query && query.length > 1 && isNaN(query)) {
+
                 queryObject = {
                     category: query
                 }
@@ -148,6 +150,23 @@ class ProductsController {
                 queryObject = {}
             }
             const sortQueryParam = sort && `&sort=${sort}` || '';
+            
+            const products = await ProductsService.getProducts(limit, page, sort, queryObject);
+            if(!products || products.length === 0){
+                return res.status(400).json({
+                    status: 'error',
+                    payload: null,
+                    totalPages: null,
+                    prevPage: null,
+                    nextPage: null,
+                    page: page,
+                    hasPrevPage: false,
+                    hasNextPage: false,
+                    prevLink: null,
+                    nextLink: null,
+                });
+            }
+
             const {
                 docs,
                 limit: limitPag,
@@ -157,7 +176,8 @@ class ProductsController {
                 nextPage,
                 prevPage,
                 page: currentPage,
-            } = await this.productManager.getProducts(limit, page, sort, queryObject);
+            } = products;
+
             if (docs && docs.length > 0) {
                 return res.json({
                     status: 'success',
@@ -172,18 +192,6 @@ class ProductsController {
                     nextLink: hasNextPage && `/api/${API_VERSION}/products?query=${query}&limit=${limit}${sortQueryParam}&page=${nextPage}` || null,
                 });
             }
-            return res.status(400).json({
-                status: 'error',
-                payload: null,
-                totalPages: totalPages,
-                prevPage: null,
-                nextPage: null,
-                page: currentPage,
-                hasPrevPage: false,
-                hasNextPage: false,
-                prevLink: null,
-                nextLink: null,
-            });
         } catch (error) {
             console.log(
                 "🚀 ~ file: cart.routes.js:43 ~ CartRoutes ~ this.router.get ~ error:",
@@ -195,7 +203,7 @@ class ProductsController {
     deleteProduct = async (req, res) => {
         try {
             const { pid } = req.params;
-            const deletedProducts = await this.productManager.deleteProduct(pid);
+            const deletedProducts = await ProductsService.deleteProduct(pid);
             if (deletedProducts && deletedProducts.deletedCount > 0) {
                 return res.json({
                     ok: true,
@@ -218,7 +226,7 @@ class ProductsController {
         try {
             const { pid } = req.params;
             const newProps = req.body;
-            const productUpdated = await this.productManager.updateProduct(pid, newProps);
+            const productUpdated = await ProductsService.updateProduct(pid, newProps);
             if (productUpdated && productUpdated.modifiedCount > 0) {
                 return res.json({
                     ok: true,
@@ -241,7 +249,7 @@ class ProductsController {
 
     insertion = async (req, res) => {
         try {
-            let result = await productsModel.insertMany(productData);
+            let result = await ProductsService.insertion(productData);
             return res.json({
                 message: "all the products are inserted succesfully",
                 students: result,

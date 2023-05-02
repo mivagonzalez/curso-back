@@ -1,8 +1,6 @@
 const { Router } = require("express");
-const productsModel = require("../dao/models/products.model");
-const productData = require("./mock-data")
-const { API_VERSION } = require('../config/config');
 const ProductsController = require('../controllers/products.controller')
+const { API_VERSION } = require('../config/config');
 
 class ProductRoutes {
     path = `/api/${API_VERSION}/products`;
