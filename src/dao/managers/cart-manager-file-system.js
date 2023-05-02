@@ -28,7 +28,6 @@ class CartManager {
         }
         this.carts = carts;
         this.#currentId = carts[carts.length -1].id + 1;
-        console.log('Cart Manager inicializado correctamente')
     }
 
     addCart = async () => {

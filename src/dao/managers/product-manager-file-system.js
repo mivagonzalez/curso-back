@@ -29,7 +29,6 @@ export class ProductManager {
         }
         this.products = products;
         this.#currentId = products[products.length -1].id + 1;
-        console.log('Product Manager inicializado correctamente')
     }
 
     addProduct = async (title = isRequired(), description = isRequired(), price = isRequired(), thumbnails = [], code = isRequired(), stock = isRequired(), status = isRequired(), category = isRequired()) => {

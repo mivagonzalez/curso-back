@@ -97,7 +97,6 @@ class CartManager {
                     quantity: 1,
                     product: product._id
                 }
-                console.log(newProduct)
                 return await cartsModel.updateOne(
                     { cartId: cartId },
                     { $addToSet: {"products": newProduct } }
@@ -219,7 +218,6 @@ class CartManager {
             throw Error("El id del cart ingresado es incorrecto");
         }
         else if (!products || products.length < 1) {
-            console.log('el array de productos recibido esta vacio')
             return null
         }
         try {

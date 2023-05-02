@@ -80,7 +80,6 @@ const initializePassport = () => {
                     return done(null, false);
                 }
 
-                console.log(newCart)
                 const userData = { email, password: createHash(password), first_name, last_name, age, address, cart: newCart._id, role };
                 const newUser = await userManager.addUser(userData);
                 if(!newUser) {

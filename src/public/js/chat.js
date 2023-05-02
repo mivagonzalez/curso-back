@@ -15,7 +15,6 @@ Swal.fire({
 chatbox.addEventListener("keyup", (event) => {
   if (event.key === "Enter") {
     if (chatbox.value.trim().length > 0) {
-        console.log(user, chatbox.value)
       socket.emit("message", { user: user, message: chatbox.value });
       chatbox.value = "";
     }
@@ -23,7 +22,6 @@ chatbox.addEventListener("keyup", (event) => {
 });
 
 socket.on("messageLogs", (data) => {
-  console.log("🚀 ~ file: chat.js:30 ~ socket.on ~ data", data);
   if (!user) return;
   let log = document.getElementById("messageLogs");
   let messages = "";

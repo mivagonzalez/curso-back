@@ -117,11 +117,9 @@ class ProductManager {
         }
         try {
             const product = await this.getProductByFields({productId: id});
-            console.log(product)
             let propsToEdit = {};
             
             propsArr.forEach(prop => {
-                console.log(prop)
                 const isPropValid = product[prop] ?? false;
                 if(prop !== 'productId' && isPropValid) {
                     propsToEdit={
@@ -133,7 +131,6 @@ class ProductManager {
                     console.error(`invalid prop ${prop}. It cant be modified`);
                 }
             });      
-            console.log(propsToEdit)
             return await productsModel.updateOne({
                 productId: id,
             },

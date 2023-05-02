@@ -4,7 +4,6 @@ const userModel = require("../models/user.model");
 class UserManager {
 
     getUser = async (email = '') => {
-        console.log(email)
         if (!email || typeof (email) !== "string" || email.length < 5) {
             throw Error("El email ingresado es incorrecto");
         }
@@ -34,7 +33,6 @@ class UserManager {
     }
 
     addUser = async ({email, first_name, last_name, age, password, address, cart, role = 'user'}) => {
-        console.log('--------------- add user', cart)
         try {
             return await userModel.create({email, password, first_name, last_name, age, password, address, cart, role});
         } catch (error) {

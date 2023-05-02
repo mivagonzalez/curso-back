@@ -12,7 +12,6 @@ class ViewsController {
     validateCIDParam = async (_, res, next, pid) => {
         const { cid } = req.params;
         if (!cid || !isNaN(cid) || cid.length < 1) {
-            console.log('error, invalid cid')
             return res.render('products', { products: [] });
         }
         next();
@@ -145,7 +144,6 @@ class ViewsController {
             });
             return res.render('chat', { style: 'chat' });
         } catch (error) {
-            console.log("Error al intentar obtener los mensajes")
             return res.json({
                 ok: false,
                 message: "Error al intentar obtener los mensajes"

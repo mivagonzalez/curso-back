@@ -17,28 +17,13 @@ class SessionRoutes {
 
   initCoursesRoutes() {
     this.router.get(`${this.path}/logout`,authMdw, this.controller.logout);
-
     this.router.get(`${this.path}/faillogin`, this.controller.faillogin)
-
     this.router.get(`${this.path}/current`,authMdw, this.controller.current)
-  
     this.router.post(`${this.path}/register`,passport.authenticate('register', {failureRedirect: '/failRegister'}), this.controller.register);
-
     this.router.get(`${this.path}/failRegister`, this.controller.failRegister);
-    
-    this.router.get(
-      `${this.path}/github`,
-      passport.authenticate("github", { scope: ["user:email"] }),
-      );
-      
-
-      this.router.post(`${this.path}/login`,passport.authenticate('login',{failureRedirect:'faillogin'}), this.controller.login);
-      
-    this.router.get(
-      `${this.path}/github/callback`,
-      passport.authenticate("github", { failureRedirect: "/login" }),
-      this.controller.githubCallback
-    );
+    this.router.get(`${this.path}/github`,passport.authenticate("github", { scope: ["user:email"] }), async (req, res) => {});
+    this.router.post(`${this.path}/login`,passport.authenticate('login',{failureRedirect:'faillogin'}), this.controller.login);
+    this.router.get(`${this.path}/github/callback`,passport.authenticate("github", { failureRedirect: "/login" }),this.controller.githubCallback);
   }
 }
 

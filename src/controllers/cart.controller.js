@@ -5,7 +5,6 @@ class CartController {
     cartManager = new CartManager();
 
     validatePIDParam = async (_, res, next, pid) => {
-        console.log("entro aca 2", pid, Number.isInteger(pid))
         if (!pid || typeof (pid) != 'string') {
             return res.status(400).json({
                 message: `id type is not correct for pid`,

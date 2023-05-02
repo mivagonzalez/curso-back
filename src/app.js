@@ -109,9 +109,7 @@ class App {
           }
       });
 
-      socket.on("message", async(message) => {
-        console.log("🚀 ~ file: app.js:35 ~ socket.on ~ message", message,'user:', message.user,'mensaje:', message.message);
-        
+      socket.on("message", async(message) => {        
         const newMessage = await messagesModel.create({
           user: message.user,
           message: message.message,
@@ -119,14 +117,12 @@ class App {
 
         if(newMessage) {
           const messages = await messagesModel.find({})
-          console.log("🚀 ~ file: app.js:37 ~ socket.on ~ messages", messages);
           io.emit("messageLogs", messages);
         }
       });
     
       // authenticated channel
       socket.on("authenticated", async (user) => {
-        console.log("🚀 ~ file: app.js:39 ~ socket.on ~ user", user);
         const messages = await messagesModel.find({});
         socket.broadcast.emit("newUserConnected", user);
         io.emit("loadMessages", messages);

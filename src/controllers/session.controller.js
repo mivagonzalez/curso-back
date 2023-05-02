@@ -45,7 +45,6 @@ class SessionController {
     login = async (req, res) => {
         try {
             if (!req.user) {
-                console.log(req);
                 return res.status(400).send({ status: "error", error: "invalid credentials" });
             }
             delete req.user.password
