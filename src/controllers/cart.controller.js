@@ -1,8 +1,6 @@
 
-const CartManager = require("../dao/managers/cart-manager-db");
 const { CartService } = require('../services')
 class CartController {
-    cartManager = new CartManager();
 
     validatePIDParam = async (_, res, next, pid) => {
         if (!pid || typeof (pid) != 'string') {
