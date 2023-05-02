@@ -1,9 +1,8 @@
-const { API_VERSION } = require('../../config/config');
 
 const addProductToCart = async (productId, cartId) => {
   debugger
   try {
-    await fetch(`/api/${API_VERSION}/carts/`+cartId+"/product/"+productId, {
+    await fetch(`/api/v1/carts/`+cartId+"/product/"+productId, {
       method: "POST"
     });
   

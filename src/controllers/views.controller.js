@@ -9,7 +9,7 @@ class ViewsController {
     cartManager = new CartManager();
     userManager = new UserManager();
 
-    validateCIDParam = async (_, res, next, pid) => {
+    validateCIDParam = async (req, res, next, pid) => {
         const { cid } = req.params;
         if (!cid || !isNaN(cid) || cid.length < 1) {
             return res.render('products', { products: [] });
@@ -135,14 +135,7 @@ class ViewsController {
 
     getChat = async (_, res) => {
         try {
-            const messages = await messagesModel.find({});
-            const mappedMessages = messages.map((message) => {
-                return {
-                    user: message.user,
-                    message: message.message
-                };
-            });
-            return res.render('chat', { style: 'chat' });
+            return res.render('chat', {style: 'chat' });
         } catch (error) {
             return res.json({
                 ok: false,

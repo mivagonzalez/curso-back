@@ -125,6 +125,7 @@ class App {
       socket.on("authenticated", async (user) => {
         const messages = await messagesModel.find({});
         socket.broadcast.emit("newUserConnected", user);
+        console.log(messages, 'LOGSSSSSSs',user)
         io.emit("loadMessages", messages);
       });
   

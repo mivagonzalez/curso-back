@@ -2,12 +2,10 @@
   <h1>Chat coder</h1>
   {{#if messages}} 
     {{#each messages}}
-        <p>
             <p>{{this.user}} dice: {{this.message}}</p>
-        </p>
     {{/each}}
   {{/if}}
-  <p id="messageLogs"></p>
+  <div id="messageLogs"></div>
   <input id="chatbox" />
 </div>
 
