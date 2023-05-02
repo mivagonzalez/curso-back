@@ -119,14 +119,14 @@ class ProductsController {
             }
 
             return res.json({
-                message: `Product not created5`,
+                message: `Product not created`,
                 product: null,
                 ok: false,
             });
         } catch (error) {
             return res.status(400).json({
                 ok: false,
-                message: `Product Not created6`,
+                message: `Product Not created, Error: ${error}`,
                 product: null,
                 error: error.message
             });

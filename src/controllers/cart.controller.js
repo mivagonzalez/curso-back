@@ -189,11 +189,16 @@ class CartController {
             const newProducts = req.body;
             await CartService.updateProductsFromCart(cid, newProducts);
             const products = await CartService.getProductsByCart(cid);
-            return res.status(200).json({
-                message: `products updated Successfully`,
-                payload: products,
+            if(products) {
+                return res.status(200).json({
+                    message: `products updated Successfully`,
+                    payload: products,
+                });
+            }
+            return res.status(400).json({
+                message: `No se pudo actualziar los productos`,
+                payload: null,
             });
-
         } catch (error) {
             console.log(
                 "🚀 ~ file: cart.routes.js:43 ~ CartsRoutes ~ this.router.post.cid.product.pid ~ error:",

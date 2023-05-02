@@ -6,7 +6,7 @@ const handlebars = require("express-handlebars");
 const path = require('path');
 const corsConfig = require("./config/cors.config");
 const { mongoDBconnection } = require("./db/mongo.config");
-const {configConnection} = require('./db/mongo.config');
+const { configConnection } = require('./db/mongo.config');
 const ProductManager = require("./dao/managers/product-manager-db");
 const messagesModel = require("./dao/models/messages.model");
 const cookieParser = require("cookie-parser");
@@ -15,7 +15,7 @@ const session = require("express-session");
 const passport = require('passport');
 const { initializePassport } = require('./config/passport.config');
 
-const {NODE_ENV, PORT, SESSION_SECRET} = require('./config/config')
+const { NODE_ENV, PORT, SESSION_SECRET } = require('./config/config')
 class App {
   app;
   env;
@@ -30,19 +30,6 @@ class App {
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
     this.initHandlebars();
-  }
-
-  /**
-   * getServer
-   */
-  getServer() {
-    return this.app;
-  }
-
-  closeServer(done) {
-    this.server = this.app.listen(this.port, () => {
-      done();
-    });
   }
 
   /**
@@ -84,56 +71,50 @@ class App {
       this.app.use(`/`, route.router);
     });
   }
-  
+
   listenWs(httpServer) {
     const io = new Server(httpServer);
 
     io.on("connection", async (socket) => {
       console.log(`New Socket Connection`)
       const productManager = new ProductManager();
-      
+
       socket.on("addNewProduct", async product => {
-          const { title='', description = '', code, price, status = true, stock, category = '', thumbnails = '' } = product;
-          if(! title || ! description || !code || !price || !status || !stock || !category || !thumbnails){
-            io.emit("productAdded", { added: false, product: null, error:'All fields are required to create a product' })
+        const { title = '', description = '', code, price, status = true, stock, category = '', thumbnails = '' } = product;
+        if (!title || !description || !code || !price || !status || !stock || !category || !thumbnails) {
+          io.emit("productAdded", { added: false, product: null, error: 'All fields are required to create a product' })
+        }
+        try {
+          var regexPattern = new RegExp("true");
+          const product = await productManager.addProduct(title.toString(), description.toString(), Number(price), thumbnails, code.toString(), Number(stock), regexPattern.test(status), category.toString());
+          if (product) {
+            io.emit("productAdded", { added: true, product: product, error: null })
           }
-          try {
-              var regexPattern = new RegExp("true");
-              const product = await productManager.addProduct(title.toString(), description.toString(), Number(price), thumbnails, code.toString(), Number(stock), regexPattern.test(status), category.toString());
-              if(product){
-                io.emit("productAdded", { added: true, product: product, error:null })
-              }
-          }
-          catch (e) {
-              io.emit("productAdded", { added: false, product: null, error:e })
-          }
+        }
+        catch (e) {
+          io.emit("productAdded", { added: false, product: null, error: e })
+        }
       });
 
-      socket.on("message", async(message) => {        
+      socket.on("message", async (message) => {
         const newMessage = await messagesModel.create({
           user: message.user,
           message: message.message,
         });
 
-        if(newMessage) {
+        if (newMessage) {
           const messages = await messagesModel.find({})
           io.emit("messageLogs", messages);
         }
       });
-    
+
       // authenticated channel
       socket.on("authenticated", async (user) => {
         const messages = await messagesModel.find({});
         socket.broadcast.emit("newUserConnected", user);
-        console.log(messages, 'LOGSSSSSSs',user)
         io.emit("loadMessages", messages);
       });
-  
-      // socket.emit("message", "comunicaicon 1 a 1 por canal message")
-      // socket.broadcast.emit("messageForEveryOne", "mensaje para todos")
-  
-      // io.emit("messageAll", "saludos desde el backend")
-  });
+    });
   }
 
   /**

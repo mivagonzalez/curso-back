@@ -226,7 +226,8 @@ class CartManager {
             }) ?? null;
 
             if (!cart) {
-                throw Error(`El cart con id ${cartId} no existe o no se pudo encontrar`);
+                console.log(`El cart con id ${cartId} no existe o no se pudo encontrar`);
+                return null;
             }
             return await cartsModel.updateOne(
                     { cartId: cartId},

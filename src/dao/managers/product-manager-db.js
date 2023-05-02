@@ -31,11 +31,13 @@ class ProductManager {
     addProduct = async (title = '', description = '', price = 0, thumbnails = [], code, stock = 0, status = true, category = '') => {
 
         if(!code || title.length === 0 || description.length === 0 || category.length === 0 ) {
-            throw Error('Product can not be created without all the fields');
+            console.log('Product can not be created without all the fields');
+            return null;
         }
         const existingProduct = await this.getProductByFields({ code: code });
         if(existingProduct){
-            throw Error('Product already exists');
+            console.log('Product already exists');
+            return null;
         }
         
         try {

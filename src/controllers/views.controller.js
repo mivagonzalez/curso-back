@@ -4,6 +4,8 @@ const ProductManager = require("../dao/managers/product-manager-db");
 const CartManager = require("../dao/managers/cart-manager-db");
 const UserManager = require("../dao/managers/user-manager-db");
 
+const { ProductsService, CartService, UserService } = require('../services')
+
 class ViewsController {
     productManager = new ProductManager();
     cartManager = new CartManager();
@@ -67,7 +69,7 @@ class ViewsController {
             nextPage,
             prevPage,
             page: currentPage
-        } = await this.productManager.getProducts(10, page, null, null);
+        } = await ProductsService.getProducts(10, page, null, null);
 
         let total_cart_products = 0;
 
@@ -112,30 +114,44 @@ class ViewsController {
     };
 
     getRealTimeProducts = async (_, res) => {
-        const products = await this.productManager.getProducts()
-        const mappedProducts = products.map((prod) => {
-            return {
-                id: prod.productId,
-                title: prod.title,
-                description: prod.description,
-                code: prod.code,
-                stock: prod.stock,
-                category: prod.category,
-                status: prod.status,
-                price: prod.price,
-                thumbnails: prod.thumbnails
-            };
-        });
-        let testProduct = {
-            style: 'index',
-            products: mappedProducts
+        try {
+            const products = await ProductsService.getProducts();
+            if (products && products.docs) {
+                console.log(products)
+                const mappedProducts = products.docs.map((prod) => {
+                    return {
+                        id: prod.productId,
+                        title: prod.title,
+                        description: prod.description,
+                        code: prod.code,
+                        stock: prod.stock,
+                        category: prod.category,
+                        status: prod.status,
+                        price: prod.price,
+                        thumbnails: prod.thumbnails
+                    };
+                });
+                let testProduct = {
+                    style: 'index',
+                    products: mappedProducts
+                }
+                return res.render('real-time-products', testProduct);
+            }
+            return res.json({
+                ok: true,
+                message: "No existen productos"
+            });
+        } catch (error) {
+            return res.json({
+                ok: false,
+                message: "Error al intentar obtener los productos"
+            });
         }
-        return res.render('real-time-products', testProduct);
     };
 
     getChat = async (_, res) => {
         try {
-            return res.render('chat', {style: 'chat' });
+            return res.render('chat', { style: 'chat' });
         } catch (error) {
             return res.json({
                 ok: false,
