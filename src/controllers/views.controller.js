@@ -1,7 +1,13 @@
 
 const messagesModel = require("../dao/models/messages.model");
+const ProductManager = require("../dao/managers/product-manager-db");
+const CartManager = require("../dao/managers/cart-manager-db");
+const UserManager = require("../dao/managers/user-manager-db");
 
 class ViewsController {
+    productManager = new ProductManager();
+    cartManager = new CartManager();
+    userManager = new UserManager();
 
     validateCIDParam = async (_, res, next, pid) => {
         const { cid } = req.params;

@@ -1,12 +1,10 @@
 const { Router } = require("express");
-const CartManager = require("../dao/managers/cart-manager-db");
 const { API_VERSION } = require('../config/config');
 const CartController = require('../controllers/cart.controller')
 
 class CartsRoute {
   path = `/api/${API_VERSION}/carts`;
   router = Router();
-  cartManager = new CartManager();
   controller = new CartController()
 
   constructor() {

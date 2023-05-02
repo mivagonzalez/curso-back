@@ -1,17 +1,10 @@
 const { Router } = require("express");
-const ProductManager = require("../dao/managers/product-manager-db");
-const CartManager = require("../dao/managers/cart-manager-db");
-const UserManager = require("../dao/managers/user-manager-db");
 const authMdw = require("../middleware/auth.middleware");
 const ViewsController = require('../controllers/views.controller')
 
 class ViewsRoutes {
   path = "/";
   router = Router();
-  productManager = new ProductManager();
-  cartManager = new CartManager();
-  cartManager = new CartManager();
-  userManager = new UserManager();
   controller = new ViewsController();
 
 

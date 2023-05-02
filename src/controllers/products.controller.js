@@ -1,5 +1,8 @@
+const ProductManager = require("../dao/managers/product-manager-db");
 
 class ProductsController {
+    productManager = new ProductManager();
+
     validateNewPropsForUpdateProducts = async (req, res, next) => {
         const newProps = req.body;
         const propsArr = Object.keys(newProps);

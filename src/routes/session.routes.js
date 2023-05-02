@@ -1,7 +1,5 @@
 const { Router } = require("express");
 const ProductManager = require("../dao/managers/product-manager-db");
-const UserManager = require("../dao/managers/user-manager-db");
-const CartManager = require("../dao/managers/cart-manager-db");
 const passport = require("passport");
 const { API_VERSION } = require('../config/config');
 const authMdw = require("../middleware/auth.middleware");
@@ -11,8 +9,6 @@ class SessionRoutes {
   path = `/api/${API_VERSION}/session`;
   router = Router();
   productManager = new ProductManager()
-  cartManager = new CartManager();
-  userManager = new UserManager();
   controller = new SessionController();
 
   constructor() {

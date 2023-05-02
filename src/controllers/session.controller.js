@@ -1,5 +1,9 @@
 
+const UserManager = require("../dao/managers/user-manager-db");
+const CartManager = require("../dao/managers/cart-manager-db");
 class SessionController {
+    cartManager = new CartManager();
+    userManager = new UserManager();
 
     logout = async (req, res) => {
         req.session.destroy((err) => {

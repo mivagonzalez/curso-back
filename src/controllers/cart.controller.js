@@ -1,5 +1,8 @@
 
+const CartManager = require("../dao/managers/cart-manager-db");
+
 class CartController {
+    cartManager = new CartManager();
 
     validatePIDParam = async (_, res, next, pid) => {
         console.log("entro aca 2", pid, Number.isInteger(pid))
