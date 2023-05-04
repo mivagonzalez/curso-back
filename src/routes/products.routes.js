@@ -14,11 +14,11 @@ class ProductRoutes {
 
     initCoursesRoutes() {
         this.router.param(`pid`, this.controller.validatePIDParam)
-        this.router.post(`${this.path}`, this.controller.validateBodyForAddProduct, this.controller.addProduct);
-        this.router.get(`${this.path}`, this.controller.validateGetProductsQueryParams, this.controller.getProducts);
+        this.router.post(`${this.path}`,authMdw, this.controller.validateBodyForAddProduct, this.controller.addProduct);
+        this.router.get(`${this.path}`,authMdw, this.controller.validateGetProductsQueryParams, this.controller.getProducts);
         this.router.get(`${this.path}/insertion`, this.controller.insertion);
-        this.router.delete(`${this.path}/:pid`, this.controller.deleteProduct);
-        this.router.put(`${this.path}/:pid`, this.controller.validateNewPropsForUpdateProducts, this.controller.updateProduct);
+        this.router.delete(`${this.path}/:pid`,authMdw, this.controller.deleteProduct);
+        this.router.put(`${this.path}/:pid`,authMdw, this.controller.validateNewPropsForUpdateProducts, this.controller.updateProduct);
     }
 }
 

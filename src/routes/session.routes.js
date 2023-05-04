@@ -15,7 +15,7 @@ class SessionRoutes {
   }
 
   initCoursesRoutes() {
-    this.router.get(`${this.path}/logout`,authMdw, this.controller.logout);
+    this.router.get(`${this.path}/logout`, authMdw, this.controller.logout);
     this.router.get(`${this.path}/faillogin`, this.controller.faillogin)
     this.router.get(`${this.path}/current`, authMdw, this.controller.current)
     this.router.post(`${this.path}/register`,passport.authenticate('register', {failureRedirect: '/failRegister'}), this.controller.register);

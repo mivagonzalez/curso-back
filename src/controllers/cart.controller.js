@@ -183,7 +183,7 @@ class CartController {
         next();
     };
 
-    updateproductsFromCart = async (req, res) => {
+    updateProductsFromCart = async (req, res) => {
         try {
             const { cid } = req.params;
             const newProducts = req.body;
