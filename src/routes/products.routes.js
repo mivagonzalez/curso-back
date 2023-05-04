@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const ProductsController = require('../controllers/products.controller')
 const { API_VERSION } = require('../config/config');
+const authMdw = require("../middleware/auth.middleware");
 
 class ProductRoutes {
     path = `/api/${API_VERSION}/products`;
