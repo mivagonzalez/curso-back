@@ -1,7 +1,7 @@
 const passport = require('passport');
 const local = require('passport-local');
-const UserManager = require("../dao/managers/user-manager-db");
-const CartManager = require("../dao/managers/cart-manager-db");
+const { CartService, UserService } = require('../services')
+const { UserDTO } = require('../dto')
 const { isValidPassword,createHash } = require('../utils');
 const GithubStrategy = require("passport-github2");
 const { API_VERSION } = require('../config/config');
@@ -9,8 +9,6 @@ const localStrategy = local.Strategy;
 const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, PORT, HOST } = require("../config/config");
 
 const initializePassport = () => {
-    const userManager = new UserManager();
-    const cartManager = new CartManager();
 
     passport.use(
         "github",
@@ -19,24 +17,21 @@ const initializePassport = () => {
             clientID: GITHUB_CLIENT_ID,
             clientSecret: GITHUB_CLIENT_SECRET,
             callbackURL: `http://${HOST}:${PORT}/api/${API_VERSION}/session/github/callback`,
-            // proxy: true,
             scope: ['user:email']
           },
           async (accessToken, refreshToken, profile, done) => {
             try {
-              let user = await userManager.getUser(profile.emails[0].value);
+              let user = await UserService.getUser(profile.emails[0].value);
               if (!user) {
-                const newCart = await cartManager.addCart();
+                const newCart = await CartService.addCart();
                 if(!newCart) {
                     console.log("Cant create a new cart");
                     return done(null, false);
                 }
-                const userData = { email: profile.emails[0].value, password: "", first_name: profile._json.name, last_name: "", age: 0, address: "", cart: newCart._id, role:"user" };
-
-                let newUser = await userManager.addUser(userData);
+                const userDTO = new UserDTO({ email: profile.emails[0].value, password: "", first_name: profile._json.name, last_name: "", age: 0, address: "", cart: newCart._id, role:"user"})
+                let newUser = await UserService.addUser(userDTO);
                 done(null, newUser);
               } else {
-                // ya existia el usuario
                 done(null, user);
               }
             } catch (error) {
@@ -49,7 +44,7 @@ const initializePassport = () => {
     passport.use('login', new localStrategy(
         {usernameField: 'email'}, async(username, password, done) => {
             try {
-                const user = await userManager.getUser(username);
+                const user = await UserService.getUser(username);
                 if(!user) {
                     console.log("user doesn't exist");
                     return done(null, false);
@@ -69,19 +64,19 @@ const initializePassport = () => {
         {passReqToCallback: true, usernameField: 'email'}, async (req, username, pw, done) => {
             const { first_name, last_name, email, age, password, address, role = 'user' } = req.body;
             try {
-                let user = await userManager.getUser(username);
+                let user = await UserService.getUser(username);
                 if(user) {
                     console.log("User already exists");
                     return done(null, false);
                 }
-                const newCart = await cartManager.addCart();
+                const newCart = await CartService.addCart();
                 if(!newCart) {
                     console.log("Cant create a new cart");
                     return done(null, false);
                 }
 
-                const userData = { email, password: createHash(password), first_name, last_name, age, address, cart: newCart._id, role };
-                const newUser = await userManager.addUser(userData);
+                const userDTO = new UserDTO({ email, password, first_name, last_name, age, address, cart: newCart._id, role})
+                const newUser = await UserService.addUser(userDTO);
                 if(!newUser) {
                     console.log("Cant create a new cart");
                     return done(null, false);
@@ -98,7 +93,7 @@ const initializePassport = () => {
     })
 
     passport.deserializeUser(async (id, done) => {
-        const user = await userManager.getUserById(id);
+        const user = await UserService.getUserById(id);
         done(null, user)
     })
 }

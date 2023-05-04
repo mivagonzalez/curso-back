@@ -1,5 +1,6 @@
 
 const { UserService } = require('../services');
+const { CurrentUserDTO } = require('../dto')
 class SessionController {
 
     logout = async (req, res) => {
@@ -22,9 +23,10 @@ class SessionController {
         try {
             const user = await UserService.getUser(req.user.email);
             if (user) {
+                const userDto = new CurrentUserDTO(user)
                 return res.status(200).json({
                     message: `User Found successfully`,
-                    user: user,
+                    user: userDto,
                 });
             }
             return res.status(400).json({

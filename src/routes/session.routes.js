@@ -8,7 +8,6 @@ const SessionController = require('../controllers/session.controller')
 class SessionRoutes {
   path = `/api/${API_VERSION}/session`;
   router = Router();
-  productManager = new ProductManager()
   controller = new SessionController();
 
   constructor() {
