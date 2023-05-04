@@ -1,9 +1,6 @@
 
-const UserManager = require("../dao/managers/user-manager-db");
-const CartManager = require("../dao/managers/cart-manager-db");
+const { UserService } = require('../services');
 class SessionController {
-    cartManager = new CartManager();
-    userManager = new UserManager();
 
     logout = async (req, res) => {
         req.session.destroy((err) => {
@@ -21,17 +18,22 @@ class SessionController {
         if (!req.user) {
             return res.status(400).send({ status: "error", error: "You need to be logged in to see this" });
         }
-        const user = await this.userManager.getUser(req.user.email);
-        if (user) {
-            return res.status(200).json({
-                message: `User Found successfully`,
-                user: user,
+        
+        try {
+            const user = await UserService.getUser(req.user.email);
+            if (user) {
+                return res.status(200).json({
+                    message: `User Found successfully`,
+                    user: user,
+                });
+            }
+            return res.status(400).json({
+                error: `User not found successfully`,
+                user: null,
             });
+        } catch (error) {
+            console.log("🚀 Error getting user with mail", mail, 'Error:', error )
         }
-        return res.status(400).json({
-            error: `User not found successfully`,
-            user: null,
-        });
     };
 
     register = async (req, res) => {
