@@ -1,15 +1,6 @@
-
-const messagesModel = require("../dao/models/messages.model");
-const ProductManager = require("../dao/managers/product-manager-db");
-const CartManager = require("../dao/managers/cart-manager-db");
-const UserManager = require("../dao/managers/user-manager-db");
-
 const { ProductsService, CartService, UserService } = require('../services')
 
 class ViewsController {
-    productManager = new ProductManager();
-    cartManager = new CartManager();
-    userManager = new UserManager();
 
     validateCIDParam = async (req, res, next, pid) => {
         const { cid } = req.params;
@@ -22,8 +13,8 @@ class ViewsController {
     getCart = async (req, res) => {
         const { cid } = req.params;
         const session = req.session;
-        const findUser = await this.userManager.getUser(session.user.email);
-        const products = await this.cartManager.getProductsByCartId(cid)
+        const findUser = await UserService.getUser(session.user.email);
+        const products = await CartService.getProductsByCart(cid)
         const mappedProducts = products.map((prod) => {
             return {
                 productId: prod.product.productId,
@@ -52,7 +43,7 @@ class ViewsController {
     getProducts = async (req, res) => {
         const { page: reqPage } = req.query;
         const session = req.session;
-        const findUser = await this.userManager.getUser(session.user.email);
+        const findUser = await UserService.getUser(session.user.email);
         let page;
         if (!reqPage || isNaN(reqPage)) {
             page = 1;
