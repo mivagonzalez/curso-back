@@ -1,5 +1,5 @@
 const authMdw = (req, res, next) => {
-  if (req.session?.user) {
+  if (req.user) {
     return next();
   }
 
