@@ -7,14 +7,15 @@ const path = require('path');
 const corsConfig = require("./config/cors.config");
 const { mongoDBconnection } = require("./db/mongo.config");
 const { configConnection } = require('./db/mongo.config');
-const ProductManager = require("./dao/managers/product-manager-db");
+const { ProductsService } = require('./services')
+
 const messagesModel = require("./dao/models/messages.model");
 const cookieParser = require("cookie-parser");
 const mongoStore = require("connect-mongo");
 const session = require("express-session");
 const passport = require('passport');
 const { initializePassport } = require('./config/passport.config');
-
+const { ProductDTO } = require('./dto')
 const { NODE_ENV, PORT, SESSION_SECRET } = require('./config/config')
 class App {
   app;
@@ -77,7 +78,6 @@ class App {
 
     io.on("connection", async (socket) => {
       console.log(`New Socket Connection`)
-      const productManager = new ProductManager();
 
       socket.on("addNewProduct", async product => {
         const { title = '', description = '', code, price, status = true, stock, category = '', thumbnails = '' } = product;
@@ -86,7 +86,8 @@ class App {
         }
         try {
           var regexPattern = new RegExp("true");
-          const product = await productManager.addProduct(title.toString(), description.toString(), Number(price), thumbnails, code.toString(), Number(stock), regexPattern.test(status), category.toString());
+          const productDTO = new ProductDTO(title.toString(), description.toString(), Number(price), thumbnails, code.toString(), Number(stock), regexPattern.test(status), category.toString())
+          const product = await ProductsService.addProduct(productDTO);
           if (product) {
             io.emit("productAdded", { added: true, product: product, error: null })
           }

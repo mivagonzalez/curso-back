@@ -31,7 +31,7 @@ export class ProductManager {
         this.#currentId = products[products.length -1].id + 1;
     }
 
-    addProduct = async (title = isRequired(), description = isRequired(), price = isRequired(), thumbnails = [], code = isRequired(), stock = isRequired(), status = isRequired(), category = isRequired()) => {
+    addProduct = async ({title = isRequired(), description = isRequired(), price = isRequired(), thumbnails = [], code = isRequired(), stock = isRequired(), status = isRequired(), category = isRequired()}) => {
         if(this.products.find(x => x.code === code)) {
             throw Error("El producto ya existe");
         }; 

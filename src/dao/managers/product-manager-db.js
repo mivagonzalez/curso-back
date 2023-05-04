@@ -27,7 +27,6 @@ class ProductManager {
     }
 
     addProduct = async (product) => {
-
         if(!product.code || product.title.length === 0 || product.description.length === 0 || product.category.length === 0 || !product.productId || product.productId.length === 0) {
             console.log('Product can not be created without all the fields');
             return null;
