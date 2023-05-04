@@ -1,6 +1,4 @@
 const productsModel = require("../models/products.model");
-const { v4: uuidv4 } = require('uuid');
-
 
 class ProductManager {
     constructor() {
@@ -28,31 +26,20 @@ class ProductManager {
         }
     }
 
-    addProduct = async (title = '', description = '', price = 0, thumbnails = [], code, stock = 0, status = true, category = '') => {
+    addProduct = async (product) => {
 
-        if(!code || title.length === 0 || description.length === 0 || category.length === 0 ) {
+        if(!product.code || product.title.length === 0 || product.description.length === 0 || product.category.length === 0 || !product.productId || product.productId.length === 0) {
             console.log('Product can not be created without all the fields');
             return null;
         }
-        const existingProduct = await this.getProductByFields({ code: code });
+        const existingProduct = await this.getProductByFields({ code: product.code });
         if(existingProduct){
             console.log('Product already exists');
             return null;
         }
         
         try {
-            const newThumbnails = Array.isArray(thumbnails) ? thumbnails : [thumbnails];
-            return await productsModel.create({
-                productId: uuidv4(),
-                title: title,
-                description: description,
-                price: price,
-                thumbnails: newThumbnails,
-                code: code,
-                stock: stock,
-                status: status,
-                category: category,
-            });
+            return await productsModel.create(product);
 
         } catch (error) {
             console.log(

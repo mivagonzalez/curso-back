@@ -3,9 +3,9 @@ module.exports = class ProductService {
     this.dao = dao;
   }
 
-  addProduct = async ({ title, description, code, price, status, stock, category, thumbnails }) => {
+  addProduct = async (productDTO) => {
     try {
-      const product = await this.dao.addProduct(title, description, price, thumbnails, code, stock, status, category);
+      const product = await this.dao.addProduct(productDTO);
       return product;
     } catch (error) {
         console.log('Error adding product', 'Error:', error)

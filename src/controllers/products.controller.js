@@ -1,7 +1,7 @@
 const productData = require("../routes/mock-data")
 const { ProductsService } = require('../services')
 const { API_VERSION } = require('../config/config');
-
+const { ProductDTO } = require('../dto')
 class ProductsController {
 
     validateNewPropsForUpdateProducts = async (req, res, next) => {
@@ -109,7 +109,10 @@ class ProductsController {
     addProduct = async (req, res) => {
         try {
             const { title, description, code, price, status, stock, category, thumbnails } = req.body;
-            const product = await ProductsService.addProduct({title, description, price, thumbnails, code, stock, status, category});
+            console.log(ProductDTO)
+            const productDTO = new ProductDTO({ title, description, code, price, status, stock, category, thumbnails })
+            console.log('llegue', productDTO)
+            const product = await ProductsService.addProduct(productDTO);
             if (product) {
                 return res.json({
                     message: `Product created succesfully`,
