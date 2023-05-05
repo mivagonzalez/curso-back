@@ -169,8 +169,9 @@ class CartController {
             let unavaliableProducts = [];
             let ticket = null;
             let boughtProducts = []
+
             const cartProducts = await CartService.getProductsByCart(cid);
-            if(!products) {
+            if(!cartProducts) {
                 return res.status(400).json({
                     message: `No hay productos asociados al carrito ${cid}`,
                     payload: null,
@@ -179,7 +180,7 @@ class CartController {
             console.log('PRODUCTS BY CAR', cartProducts)
 
             const availiableProducts = cartProducts.map(async prod => {
-                const product = ProductsService.getProductById(prod.product.productId);
+                const product = ProductsService.getProductById(prod.productId);
                 if(product.stock >= prod.quantity){
                     return prod
                 } else {
@@ -192,7 +193,7 @@ class CartController {
                     const productInStock = await ProductService.getProductById(product.productId); 
                     const updated = await ProductService.updateProductQuantity(product.productId, {quantity: productInStock.quantity - product.quantity })
                     if (updated) {
-                        totalPrice += (product.quantity * product.price);
+                        totalPrice += (product.quantity * productInStock.price);
                         boughtProducts.push(product)
                     }
                 }
