@@ -66,6 +66,7 @@ class ProductManager {
     
     getProductById = async (id = '') => {
         if (!id || typeof (id) !== "string" || id.length < 1) {
+            console.log(id,'+++++++++++')
             throw Error("El id ingresado es incorrecto");
         }
         try {

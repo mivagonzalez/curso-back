@@ -206,6 +206,25 @@ class CartManager {
             );
         }
     }
+    deleteAllProductUnitsFromCart = async (cartId, productId) => {
+        if (!productId || typeof (productId) !== "string" || productId.length < 1) {
+            throw Error("El id del producto ingresado es incorrecto");
+        }
+        if (!cartId || typeof (cartId) !== "string" || cartId.length < 1) {
+            throw Error("El id del cart ingresado es incorrecto");
+        }
+        try {
+            return await cartsModel.updateMany(
+                { "cartId": cartId},
+                { $pull: {"products":{"productId": productId } } },
+            )
+        }catch(e) {
+            console.log(
+                "🚀 Error deleting all products that matches with productid", productId,'from cart',cartId,
+                e
+            );
+        }
+    }
     
     deleteAllProductsFromCart = async (cartId = '') => {
         if (!cartId || typeof (cartId) !== "string" || cartId.length < 1) {

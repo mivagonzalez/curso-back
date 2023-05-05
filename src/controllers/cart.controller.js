@@ -1,10 +1,9 @@
 
 const { CartService } = require('../services')
 const { ProductsService } = require('../services');
-const ProductService = require('../services/products.service');
-const TicketService = require('../services/ticket.service');
+const {TicketService} = require('../services');
 const moment = require('moment')
-const TicketDTO = require('../dto')
+const {TicketDTO} = require('../dto')
 class CartController {
 
     validatePIDParam = async (_, res, next, pid) => {
@@ -165,7 +164,7 @@ class CartController {
     purchaseProducts = async (req, res) => {
         try {
             const { cid } = req.params;
-            let totalPrice;
+            let totalPrice = 0;
             let unavaliableProducts = [];
             let ticket = null;
             let boughtProducts = []
@@ -177,33 +176,38 @@ class CartController {
                     payload: null,
                 });
             }
-            console.log('PRODUCTS BY CAR', cartProducts)
 
-            const availiableProducts = cartProducts.map(async prod => {
-                const product = ProductsService.getProductById(prod.productId);
+            const availiableProducts = Promise.all(cartProducts.map(async prod => {
+                const product = await ProductsService.getProductById(prod.productId);
                 if(product.stock >= prod.quantity){
                     return prod
                 } else {
                     unavaliableProducts.push(prod)
                 }
-            })
-
+            }))
             if(availiableProducts) {
-                for (let product of availiableProducts) {
-                    const productInStock = await ProductService.getProductById(product.productId); 
-                    const updated = await ProductService.updateProductQuantity(product.productId, {quantity: productInStock.quantity - product.quantity })
-                    if (updated) {
-                        totalPrice += (product.quantity * productInStock.price);
-                        boughtProducts.push(product)
+                for (let product of await availiableProducts) {
+                    if(product){
+                        const productInStock = await ProductsService.getProductById(product.productId); 
+                        const updated = await ProductsService.updateProduct(product.productId, {stock: productInStock.stock - product.quantity })
+                        if (updated) {
+                            console.log(product.quantity, productInStock.price, updated)
+                            totalPrice += (Number(product.quantity) * Number(productInStock.price));
+                            console.log(totalPrice,' TOTAL PRICE')
+                            boughtProducts.push(product)
+                            await CartService.deleteAllProductUnitsFromCart(cid,product.productId)
+                        }
                     }
+                    
                 }
-                await CartService.updateProductsFromCart(cid, availiableProducts);
-
+                console.log(totalPrice, boughtProducts,'++-++')
                 if(boughtProducts && boughtProducts.length > 0){
                     const purchase_datetime = moment().format('MMMM Do YYYY, h:mm:ss a');
                     const purchaser = req.user.email;
                     const ticketDTO = new TicketDTO({purchaser, purchase_datetime, amount: totalPrice})
                     ticket = await TicketService.createTicket(ticketDTO);
+
+                    console.log(ticket)
                 }
             }
             if(ticket) {

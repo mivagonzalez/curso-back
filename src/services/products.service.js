@@ -44,6 +44,7 @@ module.exports = class ProductService {
   };
 
   updateProduct = async (pid, newProps) => {
+    console.log(newProps, 'NEW PROPSSS----------')
     try {
       const productUpdated = await this.dao.updateProduct(pid, newProps);
       return productUpdated;
