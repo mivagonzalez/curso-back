@@ -1,5 +1,6 @@
 const productData = require("../routes/mock-data")
 const { ProductsService } = require('../services')
+const { CartService } = require('../services')
 const { API_VERSION } = require('../config/config');
 const { ProductDTO } = require('../dto')
 class ProductsController {
@@ -207,10 +208,13 @@ class ProductsController {
         try {
             const { pid } = req.params;
             const deletedProducts = await ProductsService.deleteProduct(pid);
-            if (deletedProducts && deletedProducts.deletedCount > 0) {
+            const deletedProductsFromAllcarts = await CartService.deleteProductFromAllCarts(pid);
+            if (deletedProducts && deletedProducts.deletedCount > 0 && deletedProductsFromAllcarts && deletedProductsFromAllcarts.modifiedCount > 0) {
                 return res.json({
                     ok: true,
                     message: `Product deleted`,
+                    deletedProducts: deletedProducts,
+                    deletedProductsFromAllcarts: deletedProductsFromAllcarts
                 });
             }
             return res.status(500).json({

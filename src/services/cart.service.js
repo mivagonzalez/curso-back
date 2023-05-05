@@ -51,6 +51,15 @@ module.exports = class CartService {
         return null;
     }
   };
+
+  deleteProductFromAllCarts = async (productId) => {
+    try {
+        return await this.dao.deleteProductFromAllCarts(productId);
+    } catch (error) {
+        console.log('Error deleting product',pid,'from all carts','Error:', error)
+        return null;
+    }
+  };
   
   deleteAllProductsFromCart = async cid => {
     try {

@@ -189,6 +189,23 @@ class CartManager {
             );
         }
     }
+
+    deleteProductFromAllCarts = async (productId) => {
+        if (!productId || typeof (productId) !== "string" || productId.length < 1) {
+            throw Error("El id del producto ingresado es incorrecto");
+        }
+        try {
+            return await cartsModel.updateMany(
+                { "products.productId": productId},
+                { $pull: {"products":{"productId": productId } } },
+            )
+        }catch(e) {
+            console.log(
+                "🚀 Error deleting all products that matches with productid", productId,
+                e
+            );
+        }
+    }
     
     deleteAllProductsFromCart = async (cartId = '') => {
         if (!cartId || typeof (cartId) !== "string" || cartId.length < 1) {

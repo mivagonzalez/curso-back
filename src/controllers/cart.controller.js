@@ -105,6 +105,23 @@ class CartController {
         next();
     };
 
+    deleteProductFromAllCarts = async (req, res) => {
+        try {
+            const { pid } = req.params;
+            const deleted = await CartService.deleteProductFromAllCarts(pid);
+            return res.status(200).json({
+                message: `prod deleted Successfully`,
+                deleted: deleted,
+            });
+
+        } catch (error) {
+            console.log(
+                "🚀 Error deleting product from all carts. Controller. Error:",
+                error
+            );
+        }
+    };
+    
     updateProductQuantity = async (req, res) => {
         try {
             const { cid, pid } = req.params;

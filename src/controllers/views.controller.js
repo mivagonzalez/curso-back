@@ -15,18 +15,19 @@ class ViewsController {
         const session = req.session;
         const findUser = await UserService.getUser(session.user.email);
         const products = await CartService.getProductsByCart(cid)
+        console.log(products)
         const mappedProducts = products.map((prod) => {
             return {
-                productId: prod.product.productId,
-                title: prod.product.title,
-                description: prod.product.description,
-                code: prod.product.code,
-                stock: prod.product.stock,
-                category: prod.product.category,
-                status: prod.product.status,
-                price: prod.product.price,
-                id: prod.product._id,
-                quantity: prod.quantity
+                productId: prod.product?.productId,
+                title: prod.product?.title,
+                description: prod.product?.description,
+                code: prod.product?.code,
+                stock: prod.product?.stock,
+                category: prod.product?.category,
+                status: prod.product?.status,
+                price: prod.product?.price,
+                id: prod.product?._id,
+                quantity: prod?.quantity
             };
         });
         let cart = {
