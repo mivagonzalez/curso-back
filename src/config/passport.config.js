@@ -69,12 +69,12 @@ const initializePassport = () => {
                     console.log("User already exists");
                     return done(null, false);
                 }
-                const newCart = await CartService.addCart();
+                const newCart = await CartService.createCart();
                 if(!newCart) {
                     console.log("Cant create a new cart");
                     return done(null, false);
                 }
-
+                
                 const userDTO = new UserDTO({ email, password, first_name, last_name, age, address, cart: newCart._id, role})
                 const newUser = await UserService.addUser(userDTO);
                 if(!newUser) {

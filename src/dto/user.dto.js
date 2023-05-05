@@ -2,6 +2,7 @@ const { createHash } = require('../utils');
 
 class UserDTO {
     constructor(user){
+        console.log('CONSTURCTOR DTO USER', user)
         this.email = user.email;
         this.password = createHash(user.password);
         this.first_name = user.first_name;
@@ -9,7 +10,7 @@ class UserDTO {
         this.age = user.age;
         this.address = user.address;
         this.cart = user.cart;
-        this.role = role === 'admin' ? 'admin' : 'user';
+        this.role = user.role === 'admin' ? 'admin' : 'user';
     }
 }
 

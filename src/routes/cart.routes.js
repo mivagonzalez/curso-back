@@ -19,7 +19,7 @@ class CartsRoute {
     this.router.get(`${this.path}/:cid`, authMdw, handlePolicies([policies.USER]), this.controller.getProductsByCart);
     this.router.post(`${this.path}`, authMdw, handlePolicies([policies.USER]), this.controller.createCart);
     this.router.post(`${this.path}/:cid/product/:pid`, authMdw, handlePolicies([policies.USER]), this.controller.addProductToCart);
-    this.router.put(`${this.path}/:cid/products/:pid`, authMdw, handlePolicies([policies.USER]), this.controller.validateQuantity,this.controller.updateProductQuantity);
+    this.router.put(`${this.path}/:cid/product/:pid`, authMdw, handlePolicies([policies.USER]), this.controller.validateQuantity,this.controller.updateProductQuantity);
     this.router.delete(`${this.path}/:cid/product/:pid`, authMdw, handlePolicies([policies.USER]), this.controller.deleteProductFromCart);
     this.router.delete(`${this.path}/:cid`, authMdw, handlePolicies([policies.USER]), this.controller.deleteAllproductsFromCart);
     this.router.put(`${this.path}/:cid`, authMdw,this.controller.validateNewProducts, handlePolicies([policies.USER]), this.controller.updateProductsFromCart);
