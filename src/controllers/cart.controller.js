@@ -1,5 +1,10 @@
 
 const { CartService } = require('../services')
+const { ProductsService } = require('../services');
+const ProductService = require('../services/products.service');
+const TicketService = require('../services/ticket.service');
+const moment = require('moment')
+const TicketDTO = require('../dto')
 class CartController {
 
     validatePIDParam = async (_, res, next, pid) => {
@@ -157,7 +162,75 @@ class CartController {
             );
         }
     };
+    purchaseProducts = async (req, res) => {
+        try {
+            const { cid } = req.params;
+            let totalPrice;
+            let unavaliableProducts = [];
+            let ticket = null;
+            let boughtProducts = []
+            const cartProducts = await CartService.getProductsByCart(cid);
+            if(!products) {
+                return res.status(400).json({
+                    message: `No hay productos asociados al carrito ${cid}`,
+                    payload: null,
+                });
+            }
+            console.log('PRODUCTS BY CAR', cartProducts)
 
+            const availiableProducts = cartProducts.map(async prod => {
+                const product = ProductsService.getProductById(prod.product.productId);
+                if(product.stock >= prod.quantity){
+                    return prod
+                } else {
+                    unavaliableProducts.push(prod)
+                }
+            })
+
+            if(availiableProducts) {
+                for (let product of availiableProducts) {
+                    const productInStock = await ProductService.getProductById(product.productId); 
+                    const updated = await ProductService.updateProductQuantity(product.productId, {quantity: productInStock.quantity - product.quantity })
+                    if (updated) {
+                        totalPrice += (product.quantity * product.price);
+                        boughtProducts.push(product)
+                    }
+                }
+                await CartService.updateProductsFromCart(cid, availiableProducts);
+
+                if(boughtProducts && boughtProducts.length > 0){
+                    const purchase_datetime = moment().format('MMMM Do YYYY, h:mm:ss a');
+                    const purchaser = req.user.email;
+                    const ticketDTO = new TicketDTO({purchaser, purchase_datetime, amount: totalPrice})
+                    ticket = await TicketService.createTicket(ticketDTO);
+                }
+            }
+            if(ticket) {
+                return res.status(200).json({
+                    message: `products bought Successfully`,
+                    ticket: ticket,
+                    notAvailableProducts: unavaliableProducts
+                });
+            }
+            return res.status(400).json({
+                message: `products not bought`,
+                ticket: null,
+                notAvailableProducts: unavaliableProducts
+            });
+           
+        } catch (error) {
+            console.log(
+                "🚀 ~ file: cart.routes.js:43 ~ CartsRoutes ~ this.router.post.cid.product.pid ~ error:",
+                error
+            );
+            return res.status(400).json({
+                message: `products not bought`,
+                ticket: null,
+                notAvailableProducts: null,
+                error: error
+            });
+        }
+    }
     deleteAllproductsFromCart = async (req, res) => {
         try {
             const { cid } = req.params;

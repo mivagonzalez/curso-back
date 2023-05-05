@@ -13,8 +13,8 @@ class TicketController {
             }
             const purchase_datetime = moment().format('MMMM Do YYYY, h:mm:ss a');
             const purchaser = req.user.email;
-            const ticketDTO = new TicketDTO(purchaser, purchase_datetime, amount)
-
+            const ticketDTO = new TicketDTO({purchaser, purchase_datetime, amount})
+            console.log(purchase_datetime,purchaser,amount,'DATOSSS')
             const ticket = await TicketService.createTicket(ticketDTO) ?? null;
             if (!ticket) {
                 return res.status(400).json({
@@ -37,9 +37,9 @@ class TicketController {
 
     getTicket = async (req, res) => {
         try {
-            const {email,purchaser,code} = req.query;
-
-            const ticket = await TicketService.getTicket({email: email || null, purchaser: purchaser || null, code: code || null});
+            const {email} = req.query;
+            console.log(email)
+            const ticket = await TicketService.getTicket({purchaser: email });
             if (ticket) {
                 return res.status(200).json({
                     message: `Ticket found Successfully`,
@@ -61,135 +61,6 @@ class TicketController {
         }
     };
 
-    validateQuantity = async (req, res, next) => {
-        const { quantity } = req.body;
-        if (!quantity || isNaN(quantity)) {
-            return res.status(400).json({
-                message: `quantity type is not correct or is empty`,
-                products: null,
-            });
-        }
-        next();
-    };
-
-    deleteProductFromAllCarts = async (req, res) => {
-        try {
-            const { pid } = req.params;
-            const deleted = await CartService.deleteProductFromAllCarts(pid);
-            return res.status(200).json({
-                message: `prod deleted Successfully`,
-                deleted: deleted,
-            });
-
-        } catch (error) {
-            console.log(
-                "🚀 Error deleting product from all carts. Controller. Error:",
-                error
-            );
-        }
-    };
-    
-    updateProductQuantity = async (req, res) => {
-        try {
-            const { cid, pid } = req.params;
-            const { quantity } = req.body;
-            await CartService.updateProductQuantity(cid, pid, quantity);
-            const products = await CartService.getProductsByCart(cid);
-            return res.status(200).json({
-                message: `Quantity updated Successfully`,
-                products: products,
-            });
-
-        } catch (error) {
-            console.log(
-                "🚀 ~ file: cart.routes.js:43 ~ CartsRoutes ~ this.router.post.cid.product.pid ~ error:",
-                error
-            );
-        }
-    };
-
-    deleteProductFromCart = async (req, res) => {
-        try {
-            const { cid, pid } = req.params;
-            await CartService.deleteProductFromCart(cid, pid);
-            const products = await CartService.getProductsByCart(cid);
-            return res.status(400).json({
-                message: `product deleted Successfully`,
-                payload: products,
-            });
-        } catch (error) {
-            console.log(
-                "🚀 ~ file: cart.routes.js:43 ~ CartsRoutes ~ this.router.post.cid.product.pid ~ error:",
-                error
-            );
-        }
-    };
-
-    deleteAllproductsFromCart = async (req, res) => {
-        try {
-            const { cid } = req.params;
-            await CartService.deleteAllProductsFromCart(cid);
-            const products = await CartService.getProductsByCart(cid);
-            return res.status(200).json({
-                message: `products deleted Successfully`,
-                payload: products,
-            });
-        } catch (error) {
-            console.log(
-                "🚀 ~ file: cart.routes.js:43 ~ CartsRoutes ~ this.router.post.cid.product.pid ~ error:",
-                error
-            );
-        }
-    };
-
-    validateNewProducts = async (req, res, next) => {
-        const newProducts = req.body;
-        if (!newProducts) {
-            return res.status(400).json({
-                message: `array not passed`,
-                payload: null,
-            });
-        }
-        if (newProducts.length < 1) {
-            return res.status(400).json({
-                message: `array is empty`,
-                payload: null,
-            });
-        }
-        for (const product of newProducts) {
-            if (!product.productId || !product.quantity || typeof (product.productId) !== 'string' || isNaN(product.quantity)) {
-                return res.status(400).json({
-                    message: `Products don't have the required format: [{_id: ...(oid) , productId: ...(string) , quantity: ...(int) }]`,
-                    payload: null,
-                });
-            }
-        }
-        next();
-    };
-
-    updateProductsFromCart = async (req, res) => {
-        try {
-            const { cid } = req.params;
-            const newProducts = req.body;
-            await CartService.updateProductsFromCart(cid, newProducts);
-            const products = await CartService.getProductsByCart(cid);
-            if(products) {
-                return res.status(200).json({
-                    message: `products updated Successfully`,
-                    payload: products,
-                });
-            }
-            return res.status(400).json({
-                message: `No se pudo actualziar los productos`,
-                payload: null,
-            });
-        } catch (error) {
-            console.log(
-                "🚀 ~ file: cart.routes.js:43 ~ CartsRoutes ~ this.router.post.cid.product.pid ~ error:",
-                error
-            );
-        }
-    };
 }
 
 module.exports = TicketController;

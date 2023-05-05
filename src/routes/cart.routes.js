@@ -23,6 +23,7 @@ class CartsRoute {
     this.router.delete(`${this.path}/:cid/product/:pid`, authMdw, handlePolicies([policies.USER]), this.controller.deleteProductFromCart);
     this.router.delete(`${this.path}/:cid`, authMdw, handlePolicies([policies.USER]), this.controller.deleteAllproductsFromCart);
     this.router.put(`${this.path}/:cid`, authMdw,this.controller.validateNewProducts, handlePolicies([policies.USER]), this.controller.updateProductsFromCart);
+    this.router.post(`${this.path}/:cid/purchase`, authMdw, handlePolicies([policies.USER]), this.controller.purchaseProducts);
   }
 }
 

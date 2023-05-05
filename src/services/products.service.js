@@ -23,6 +23,16 @@ module.exports = class ProductService {
     }
   };
 
+  getProductById = async (id) => {
+    try {
+      const product = await this.dao.getProductById(id);
+      return product;
+    } catch (error) {
+        console.log('Error getting product with id', id ,'Error:', error)
+        return null;
+    }
+  };
+
   deleteProduct = async (pid) => {
     try {
       const deletedProducts = await this.dao.deleteProduct(pid);

@@ -4,6 +4,7 @@ const ticketModel = require("../models/ticket.model");
 class TicketManager {
 
     createTicket = async (ticket) => {
+        console.log(ticket)
         if(!ticket.code || ticket.code.length < 8 || !ticket.purchase_datetime || !ticket.amount || ticket.amount <= 0 || !ticket.purchaser || ticket.purchaser.length < 5 ) {
             console.log('Ticket can not be created without all the fields');
             return null;

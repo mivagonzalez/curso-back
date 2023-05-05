@@ -15,6 +15,7 @@ module.exports = class TicketService {
 
   getTicket = async (query = {}) => {
     try {
+      console.log(query, 'queryy')
         const ticket = await this.dao.getTicket(query)
         return ticket;
     } catch (error) {
