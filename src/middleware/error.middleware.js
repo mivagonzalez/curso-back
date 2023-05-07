@@ -1,6 +1,6 @@
 const Errors = require('../services/errors/errors');
 
-const handleErrors = (error, _, res, _) => {
+const handleErrors = (error, _, res, _1) => {
     console.log(error.cause);
     switch(error.code) {
         case (Errors.DATABASE_ERROR):
