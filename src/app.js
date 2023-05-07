@@ -8,6 +8,7 @@ const corsConfig = require("./config/cors.config");
 const { mongoDBconnection } = require("./db/mongo.config");
 const { configConnection } = require('./db/mongo.config');
 const { ProductsService } = require('./services')
+const handleErrors = require('./middleware/error.middleware');
 
 const messagesModel = require("./dao/models/messages.model");
 const cookieParser = require("cookie-parser");
@@ -56,6 +57,7 @@ class App {
       })
     );
     initializePassport();
+    this.app.use(handleErrors);
     this.app.use(passport.initialize());
     this.app.use(passport.session())
     this.app.use(cors(corsConfig));
