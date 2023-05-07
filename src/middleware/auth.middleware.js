@@ -1,6 +1,5 @@
 const authMdw = (req, res, next) => {
   if (req.user) {
-    console.log('estoy aca')
     return next();
   }
 
