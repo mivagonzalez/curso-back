@@ -1,6 +1,7 @@
 const cartsModel = require("../models/carts.model");
 const productsModel = require("../models/products.model");
 const { v4: uuidv4 } = require('uuid');
+const { ERRORS, CustomError } = require('../services/errors');
 
 class CartManager {
     constructor() {
@@ -20,6 +21,12 @@ class CartManager {
                 "🚀 ~ file: cart.manager.js:45 ~ CartManager ~ addCart=async ~ error:",
                 error
             );
+            CustomError.createError(
+                'Add Cart Error',
+                'Error trying to create a new cart',
+                'Database returned an error when tried to create a cart',
+                ERRORS.DATABASE_ERROR
+            );
         }
     };
 
@@ -34,6 +41,12 @@ class CartManager {
                 "🚀 ~ file: carts.manager.js:21 ~ CartsManager ~ getCartById=async ~ error:",
                 error
             );
+            CustomError.createError(
+                'Get Cart By Id Error',
+                'Error trying to get a cart by id',
+                'A parameter passed to carts model is possible missing or wrong',
+                ERRORS.INVALID_PARAMETER_ERROR
+            );
         }
     }
 
@@ -44,6 +57,12 @@ class CartManager {
             console.log(
                 "🚀 ~ file: carts.manager.js:21 ~ CoursesManager ~ getCarts= ~ error:",
                 error
+            );
+            CustomError.createError(
+                'Get Carts Error',
+                'Error trying to get carts ',
+                'Database returned an error when tried to get carts',
+                ERRORS.DATABASE_ERROR
             );
         }
     };
@@ -60,6 +79,12 @@ class CartManager {
             console.log(
                 "🚀 ~ file: carts.manager.js:21 ~ CartsManager ~ getProductsByCartId=async ~ error:",
                 error
+            );
+            CustomError.createError(
+                'Get product By cart Id Error',
+                'Error trying to get a product by cart by id',
+                'A parameter passed to carts model is possible missing or wrong',
+                ERRORS.INVALID_PARAMETER_ERROR
             );
         }
     }
@@ -106,9 +131,15 @@ class CartManager {
             console.log(
                 'No se pudo agregar el producto. Error:',e
             );
-            return null;
+            CustomError.createError(
+                'Add product to cart Error',
+                'Error trying to add a product to a cart',
+                'A parameter passed to carts model is possible missing or wrong',
+                ERRORS.INVALID_PARAMETER_ERROR
+            );
         }
     }
+
     updateProductQuantityForCart = async (cartId = '', productId, quantity=1) => {
         if (!cartId || typeof (cartId) !== "string" || cartId.length < 1) {
             throw Error("El id del cart ingresado es incorrecto");
@@ -143,6 +174,12 @@ class CartManager {
             console.log(
                 "🚀 ~ file: cart.manager.js:45 ~ CartManager ~ addProductToCart=async ~ error:",
                 e
+            );
+            CustomError.createError(
+                'update product quantity Error',
+                'Error trying to update a product from a cart',
+                'A parameter passed to carts model is possible missing or wrong',
+                ERRORS.INVALID_PARAMETER_ERROR
             );
         }
     }
@@ -187,6 +224,12 @@ class CartManager {
                 "🚀 ~ file: cart.manager.js:45 ~ CartManager ~ addProductToCart=async ~ error:",
                 e
             );
+            CustomError.createError(
+                'Delete product Error',
+                'Error trying to delete a product from a cart',
+                'A parameter passed to carts model is possible missing or wrong',
+                ERRORS.INVALID_PARAMETER_ERROR
+            );
         }
     }
 
@@ -203,6 +246,12 @@ class CartManager {
             console.log(
                 "🚀 Error deleting all products that matches with productid", productId,
                 e
+            );
+            CustomError.createError(
+                'Delete product from all carts Error',
+                'Error trying to delete a products from all carts',
+                'A parameter passed to carts model is possible missing or wrong',
+                ERRORS.INVALID_PARAMETER_ERROR
             );
         }
     }
@@ -222,6 +271,12 @@ class CartManager {
             console.log(
                 "🚀 Error deleting all products that matches with productid", productId,'from cart',cartId,
                 e
+            );
+            CustomError.createError(
+                'Delete all product units from cart Error',
+                'Error trying to delete all product units from cart',
+                'A parameter passed to carts model is possible missing or wrong',
+                ERRORS.INVALID_PARAMETER_ERROR
             );
         }
     }
@@ -246,6 +301,12 @@ class CartManager {
             console.log(
                 "🚀 ~ file: cart.manager.js:45 ~ CartManager ~ addProductToCart=async ~ error:",
                 e
+            );
+            CustomError.createError(
+                'Delete all products from cart Error',
+                'Error trying to delete all products from cart',
+                'A parameter passed to carts model is possible missing or wrong',
+                ERRORS.INVALID_PARAMETER_ERROR
             );
         }
     }
@@ -273,6 +334,12 @@ class CartManager {
             console.log(
                 "🚀 ~ file: cart.manager.js:45 ~ CartManager ~ addProductToCart=async ~ error:",
                 e
+            );
+            CustomError.createError(
+                'Update all products from cart Error',
+                'Error trying to update all products from cart',
+                'A parameter passed to carts model is possible missing or wrong',
+                ERRORS.INVALID_PARAMETER_ERROR
             );
         }
     }

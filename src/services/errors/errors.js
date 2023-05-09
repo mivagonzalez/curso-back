@@ -1,7 +1,8 @@
-const errors = {
+const ERRORS = {
     ROUTING_ERROR: 404,
     INVALID_TYPES_ERROR: 400,
-    DATABASE_ERROR: 500
+    DATABASE_ERROR: 500,
+    INVALID_PARAMETER_ERROR: 400
 }
 
-module.exports = errors;
+module.exports = ERRORS;
