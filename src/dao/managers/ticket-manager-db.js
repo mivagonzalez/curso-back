@@ -1,4 +1,5 @@
 const ticketModel = require("../models/ticket.model");
+const {ERRORS, CustomError } = require('../../services/errors/errors')
 
 
 class TicketManager {
@@ -16,7 +17,7 @@ class TicketManager {
                 "🚀 Error creating ticket:",
                 error
             );
-            return null
+            CustomError.createError(ERRORS.CREATION_ERROR.name,'','Can not create ticket', ERRORS.CREATION_ERROR.code)
         }
     }
 
@@ -29,7 +30,7 @@ class TicketManager {
                 "🚀 Error getting ticket:", query, 'Error:',
                 error
             );
-            return null
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','can not get ticket with provided query', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
 

@@ -1,4 +1,5 @@
 const userModel = require("../models/user.model");
+const {ERRORS, CustomError } = require('../../services/errors/errors')
 
 
 class UserManager {
@@ -14,7 +15,7 @@ class UserManager {
                 "🚀 ~ file: User.manager.js:21 ~ UserManager ~ getUser=async ~ error:",
                 error
             );
-            return null
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not get user with the provided email ', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
     getUserById = async (id = '') => {
@@ -28,7 +29,7 @@ class UserManager {
                 "🚀 ~ file: User.manager.js:21 ~ UserManager ~ getUserById=async ~ error:",
                 error
             );
-            return null
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not get user with the provided id ', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
 
@@ -40,7 +41,7 @@ class UserManager {
                 "🚀 ~ file: User.manager.js:21 ~ UserManager ~ add=async ~ error:",
                 error
             );
-            return null
+            CustomError.createError(ERRORS.CREATION_ERROR.name,'','Can not create new user', ERRORS.CREATION_ERROR.code)
         }
     }
 

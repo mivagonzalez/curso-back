@@ -1,6 +1,7 @@
 const cartsModel = require("../models/carts.model");
 const productsModel = require("../models/products.model");
 const { v4: uuidv4 } = require('uuid');
+const {ERRORS, CustomError } = require('../../services/errors/errors')
 
 class CartManager {
     constructor() {
@@ -20,6 +21,7 @@ class CartManager {
                 "🚀 ~ file: cart.manager.js:45 ~ CartManager ~ addCart=async ~ error:",
                 error
             );
+            CustomError.createError(ERRORS.DATABASE_ERROR.name,'','Can not create a new cart', ERRORS.DATABASE_ERROR.code)
         }
     };
 
@@ -34,6 +36,7 @@ class CartManager {
                 "🚀 ~ file: carts.manager.js:21 ~ CartsManager ~ getCartById=async ~ error:",
                 error
             );
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'The id passed does not exist, or type is invalid','Can not get cart with the provided id', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
 
@@ -46,6 +49,8 @@ class CartManager {
                 error
             );
         }
+        CustomError.createError(ERRORS.DATABASE_ERROR.name,'','can not get carts', ERRORS.DATABASE_ERROR.code)
+
     };
 
     getProductsByCartId = async (id = '') => {
@@ -61,6 +66,7 @@ class CartManager {
                 "🚀 ~ file: carts.manager.js:21 ~ CartsManager ~ getProductsByCartId=async ~ error:",
                 error
             );
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'The id passed does not exist, or type is invalid','can not get cart with the provided id', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
 
@@ -106,7 +112,7 @@ class CartManager {
             console.log(
                 'No se pudo agregar el producto. Error:',e
             );
-            return null;
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'The cid or pid passed does not exist, or type is invalid','can not get cart with the provided ids', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
     updateProductQuantityForCart = async (cartId = '', productId, quantity=1) => {
@@ -144,6 +150,7 @@ class CartManager {
                 "🚀 ~ file: cart.manager.js:45 ~ CartManager ~ addProductToCart=async ~ error:",
                 e
             );
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'The id passed does not exist, or type is invalid','can not get cart with the provided id', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
 
@@ -187,6 +194,7 @@ class CartManager {
                 "🚀 ~ file: cart.manager.js:45 ~ CartManager ~ addProductToCart=async ~ error:",
                 e
             );
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'The id passed does not exist, or type is invalid','can not get cart with the provided id', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
 
@@ -204,6 +212,7 @@ class CartManager {
                 "🚀 Error deleting all products that matches with productid", productId,
                 e
             );
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'The id passed does not exist, or type is invalid','can not get cart with the provided id', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
     deleteAllProductUnitsFromCart = async (cartId, productId) => {
@@ -223,6 +232,7 @@ class CartManager {
                 "🚀 Error deleting all products that matches with productid", productId,'from cart',cartId,
                 e
             );
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'The id passed does not exist, or type is invalid','can not get cart with the provided id', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
     
@@ -247,6 +257,7 @@ class CartManager {
                 "🚀 ~ file: cart.manager.js:45 ~ CartManager ~ addProductToCart=async ~ error:",
                 e
             );
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'The id passed does not exist, or type is invalid','can not get cart with the provided id', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
     updateProductsForCart = async (cartId = '', products = []) => {
@@ -274,6 +285,7 @@ class CartManager {
                 "🚀 ~ file: cart.manager.js:45 ~ CartManager ~ addProductToCart=async ~ error:",
                 e
             );
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'The id passed does not exist, or type is invalid','can not get cart with the provided id', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
 };
