@@ -2,6 +2,7 @@ const path = require("path");
 const multer = require("multer");
 const bcrypt = require('bcrypt');
 const { faker } = require("@faker-js/faker");
+const { Logger } = require('./helpers')
 
 faker.locale = "es";
 
@@ -17,7 +18,7 @@ const storage = multer.diskStorage({
 const uploader = multer({
   storage,
   onError: function (err, next) {
-    console.log(err);
+    Logger.error(err);
     next();
   },
 });

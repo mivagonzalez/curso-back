@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { fileURLToPath } = require('url');
-
+const { Logger } = require('../../helpers');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const isRequired = () => { throw Error("Parametro faltante. No se puede crear un Cart si falta algun parametro.") };
@@ -16,9 +16,9 @@ class CartManager {
 
     init = async () => {
         if(!fs.existsSync(this.path)){
-            console.log(`El archivo especificado ${this.path} no existe aun. Creando...`);
+            Logger.warning(`El archivo especificado ${this.path} no existe aun. Creando...`);
             await fs.promises.writeFile(this.path, "[]")
-            console.log(`Archivo ${this.path} Creado!`)
+            Logger.debug(`Archivo ${this.path} Creado!`)
             return;
         }
         const readCarts = fs.readFileSync(this.path);
@@ -42,14 +42,14 @@ class CartManager {
     };
     getCartById = async (id = '') => {
         if (!fs.existsSync(this.path)) {
-            console.warn(`El archivo ${this.path} no existe`)
+            Logger.warning(`El archivo ${this.path} no existe`)
             return null;
         }
         const readCarts = await fs.promises.readFile(this.path);
         const carts = JSON.parse(readCarts);
         const cart = carts.find(c => c.id === id); 
         if(!cart) {
-            console.warn("Cart no encontrado");
+            Logger.warning("Cart no encontrado");
             return null
         };
         return cart;
@@ -61,20 +61,20 @@ class CartManager {
             const carts = JSON.parse(readCarts);
             return carts;
         }
-        console.warn(`El archivo ${this.path} no existe`)
+        Logger.warning(`El archivo ${this.path} no existe`)
         return [];
     };
     
     getProductsByCartId = async (id = '') => {
         if (!fs.existsSync(this.path)) {
-            console.warn(`El archivo ${this.path} no existe`)
+            Logger.warning(`El archivo ${this.path} no existe`)
             return null;
         }
         const readCarts = await fs.promises.readFile(this.path);
         const carts = JSON.parse(readCarts);
         const cart = carts.find(c => c.id === id); 
         if(!cart) {
-            console.warn("Cart no encontrado");
+            Logger.warning("Cart no encontrado");
             return null
         };
         return cart.products;
@@ -82,7 +82,7 @@ class CartManager {
     
     addProductToCart = async (cartId = '', productId) => {
         if (!fs.existsSync(this.path)) {
-            console.warn(`El archivo ${this.path} no existe`)
+            Logger.warning(`El archivo ${this.path} no existe`)
             return null;
         }
 
@@ -92,7 +92,7 @@ class CartManager {
         const cartIndex = carts.findIndex(c => c.id === cartId);
         const cart = carts[cartIndex];
         if(!cart) {
-            console.warn("Cart no encontrado");
+            Logger.warning("Cart no encontrado");
             return null
         };
         const productIndex = cart.products.findIndex(p => p.product === productId);

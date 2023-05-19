@@ -2,7 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
+const { Logger } = require('../../helpers');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const isRequired = () => { throw Error("Parametro faltante. No se puede crear un Producto si falta algun parametro.") };
@@ -17,9 +17,9 @@ export class ProductManager {
 
     init = async () => {
         if(!fs.existsSync(this.path)){
-            console.log(`El archivo especificado ${this.path} no existe aun. Creando...`);
+            Logger.debug(`El archivo especificado ${this.path} no existe aun. Creando...`);
             await fs.promises.writeFile(this.path, "[]")
-            console.log(`Archivo ${this.path} Creado!`)
+            Logger.debug(`Archivo ${this.path} Creado!`)
             return;
         }
         const readProducts = fs.readFileSync(this.path);
@@ -58,20 +58,20 @@ export class ProductManager {
             const products = JSON.parse(readProducts);
             return products;
         }
-        console.warn(`El archivo ${this.path} no existe`)
+        Logger.warning(`El archivo ${this.path} no existe`)
         return [];
     };
     
     getProductById = async (id = '') => {
         if (!fs.existsSync(this.path)) {
-            console.warn(`El archivo ${this.path} no existe`)
+            Logger.warning(`El archivo ${this.path} no existe`)
             return null;
         }
         const readProducts = await fs.promises.readFile(this.path);
         const products = JSON.parse(readProducts);
         const product = products.find(p => p.id === id); 
         if(!product) {
-            console.warn("Producto no encontrado");
+            Logger.warning("Producto no encontrado");
             return null
         };
         return product;
@@ -87,7 +87,7 @@ export class ProductManager {
     updateProduct = async (id = '', newProps = {} ) => {
         const newPropsArr = Object.keys(newProps);
         if (newPropsArr.length === 0) {
-            console.warn(`No hay props para actualizar para el producto con id ${id}`)
+            Logger.warning(`No hay props para actualizar para el producto con id ${id}`)
             return;
         }
         const index = this.products.findIndex(producto => producto.id === id);
@@ -98,7 +98,7 @@ export class ProductManager {
                 this.products[index][prop]=newProps[prop];
             }
             else{
-                console.error('La propiedad ID no puede ser modificada');
+                Logger.error('La propiedad ID no puede ser modificada');
             }
         });      
         await fs.promises.writeFile(this.path, JSON.stringify(this.products, null, 2));

@@ -9,6 +9,7 @@ const { mongoDBconnection } = require("./db/mongo.config");
 const { configConnection } = require('./db/mongo.config');
 const { ProductsService } = require('./services')
 const handleErrors = require('./middleware/error.middleware');
+const { Logger } = require('./helpers')
 
 const messagesModel = require("./dao/models/messages.model");
 const cookieParser = require("cookie-parser");
@@ -79,7 +80,7 @@ class App {
     const io = new Server(httpServer);
 
     io.on("connection", async (socket) => {
-      console.log(`New Socket Connection`)
+      Logger.info(`New Socket Connection`)
 
       socket.on("addNewProduct", async product => {
         const { title = '', description = '', code, price, status = true, stock, category = '', thumbnails = '' } = product;
@@ -126,10 +127,10 @@ class App {
   listen() {
     const httpServer = this.app.listen(this.port, () => {
       displayRoutes(this.app);
-      console.log(`=================================`);
-      console.log(`======= ENV: ${this.env} =======`);
-      console.log(`🚀 App listening on the port ${this.port}`);
-      console.log(`=================================`);
+      Logger.debug(`=================================`);
+      Logger.debug(`======= ENV: ${this.env} =======`);
+      Logger.debug(`🚀 App listening on the port ${this.port}`);
+      Logger.debug(`=================================`);
 
     });
     this.listenWs(httpServer);
