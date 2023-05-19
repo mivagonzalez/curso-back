@@ -1,5 +1,6 @@
 const ticketModel = require("../models/ticket.model");
 const {ERRORS, CustomError } = require('../../services/errors/errors')
+const { Logger } = require('../../helpers');
 
 
 class TicketManager {
@@ -13,10 +14,7 @@ class TicketManager {
         try {
             return await ticketModel.create(ticket);
         } catch (error) {
-            console.log(
-                "🚀 Error creating ticket:",
-                error
-            );
+            Logger.error("🚀 Error creating ticket:", error)
             CustomError.createError(ERRORS.CREATION_ERROR.name,'','Can not create ticket', ERRORS.CREATION_ERROR.code)
         }
     }
@@ -26,10 +24,7 @@ class TicketManager {
             const ticket = await ticketModel.findOne(query) ?? null;
             return ticket
         } catch (error) {
-            console.log(
-                "🚀 Error getting ticket:", query, 'Error:',
-                error
-            );
+            Logger.error("🚀 Error getting ticket:", query, 'Error:', error)
             CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','can not get ticket with provided query', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
