@@ -1,4 +1,5 @@
 const productsModel = require("../models/products.model");
+const {ERRORS, CustomError } = require('../../services/errors/errors')
 
 class ProductManager {
     constructor() {
@@ -13,6 +14,7 @@ class ProductManager {
                 "🚀 ~ file: Product.manager.js:15 ~ Product ~ getProductByFields=async ~ error:",
                 error
             );
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not get products with the query provided', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
     getProductsWithLimit = async(limit = null) => {
@@ -23,6 +25,7 @@ class ProductManager {
                 "🚀 ~ file: Product.manager.js:15 ~ Product ~ getProductByFields=async ~ error:",
                 error
             );
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not get products with the limit provided', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
 
@@ -45,7 +48,7 @@ class ProductManager {
                 "🚀 ~ file: Product.manager.js:45 ~ Product ~ addProduct=async ~ error:",
                 error
             );
-            return null;
+            CustomError.createError(ERRORS.CREATION_ERROR.name,'','Can not create product with the values provided', ERRORS.CREATION_ERROR.code)
         }
 
     };
@@ -61,6 +64,7 @@ class ProductManager {
                 "🚀 ~ file: product.manager.js:21 ~ ProductManager ~ getProducts= ~ error:",
                 error
             );
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not get products with the query provided', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     };
     
@@ -76,17 +80,28 @@ class ProductManager {
                 "🚀 ~ file: product.manager.js:21 ~ ProductManager ~ getProductById=async ~ error:",
                 error
             );
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not get products with the id provided', ERRORS.INVALID_PARAMETER_ERROR.code)
+
         }
     }
     
     deleteProduct = async (id = '') => {
-        if (!id || typeof (id) !== "string" || id.length < 1) {
-            throw Error("El id ingresado es incorrecto");
-        }
+        try {
+            if (!id || typeof (id) !== "string" || id.length < 1) {
+                throw Error("El id ingresado es incorrecto");
+            }
+    
+            return await productsModel.deleteOne({
+                productId: id
+            })
+        } catch (error) {
+            console.log(
+                "🚀 ~ file: product.manager.js:21 ~ ProductManager ~ getProductById=async ~ error:",
+                error
+            );
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not delete products with the id provided', ERRORS.INVALID_PARAMETER_ERROR.code)
 
-        return await productsModel.deleteOne({
-            productId: id
-        })
+        }
     }
 
     updateProduct = async (id = '', newProps = {} ) => {
@@ -131,6 +146,8 @@ class ProductManager {
                 "🚀 ~ file: product.manager.js:21 ~ ProductManager ~ updateproduct=async ~ error:",
                 error
             );
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not update products', ERRORS.INVALID_PARAMETER_ERROR.code)
+
         }
     }
 };

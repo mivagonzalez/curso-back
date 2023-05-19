@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start:dev:watch": "cross-env NODE_ENV=development node --watch ./src/index",
     "start:dev": "cross-env NODE_ENV=development nodemon ./src/index",
     "start:test": "cross-env NODE_ENV=test nodemon ./src/index",
     "test": "echo \"Error: no test specified\" && exit 1"
