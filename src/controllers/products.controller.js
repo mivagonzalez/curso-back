@@ -3,6 +3,8 @@ const { ProductsService } = require('../services')
 const { CartService } = require('../services')
 const { API_VERSION } = require('../config/config');
 const { ProductDTO } = require('../dto')
+const { Logger } = require('../helpers')
+
 class ProductsController {
 
     validateNewPropsForUpdateProducts = async (req, res, next) => {
@@ -110,9 +112,7 @@ class ProductsController {
     addProduct = async (req, res) => {
         try {
             const { title, description, code, price, status, stock, category, thumbnails } = req.body;
-            console.log(ProductDTO)
             const productDTO = new ProductDTO({ title, description, code, price, status, stock, category, thumbnails })
-            console.log('llegue', productDTO)
             const product = await ProductsService.addProduct(productDTO);
             if (product) {
                 return res.json({
@@ -197,7 +197,7 @@ class ProductsController {
                 });
             }
         } catch (error) {
-            console.log(
+            Logger.error(
                 "🚀 ~ file: cart.routes.js:43 ~ CartRoutes ~ this.router.get ~ error:",
                 error
             );
@@ -222,7 +222,7 @@ class ProductsController {
                 message: `product not deleted`,
             });
         } catch (error) {
-            console.log(
+            Logger.error(
                 "🚀 ~ file: product.routes.js:43 ~ ProductRoute ~ this.router.delete ~ error:",
                 error
             );
@@ -247,7 +247,7 @@ class ProductsController {
                 error: `No se puede actualizar el producto con productId ${productId}`
             });
         } catch (error) {
-            console.log(
+            Logger.error(
                 "🚀 ~ file: product.routes.js:43 ~ ProductRoute ~ this.router.put ~ error:",
                 error
             );
@@ -262,7 +262,7 @@ class ProductsController {
                 students: result,
             });
         } catch (error) {
-            console.log(
+            Logger.error(
                 "🚀 ~ file: products.routes.js:15 ~ router.get.insertion ~ error:",
                 error
             );

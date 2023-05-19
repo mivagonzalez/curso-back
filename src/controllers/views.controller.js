@@ -1,4 +1,5 @@
 const { ProductsService, CartService, UserService } = require('../services')
+const { Logger } = require('../helpers')
 
 class ViewsController {
 
@@ -15,7 +16,6 @@ class ViewsController {
         const session = req.session;
         const findUser = await UserService.getUser(session.user.email);
         const products = await CartService.getProductsByCart(cid)
-        console.log(products)
         const mappedProducts = products.map((prod) => {
             return {
                 productId: prod.product?.productId,
@@ -109,7 +109,6 @@ class ViewsController {
         try {
             const products = await ProductsService.getProducts();
             if (products && products.docs) {
-                console.log(products)
                 const mappedProducts = products.docs.map((prod) => {
                     return {
                         id: prod.productId,
@@ -156,7 +155,7 @@ class ViewsController {
         try {
             return res.render('login');
         } catch (error) {
-            console.log("Error al ingresar al login")
+            Logger.error("Error al ingresar al login")
         }
     };
 

@@ -7,7 +7,7 @@ const GithubStrategy = require("passport-github2");
 const { API_VERSION } = require('../config/config');
 const localStrategy = local.Strategy;
 const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, PORT, HOST } = require("../config/config");
-
+const { Logger } = require('../helpers')
 const initializePassport = () => {
 
     passport.use(
@@ -25,7 +25,7 @@ const initializePassport = () => {
               if (!user) {
                 const newCart = await CartService.addCart();
                 if(!newCart) {
-                    console.log("Cant create a new cart");
+                    Logger.error("Cant create a new cart",error)
                     return done(null, false);
                 }
                 const userDTO = new UserDTO({ email: profile.emails[0].value, password: "", first_name: profile._json.name, last_name: "", age: 0, address: "", cart: newCart._id, role:"user"})
@@ -46,11 +46,11 @@ const initializePassport = () => {
             try {
                 const user = await UserService.getUser(username);
                 if(!user) {
-                    console.log("user doesn't exist");
+                    Logger.error("user doesn't exist",error)
                     return done(null, false);
                 }
                 if(!isValidPassword(user, password)){
-                    console.log("invalid password");
+                    Logger.error("invalid password");
                     return done(null, false);
                 }
                 return done(null, user);
@@ -66,19 +66,19 @@ const initializePassport = () => {
             try {
                 let user = await UserService.getUser(username);
                 if(user) {
-                    console.log("User already exists");
+                    Logger.error("User already exists");
                     return done(null, false);
                 }
                 const newCart = await CartService.createCart();
                 if(!newCart) {
-                    console.log("Cant create a new cart");
+                    Logger.error("Cant create a new cart");
                     return done(null, false);
                 }
                 
                 const userDTO = new UserDTO({ email, password, first_name, last_name, age, address, cart: newCart._id, role})
                 const newUser = await UserService.addUser(userDTO);
                 if(!newUser) {
-                    console.log("Cant create a new cart");
+                    Logger.error("Cant create a new cart");
                     return done(null, false);
                 }
                 return done(null, newUser)

@@ -1,6 +1,8 @@
 
 const { UserService } = require('../services');
 const { CurrentUserDTO } = require('../dto')
+const { Logger } = require('../helpers')
+
 class SessionController {
 
     logout = async (req, res) => {
@@ -11,7 +13,7 @@ class SessionController {
     };
 
     faillogin = (_, res) => {
-        console.log("invalid credentials");
+        Logger.error("invalid credentials");
         res.redirect('/faillogin')
     };
 
@@ -34,7 +36,7 @@ class SessionController {
                 user: null,
             });
         } catch (error) {
-            console.log("🚀 Error getting user with mail", mail, 'Error:', error )
+            Logger.error("🚀 Error getting user with mail", mail, 'Error:', error )
         }
     };
 
@@ -55,7 +57,7 @@ class SessionController {
             req.session.user = req.user;
             return res.redirect('/products');
         } catch (error) {
-            console.log(
+            Logger.error(
                 "🚀 ~ file: session.routes.js:23 ~ router.post ~ error:",
                 error
             );
@@ -68,7 +70,7 @@ class SessionController {
             req.session.user = req.user;
             res.redirect("/products");
         } catch (error) {
-            console.log("🚀 ~ file: session.routes.js:115 ~ error:", error);
+            Logger.error("🚀 ~ file: session.routes.js:115 ~ error:", error);
         }
     }
 }

@@ -4,6 +4,7 @@ const { ProductsService } = require('../services');
 const {TicketService} = require('../services');
 const moment = require('moment')
 const {TicketDTO} = require('../dto')
+const { Logger } = require('../helpers')
 class CartController {
 
     validatePIDParam = async (_, res, next, pid) => {
@@ -42,7 +43,7 @@ class CartController {
             });
 
         } catch (error) {
-            console.log(
+            Logger.error(
                 "🚀 ~ file: cart.routes.js:43 ~ CartRoutes ~ this.router.get ~ error:",
                 error
             );
@@ -64,7 +65,7 @@ class CartController {
                 course: cart,
             });
         } catch (error) {
-            console.log(
+            Logger.error(
                 "🚀 ~ file: cart.routes.js:43 ~ CartsRoutes ~ this.router.post ~ error:",
                 error
             );
@@ -91,7 +92,7 @@ class CartController {
             });
 
         } catch (error) {
-            console.log(
+            Logger.error(
                 "🚀 ~ file: cart.routes.js:43 ~ CartsRoutes ~ this.router.post.cid.product.pid ~ error:",
                 error
             );
@@ -119,7 +120,7 @@ class CartController {
             });
 
         } catch (error) {
-            console.log(
+            Logger.error(
                 "🚀 Error deleting product from all carts. Controller. Error:",
                 error
             );
@@ -138,7 +139,7 @@ class CartController {
             });
 
         } catch (error) {
-            console.log(
+            Logger.error(
                 "🚀 ~ file: cart.routes.js:43 ~ CartsRoutes ~ this.router.post.cid.product.pid ~ error:",
                 error
             );
@@ -155,7 +156,7 @@ class CartController {
                 payload: products,
             });
         } catch (error) {
-            console.log(
+            Logger.error(
                 "🚀 ~ file: cart.routes.js:43 ~ CartsRoutes ~ this.router.post.cid.product.pid ~ error:",
                 error
             );
@@ -191,23 +192,19 @@ class CartController {
                         const productInStock = await ProductsService.getProductById(product.productId); 
                         const updated = await ProductsService.updateProduct(product.productId, {stock: productInStock.stock - product.quantity })
                         if (updated) {
-                            console.log(product.quantity, productInStock.price, updated)
                             totalPrice += (Number(product.quantity) * Number(productInStock.price));
-                            console.log(totalPrice,' TOTAL PRICE')
                             boughtProducts.push(product)
                             await CartService.deleteAllProductUnitsFromCart(cid,product.productId)
                         }
                     }
                     
                 }
-                console.log(totalPrice, boughtProducts,'++-++')
                 if(boughtProducts && boughtProducts.length > 0){
                     const purchase_datetime = moment().format('MMMM Do YYYY, h:mm:ss a');
                     const purchaser = req.user.email;
                     const ticketDTO = new TicketDTO({purchaser, purchase_datetime, amount: totalPrice})
                     ticket = await TicketService.createTicket(ticketDTO);
-
-                    console.log(ticket)
+                    Logger.info('ticket created', ticket)
                 }
             }
             if(ticket) {
@@ -224,7 +221,7 @@ class CartController {
             });
            
         } catch (error) {
-            console.log(
+            Logger.error(
                 "🚀 ~ file: cart.routes.js:43 ~ CartsRoutes ~ this.router.post.cid.product.pid ~ error:",
                 error
             );
@@ -246,7 +243,7 @@ class CartController {
                 payload: products,
             });
         } catch (error) {
-            console.log(
+            Logger.error(
                 "🚀 ~ file: cart.routes.js:43 ~ CartsRoutes ~ this.router.post.cid.product.pid ~ error:",
                 error
             );
@@ -295,7 +292,7 @@ class CartController {
                 payload: null,
             });
         } catch (error) {
-            console.log(
+            Logger.error(
                 "🚀 ~ file: cart.routes.js:43 ~ CartsRoutes ~ this.router.post.cid.product.pid ~ error:",
                 error
             );
