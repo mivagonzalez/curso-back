@@ -1,3 +1,4 @@
+const { Logger } = require('../helpers')
 const { connect } = require("mongoose");
 const { DB_USE_ATLAS, DB_USER, DB_NAME, DB_PASSWORD, LOCAL_DB_NAME, LOCAL_DB_HOST, LOCAL_DB_PORT } = require('../config/config')
 const LOCAL_MONGO_CONNECTION=`mongodb://${LOCAL_DB_HOST}:${LOCAL_DB_PORT}/${LOCAL_DB_NAME}`;
@@ -13,13 +14,13 @@ const configConnection = {
 const mongoDBconnection = async () => {
   try {
     await connect(configConnection.url, configConnection.options);
-    console.log(`=================================`);
-    console.log(
+    Logger.debug(`=================================`);
+    Logger.debug(
       `======= URL: ${configConnection.url.substring(0, 20)} =======`
     );
-    console.log(`=================================`);
+    Logger.debug(`=================================`);
   } catch (error) {
-    console.log(
+    Logger.fatal(
       "🚀 ~ file: mongo.config.js:23 ~ mongoDBconnection ~ error:",
       error
     );
