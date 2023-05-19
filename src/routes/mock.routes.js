@@ -1,5 +1,4 @@
 const { Router } = require("express");
-const { API_VERSION } = require('../config/config');
 const authMdw = require("../middleware/auth.middleware");
 const handlePolicies = require("../middleware/handlePolicies.middleware");
 const { policies } = require('../middleware/constants');
