@@ -1,5 +1,6 @@
 const productsModel = require("../models/products.model");
 const {ERRORS, CustomError } = require('../../services/errors/errors')
+const { Logger } = require('../../helpers');
 
 class ProductManager {
     constructor() {
@@ -10,10 +11,7 @@ class ProductManager {
         try {
             return await productsModel.findOne(fields);
         }catch(error){
-            console.log(
-                "🚀 ~ file: Product.manager.js:15 ~ Product ~ getProductByFields=async ~ error:",
-                error
-            );
+            Logger.error("🚀 ~ file: Product.manager.js:15 ~ Product ~ getProductByFields=async ~ error:",error)
             CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not get products with the query provided', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
@@ -21,22 +19,19 @@ class ProductManager {
         try {
             return await productsModel.find().limit(limit);
         }catch(error){
-            console.log(
-                "🚀 ~ file: Product.manager.js:15 ~ Product ~ getProductByFields=async ~ error:",
-                error
-            );
+            Logger.error("🚀 ~ file: Product.manager.js:15 ~ Product ~ getProductsWithLimit=async ~ error:",error)
             CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not get products with the limit provided', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
 
     addProduct = async (product) => {
         if(!product.code || product.title.length === 0 || product.description.length === 0 || product.category.length === 0 || !product.productId || product.productId.length === 0) {
-            console.log('Product can not be created without all the fields');
+            Logger.error("Product can not be created without all the fields",error)
             return null;
         }
         const existingProduct = await this.getProductByFields({ code: product.code });
         if(existingProduct){
-            console.log('Product already exists');
+            Logger.error("Product already exists",error)
             return null;
         }
         
@@ -44,10 +39,7 @@ class ProductManager {
             return await productsModel.create(product);
 
         } catch (error) {
-            console.log(
-                "🚀 ~ file: Product.manager.js:45 ~ Product ~ addProduct=async ~ error:",
-                error
-            );
+            Logger.error("🚀 ~ file: Product.manager.js:15 ~ Product ~ addProduct=async ~ error:",error)
             CustomError.createError(ERRORS.CREATION_ERROR.name,'','Can not create product with the values provided', ERRORS.CREATION_ERROR.code)
         }
 
@@ -60,26 +52,19 @@ class ProductManager {
             }
             return await productsModel.paginate(query, { limit: limit, page: page, lean: true }) ?? null;
         } catch (error) {
-            console.log(
-                "🚀 ~ file: product.manager.js:21 ~ ProductManager ~ getProducts= ~ error:",
-                error
-            );
+            Logger.error("🚀 ~ file: Product.manager.js:15 ~ Product ~ getProducts=async ~ error:",error)
             CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not get products with the query provided', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     };
     
     getProductById = async (id = '') => {
         if (!id || typeof (id) !== "string" || id.length < 1) {
-            console.log(id,'+++++++++++')
             throw Error("El id ingresado es incorrecto");
         }
         try {
             return await productsModel.findOne({ productId: id }) ?? null;
         } catch (error) {
-            console.log(
-                "🚀 ~ file: product.manager.js:21 ~ ProductManager ~ getProductById=async ~ error:",
-                error
-            );
+            Logger.error("🚀 ~ file: Product.manager.js:15 ~ Product ~ getProductById=async ~ error:",error)
             CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not get products with the id provided', ERRORS.INVALID_PARAMETER_ERROR.code)
 
         }
@@ -95,10 +80,7 @@ class ProductManager {
                 productId: id
             })
         } catch (error) {
-            console.log(
-                "🚀 ~ file: product.manager.js:21 ~ ProductManager ~ getProductById=async ~ error:",
-                error
-            );
+            Logger.error("🚀 ~ file: Product.manager.js:15 ~ Product ~ deleteProduct=async ~ error:",error)
             CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not delete products with the id provided', ERRORS.INVALID_PARAMETER_ERROR.code)
 
         }
@@ -110,7 +92,7 @@ class ProductManager {
         }
         const propsArr = Object.keys(newProps);
         if (propsArr.length === 0) {
-            console.warn(`No hay props para actualizar para el producto con id ${id}`)
+            Logger.warning(`No hay props para actualizar para el producto con id ${id}`)
             return;
         }
         if(newProps && newProps['code']) {
@@ -132,7 +114,7 @@ class ProductManager {
                     };
                 }
                 else{
-                    console.error(`invalid prop ${prop}. It cant be modified`);
+                    Logger.error(`invalid prop ${prop}. It cant be modified`);
                 }
             });      
             return await productsModel.updateOne({
@@ -142,10 +124,8 @@ class ProductManager {
               $set:{ ...propsToEdit }  
             })
         } catch (error) {
-            console.log(
-                "🚀 ~ file: product.manager.js:21 ~ ProductManager ~ updateproduct=async ~ error:",
-                error
-            );
+            Logger.error("🚀 ~ file: Product.manager.js:15 ~ Product ~ updateProduct=async ~ error:",error)
+
             CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not update products', ERRORS.INVALID_PARAMETER_ERROR.code)
 
         }
