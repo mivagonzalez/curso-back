@@ -1,5 +1,6 @@
 const userModel = require("../models/user.model");
 const {ERRORS, CustomError } = require('../../services/errors/errors')
+const { Logger } = require('../../helpers');
 
 
 class UserManager {
