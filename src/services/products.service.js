@@ -1,3 +1,5 @@
+const { Logger } = require('../helpers')
+
 module.exports = class ProductService {
   constructor(dao) {
     this.dao = dao;
@@ -8,7 +10,7 @@ module.exports = class ProductService {
       const product = await this.dao.addProduct(productDTO);
       return product;
     } catch (error) {
-        console.log('Error adding product', 'Error:', error)
+        Logger.error('Error adding product', 'Error:', error)
         return null;
     }
   };
@@ -18,7 +20,7 @@ module.exports = class ProductService {
       const products = await this.dao.getProducts(limit, page, sort, queryObject);
       return products;
     } catch (error) {
-        console.log('Error getting products' ,'Error:', error)
+        Logger.error('Error getting products' ,'Error:', error)
         return null;
     }
   };
@@ -28,7 +30,7 @@ module.exports = class ProductService {
       const product = await this.dao.getProductById(id);
       return product;
     } catch (error) {
-        console.log('Error getting product with id', id ,'Error:', error)
+        Logger.error('Error getting product with id', id ,'Error:', error)
         return null;
     }
   };
@@ -38,18 +40,17 @@ module.exports = class ProductService {
       const deletedProducts = await this.dao.deleteProduct(pid);
       return deletedProducts;
     } catch (error) {
-        console.log('Error deleting product','Error: ', error)
+        Logger.error('Error deleting product','Error: ', error)
         return null;
     }
   };
 
   updateProduct = async (pid, newProps) => {
-    console.log(newProps, 'NEW PROPSSS----------')
     try {
       const productUpdated = await this.dao.updateProduct(pid, newProps);
       return productUpdated;
     } catch (error) {
-        console.log('Error updating product',pid,'with new props',JSON.stringify(newProps),'Error:', error)
+        Logger.error('Error updating product',pid,'with new props',JSON.stringify(newProps),'Error:', error)
         return null;
     }
   };
@@ -59,7 +60,7 @@ module.exports = class ProductService {
       let result = await this.dao.insertMany(productData);
       return result;
     } catch (error) {
-        console.log('Error inserting many products',JSON.stringify(productData),'Error:', error)
+        Logger.error('Error inserting many products',JSON.stringify(productData),'Error:', error)
         return null;
     }
   };

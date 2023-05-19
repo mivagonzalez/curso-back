@@ -44,8 +44,6 @@ socket.on("newUserConnected", (user, messages) => {
 });
 
 socket.on("loadMessages", async messages => {
-
-  console.log('LLEGUEEE ++++++++++++', messages)
     let log = document.getElementById("messageLogs");
     let messagesStr = "";
     messages.forEach((msg) => {

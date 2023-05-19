@@ -10,8 +10,7 @@ const addProductToCart = async (productId, cartId) => {
     var value = parseInt(document.getElementById("cartCount").textContent) + 1 ;
     document.getElementById("cartCount").textContent = value;
   } catch (error) {
-   console.log('Error. No se pudo agregar el producto. Error:', error) 
-   alert(error)
+    alert(error)
   }
 }
 
