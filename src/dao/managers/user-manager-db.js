@@ -12,10 +12,7 @@ class UserManager {
         try {
             return await userModel.findOne({ email }).populate('cart');
         } catch (error) {
-            console.log(
-                "🚀 ~ file: User.manager.js:21 ~ UserManager ~ getUser=async ~ error:",
-                error
-            );
+            Logger.error("🚀 ~ file: User.manager.js:21 ~ UserManager ~ getUser=async ~ error:", error);
             CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not get user with the provided email ', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
@@ -26,10 +23,7 @@ class UserManager {
         try {
             return await userModel.findById(id).populate('cart');
         } catch (error) {
-            console.log(
-                "🚀 ~ file: User.manager.js:21 ~ UserManager ~ getUserById=async ~ error:",
-                error
-            );
+            Logger.error("🚀 ~ file: User.manager.js:21 ~ UserManager ~ getUserById=async ~ error:", error);
             CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not get user with the provided id ', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
@@ -38,10 +32,8 @@ class UserManager {
         try {
             return await userModel.create({email, password, first_name, last_name, age, password, address, cart, role});
         } catch (error) {
-            console.log(
-                "🚀 ~ file: User.manager.js:21 ~ UserManager ~ add=async ~ error:",
-                error
-            );
+            Logger.error("🚀 ~ file: User.manager.js:21 ~ UserManager ~ addUser=async ~ error:", error);
+
             CustomError.createError(ERRORS.CREATION_ERROR.name,'','Can not create new user', ERRORS.CREATION_ERROR.code)
         }
     }
