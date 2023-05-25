@@ -1,8 +1,7 @@
 
 const { UserService } = require('../services');
 const { CurrentUserDTO } = require('../dto')
-const { Logger } = require('../helpers')
-
+const { Logger, sendMail } = require('../helpers')
 class SessionController {
 
     logout = async (req, res) => {
@@ -72,6 +71,10 @@ class SessionController {
         } catch (error) {
             Logger.error("🚀 ~ file: session.routes.js:115 ~ error:", error);
         }
+    }
+
+    restorePassword = async (req, res) => {
+        res.render("restore-PW-mail-sent")
     }
 }
 

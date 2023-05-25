@@ -1,5 +1,6 @@
 const { ProductsService, CartService, UserService } = require('../services')
 const { Logger } = require('../helpers')
+const { sendMail } = require('../helpers')
 
 class ViewsController {
 
@@ -151,11 +152,12 @@ class ViewsController {
         }
     };
 
-    getLogin = async (_, res) => {
+    getLogin = async (req, res) => {
         try {
+            await sendMail()
             return res.render('login');
         } catch (error) {
-            Logger.error("Error al ingresar al login")
+            Logger.error("Error al ingresar al login", error)
         }
     };
 
@@ -166,6 +168,14 @@ class ViewsController {
     getFailLogin = async (req, res) => {
         res.render("fail-login");
     };
+
+    getRestorePassword = (req,res) => {
+        res.render("restore-password");
+    }
+
+    getRestorePWMailSent = (req,res) => {
+        res.render("restore-pw-mail-sent")
+    }
 
 }
 

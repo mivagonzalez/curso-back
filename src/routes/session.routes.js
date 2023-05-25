@@ -24,6 +24,7 @@ class SessionRoutes {
     this.router.get(`${this.path}/github`,passport.authenticate("github", { scope: ["user:email"] }), handlePolicies([policies.PUBLIC]), async (req, res) => {});
     this.router.post(`${this.path}/login`,passport.authenticate('login',{failureRedirect:'faillogin'}), handlePolicies([policies.PUBLIC]), this.controller.login);
     this.router.get(`${this.path}/github/callback`,passport.authenticate("github", { failureRedirect: "/login" }), handlePolicies([policies.PUBLIC]),this.controller.githubCallback);
+    this.router.post(`${this.path}/restorePassword`, handlePolicies([policies.PUBLIC]), this.controller.restorePassword);
   }
 }
 
