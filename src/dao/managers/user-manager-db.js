@@ -16,6 +16,7 @@ class UserManager {
             CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not get user with the provided email ', ERRORS.INVALID_PARAMETER_ERROR.code)
         }
     }
+
     getUserById = async (id = '') => {
         if (!id || typeof (id) !== "string" || id.length < 5) {
             throw Error("El id ingresado es incorrecto");
@@ -38,6 +39,22 @@ class UserManager {
         }
     }
 
+    updateUserPassword = async (userId, newPassword) => {
+        try {
+            if (!newPassword || typeof (newPassword) !== "string" || newPassword.length < 8) {
+                throw Error("El password ingresado es invalido");
+            }
+            const user = await getUserById(userId);
+            if(!user) {
+                throw Error("El usuario ingresado no existe");
+            }
+            return await userModel.updateOne({_id: userId}, {password: newPassword})
+        } catch (error) {
+            Logger.error("🚀 ~ file: User.manager.js:21 ~ UserManager ~ addUser=async ~ error:", error);
+
+            CustomError.createError(ERRORS.CREATION_ERROR.name,'','Can not create new user', ERRORS.CREATION_ERROR.code)
+        }
+    }
 
 };
 

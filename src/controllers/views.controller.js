@@ -1,4 +1,4 @@
-const { ProductsService, CartService, UserService } = require('../services')
+const { ProductsService, CartService, UserService, RestorePasswordRequestService } = require('../services')
 const { Logger } = require('../helpers')
 const { sendMail } = require('../helpers')
 
@@ -170,11 +170,28 @@ class ViewsController {
     };
 
     getRestorePassword = (req,res) => {
-        res.render("restore-password");
+        res.render("restore-password-mail");
     }
 
     getRestorePWMailSent = (req,res) => {
         res.render("restore-pw-mail-sent")
+    }
+
+    restorePassword = async (req, res) => {
+        try {
+            const { userId } = req.params;
+            if (!userId || typeof (userId) !== "string" || userId.length < 5) {
+                throw Error("El userId ingresado es incorrecto");
+            }
+            const restorePasswordRequest = await RestorePasswordRequestService.getRestorePasswordRequest(userId)
+            if(restorePasswordRequest && restorePasswordRequest.expiresAt > Date.now()) {
+                return res.render("restore-password", {userId: userId});
+            } else {
+                res.render("restore-password-expired")
+            }
+            } catch (error) {
+            Logger.error("🚀 ~ file: session.routes.js:115 createRestorePasswordRequest ~ error:", error);
+        }
     }
 
 }

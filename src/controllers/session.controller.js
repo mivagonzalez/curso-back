@@ -1,7 +1,8 @@
 
-const { UserService } = require('../services');
+const { UserService, RestorePasswordRequestService } = require('../services');
 const { CurrentUserDTO } = require('../dto')
-const { Logger, sendMail } = require('../helpers')
+const { Logger } = require('../helpers')
+const { createHash } = require('../utils')
 class SessionController {
 
     logout = async (req, res) => {
@@ -73,8 +74,71 @@ class SessionController {
         }
     }
 
+    createRestorePasswordRequest = async (req, res) => {
+        try {
+            const { email } = req.body;
+            if (!email || typeof (email) !== "string" || email.length < 5) {
+                throw Error("El email ingresado es incorrecto");
+            }
+            const user = await UserService.getUser(email);
+            if(user && user._id) {
+                const restorePasswordRequest = await RestorePasswordRequestService.getRestorePasswordRequest(user._id)
+                if(restorePasswordRequest && restorePasswordRequest.expiresAt > Date.now()) {
+                    Logger.info("The restore password email is already sent")
+                    return res.render("restore-PW-mail-sent")
+                }
+                await RestorePasswordRequestService.createRequest(user._id);
+                await RestorePasswordRequestService.sendRestorePasswordMail(email, user._id)
+                Logger.info("Restore password mail created")
+            }else {
+                Logger.warning("The user does not exist")
+            }
+            return res.render("restore-PW-mail-sent")
+        } catch (error) {
+            Logger.error("🚀 ~ file: session.routes.js:115 createRestorePasswordRequest ~ error:", error);
+            return res.status(400).json({
+                message: `Password was not updated`,
+                status: "Error",
+                error: error
+            });
+        }
+    }
+
     restorePassword = async (req, res) => {
-        res.render("restore-PW-mail-sent")
+        try {
+            const { password } = req.body;
+            const { userId } = req.params;
+
+            if (!password || typeof (password) !== "string" || password.length < 8) {
+                return res.status(400).json({
+                    message: `password is not valid`,
+                    status:"Error",
+                    password: password,
+                });
+            }
+            const user = await UserService.getUserById(userId);
+            if(!user) {
+                return res.status(400).json({
+                    message: `user does not exist`,
+                    status: "Error",
+                });
+            }
+            const encriptedPassword = createHash(password);
+            const updatedUser = await UserService.updateUserPassword(userId, encriptedPassword)
+            if(updatedUser) {
+                return res.redirect('password-restored')
+            }
+            return res.status(400).json({
+                message: `Password was not updated`,
+                status: "Error",
+            });
+        } catch (error) {
+            return res.status(400).json({
+                message: `Password was not updated`,
+                status: "Error",
+                error: error
+            });
+        }
     }
 }
 

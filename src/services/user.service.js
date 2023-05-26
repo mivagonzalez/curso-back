@@ -39,6 +39,15 @@ module.exports = class UserService {
         return null;
     }
   };
+
+  updateUserPassword = async (userId, newPassword) => {
+    try {
+      return await this.dao.updateUserPassword(userId, newPassword);
+    } catch (error) {
+      Logger.error('Error updating password', error)
+      return null;
+    }
+  }
 }
 
 
