@@ -25,6 +25,8 @@ const uploader = multer({
 
 const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 
+const arePasswordsEqual= (password, newPassword) => bcrypt.compareSync(password, newPassword);
+
 const isValidPassword = (user, password) => bcrypt.compareSync(password, user.password);
 
 const generateProducts = (productsAmount) => {
@@ -50,4 +52,4 @@ const generateProducts = (productsAmount) => {
   return products;
 };
 
-module.exports = { uploader, createHash, isValidPassword, generateProducts };
+module.exports = { uploader, createHash, isValidPassword, generateProducts, arePasswordsEqual };

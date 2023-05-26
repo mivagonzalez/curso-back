@@ -2,7 +2,7 @@
 const { UserService, RestorePasswordRequestService } = require('../services');
 const { CurrentUserDTO } = require('../dto')
 const { Logger } = require('../helpers')
-const { createHash } = require('../utils')
+const { createHash, arePasswordsEqual } = require('../utils')
 class SessionController {
 
     logout = async (req, res) => {
@@ -120,6 +120,13 @@ class SessionController {
             if(!user) {
                 return res.status(400).json({
                     message: `user does not exist`,
+                    status: "Error",
+                });
+            }
+            const passwordsEqual = arePasswordsEqual(user.password, password)
+            if(passwordsEqual) {
+                return res.status(400).json({
+                    message: `The new password is equal to the current password`,
                     status: "Error",
                 });
             }
