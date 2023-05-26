@@ -1,17 +1,22 @@
 const nodemailer = require("nodemailer");
-
+const {
+    MAIL_USER,
+    MAIL_PORT,
+    MAIL_SERVICE,
+    MAIL_PASSWORD
+} = require('../config/config')
 const transporter = nodemailer.createTransport({
-    service: "gmail",
-    port: 465,
-    user: "cursocoder.mig@gmail.com",
+    service: MAIL_SERVICE,
+    port: MAIL_PORT,
+    user: MAIL_USER,
     secure: true,
     auth: {
-        user: "cursocoder.mig@gmail.com",
-        pass: "zsjkgkqadqrrvzrv",
+        user: MAIL_USER,
+        pass: MAIL_PASSWORD,
     },
 });
 
-const sendMail = async (to = "cursocoder.mig@gmail.com", subject = '', html = '', attachments = null) => await transporter.sendMail({
+const sendMail = async (to = MAIL_USER, subject = '', html = '', attachments = null) => await transporter.sendMail({
     from: "cursocoder.mig@gmail.com",
     to: to || "cursocoder.mig@gmail.com",
     subject: subject || "Sujeto de Ejemplo",
