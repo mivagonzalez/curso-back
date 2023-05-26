@@ -62,7 +62,7 @@ const initializePassport = () => {
 
     passport.use('register', new localStrategy(
         {passReqToCallback: true, usernameField: 'email'}, async (req, username, pw, done) => {
-            const { first_name, last_name, email, age, password, address, role = 'user' } = req.body;
+            const { first_name, last_name, email, age, password, address, role = ROLES.USER } = req.body;
             try {
                 let user = await UserService.getUser(username);
                 if(user) {

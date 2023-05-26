@@ -1,6 +1,6 @@
 const userModel = require("../models/user.model");
 const {ERRORS, CustomError } = require('../../services/errors/errors')
-const { Logger } = require('../../helpers');
+const { Logger, ROLES } = require('../../helpers');
 
 
 class UserManager {
@@ -29,7 +29,7 @@ class UserManager {
         }
     }
 
-    addUser = async ({email, first_name, last_name, age, password, address, cart, role = 'user'}) => {
+    addUser = async ({email, first_name, last_name, age, password, address, cart, role = ROLES.USER }) => {
         try {
             return await userModel.create({email, password, first_name, last_name, age, password, address, cart, role});
         } catch (error) {

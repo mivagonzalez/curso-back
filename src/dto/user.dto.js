@@ -1,5 +1,6 @@
 const { createHash } = require('../utils');
 
+const { ROLES } = require('../helpers')
 class UserDTO {
     constructor(user){
         this.email = user.email;
@@ -9,7 +10,7 @@ class UserDTO {
         this.age = user.age;
         this.address = user.address;
         this.cart = user.cart;
-        this.role = user.role === 'admin' ? 'admin' : 'user';
+        this.role = ROLES[user.role] || ROLES.USER;
     }
 }
 

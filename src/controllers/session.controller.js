@@ -55,6 +55,7 @@ class SessionController {
             }
             delete req.user.password
             req.session.user = req.user;
+            console.log(req.user)
             return res.redirect('/products');
         } catch (error) {
             Logger.error(
