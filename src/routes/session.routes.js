@@ -1,5 +1,4 @@
 const { Router } = require("express");
-const ProductManager = require("../dao/managers/product-manager-db");
 const passport = require("passport");
 const { API_VERSION } = require('../config/config');
 const authMdw = require("../middleware/auth.middleware");

@@ -55,6 +55,25 @@ class UserManager {
             CustomError.createError(ERRORS.CREATION_ERROR.name,'','Can not create new user', ERRORS.CREATION_ERROR.code)
         }
     }
+    
+    updateRole = async (userId, newRole) => {
+        try {
+            if (!newRole || typeof (newRole) !== "string" || !Object.values(ROLES).includes(newRole)) {
+                throw Error("El rol ingresado es invalido");
+            }
+            const user = await this.getUserById(userId);
+            if(!user) {
+                throw Error("El usuario ingresado no existe");
+            }
+            return await userModel.findOneAndUpdate({_id: userId}, {role: newRole},{new: true})
+        } catch (error) {
+            Logger.error("🚀 ~ file: User.manager.js:21 ~ UserManager ~ addUser=async ~ error:", error);
+
+            CustomError.createError(ERRORS.CREATION_ERROR.name,'','Can not change Role', ERRORS.CREATION_ERROR.code)
+        }
+    }
+
+
 
 };
 

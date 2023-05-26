@@ -76,7 +76,6 @@ class CartController {
         try {
             const { cid, pid } = req.params;
             const product = await ProductsService.getProductById(pid);
-            console.log(req.user.role,req.user.email, product.owner)
             if(req.user.role === ROLES.PREMIUM) {
                 if(product.owner === req.user.email) {
                     return res.status(400).json({

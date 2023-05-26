@@ -48,6 +48,15 @@ module.exports = class UserService {
       return null;
     }
   }
+  
+  updateRole = async (userId, newRole) => {
+    try {
+      return await this.dao.updateRole(userId, newRole);
+    } catch (error) {
+      Logger.error('Error updating role', error)
+      return null;
+    }
+  }
 }
 
 
