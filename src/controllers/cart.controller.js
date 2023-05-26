@@ -4,7 +4,7 @@ const { ProductsService } = require('../services');
 const {TicketService} = require('../services');
 const moment = require('moment')
 const {TicketDTO} = require('../dto')
-const { Logger } = require('../helpers')
+const { Logger, ROLES } = require('../helpers')
 class CartController {
 
     validatePIDParam = async (_, res, next, pid) => {
@@ -75,7 +75,18 @@ class CartController {
     addProductToCart = async (req, res) => {
         try {
             const { cid, pid } = req.params;
-
+            const product = await ProductsService.getProductById(pid);
+            console.log(req.user.role,req.user.email, product.owner)
+            if(req.user.role === ROLES.PREMIUM) {
+                if(product.owner === req.user.email) {
+                    return res.status(400).json({
+                        message: "Product not added",
+                        error: `You cant add products you own to the cart`,
+                        products: null,
+                        ok: false
+                    });
+                }
+            }
             const updateDoc = await CartService.addProductToCart(cid, pid);
             if (updateDoc && updateDoc.modifiedCount > 0) {
                 const products = await CartService.getProductsByCart(cid);
