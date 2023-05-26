@@ -16,14 +16,14 @@ class CartsRoute {
   initCoursesRoutes() {
     this.router.param("cid", this.controller.validateCIDParam);
     this.router.param("pid", this.controller.validatePIDParam);
-    this.router.get(`${this.path}/:cid`, authMdw, handlePolicies([policies.USER]), this.controller.getProductsByCart);
-    this.router.post(`${this.path}`, authMdw, handlePolicies([policies.USER]), this.controller.createCart);
-    this.router.post(`${this.path}/:cid/product/:pid`, authMdw, handlePolicies([policies.USER]), this.controller.addProductToCart);
-    this.router.put(`${this.path}/:cid/product/:pid`, authMdw, handlePolicies([policies.USER]), this.controller.validateQuantity,this.controller.updateProductQuantity);
-    this.router.delete(`${this.path}/:cid/product/:pid`, authMdw, handlePolicies([policies.USER]), this.controller.deleteProductFromCart);
-    this.router.delete(`${this.path}/:cid`, authMdw, handlePolicies([policies.USER]), this.controller.deleteAllproductsFromCart);
-    this.router.put(`${this.path}/:cid`, authMdw,this.controller.validateNewProducts, handlePolicies([policies.USER]), this.controller.updateProductsFromCart);
-    this.router.post(`${this.path}/:cid/purchase`, authMdw, handlePolicies([policies.USER]), this.controller.purchaseProducts);
+    this.router.get(`${this.path}/:cid`, authMdw, handlePolicies([policies.USER, policies.PREMIUM]), this.controller.getProductsByCart);
+    this.router.post(`${this.path}`, authMdw, handlePolicies([policies.USER, policies.PREMIUM]), this.controller.createCart);
+    this.router.post(`${this.path}/:cid/product/:pid`, authMdw, handlePolicies([policies.USER, policies.PREMIUM]), this.controller.addProductToCart);
+    this.router.put(`${this.path}/:cid/product/:pid`, authMdw, handlePolicies([policies.USER, policies.PREMIUM]), this.controller.validateQuantity,this.controller.updateProductQuantity);
+    this.router.delete(`${this.path}/:cid/product/:pid`, authMdw, handlePolicies([policies.USER, policies.PREMIUM]), this.controller.deleteProductFromCart);
+    this.router.delete(`${this.path}/:cid`, authMdw, handlePolicies([policies.USER, policies.PREMIUM,]), this.controller.deleteAllproductsFromCart);
+    this.router.put(`${this.path}/:cid`, authMdw,this.controller.validateNewProducts, handlePolicies([policies.USER, policies.PREMIUM]), this.controller.updateProductsFromCart);
+    this.router.post(`${this.path}/:cid/purchase`, authMdw, handlePolicies([policies.USER, policies.PREMIUM]), this.controller.purchaseProducts);
   }
 }
 

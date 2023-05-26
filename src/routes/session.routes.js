@@ -16,9 +16,9 @@ class SessionRoutes {
   }
 
   initCoursesRoutes() {
-    this.router.get(`${this.path}/logout`, authMdw, handlePolicies([policies.ADMIN, policies.USER]), this.controller.logout);
+    this.router.get(`${this.path}/logout`, authMdw, handlePolicies([policies.ADMIN, policies.USER, policies.PREMIUM]), this.controller.logout);
     this.router.get(`${this.path}/faillogin`, handlePolicies([policies.PUBLIC]), this.controller.faillogin)
-    this.router.get(`${this.path}/current`, authMdw, handlePolicies([policies.ADMIN, policies.USER]), this.controller.current)
+    this.router.get(`${this.path}/current`, authMdw, handlePolicies([policies.ADMIN, policies.PREMIUM, policies.USER]), this.controller.current)
     this.router.post(`${this.path}/register`,passport.authenticate('register', {failureRedirect: '/failRegister'}), this.controller.register);
     this.router.get(`${this.path}/failRegister`, handlePolicies([policies.PUBLIC]), this.controller.failRegister);
     this.router.get(`${this.path}/github`,passport.authenticate("github", { scope: ["user:email"] }), handlePolicies([policies.PUBLIC]), async (req, res) => {});

@@ -14,8 +14,8 @@ class TicketRoutes {
   }
 
   initCoursesRoutes() {
-    this.router.get(`${this.path}`, authMdw, handlePolicies([policies.USER]), this.controller.getTicket);
-    this.router.post(`${this.path}`, authMdw, handlePolicies([policies.USER]), this.controller.createTicket);
+    this.router.get(`${this.path}`, authMdw, handlePolicies([policies.USER, policies.PREMIUM]), this.controller.getTicket);
+    this.router.post(`${this.path}`, authMdw, handlePolicies([policies.USER, policies.PREMIUM]), this.controller.createTicket);
     
   }
 }

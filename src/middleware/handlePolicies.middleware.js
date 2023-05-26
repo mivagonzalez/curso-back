@@ -1,4 +1,5 @@
 const handlePolicies = (policies = []) => (req, res, next) => {
+  console.log(policies)
   if(policies.length === 0){
     return next();
   }

@@ -3,7 +3,7 @@ const { ProductsService } = require('../services')
 const { CartService } = require('../services')
 const { API_VERSION } = require('../config/config');
 const { ProductDTO } = require('../dto')
-const { Logger } = require('../helpers')
+const { Logger, ROLES } = require('../helpers')
 
 class ProductsController {
 
@@ -112,7 +112,7 @@ class ProductsController {
     addProduct = async (req, res) => {
         try {
             const { title, description, code, price, status, stock, category, thumbnails } = req.body;
-            const productDTO = new ProductDTO({ title, description, code, price, status, stock, category, thumbnails, owner: req.user._id })
+            const productDTO = new ProductDTO({ title, description, code, price, status, stock, category, thumbnails, owner: req.user.email })
             const product = await ProductsService.addProduct(productDTO);
             if (product) {
                 return res.json({
@@ -207,19 +207,32 @@ class ProductsController {
     deleteProduct = async (req, res) => {
         try {
             const { pid } = req.params;
-            const deletedProducts = await ProductsService.deleteProduct(pid);
-            const deletedProductsFromAllcarts = await CartService.deleteProductFromAllCarts(pid);
-            if (deletedProducts && deletedProducts.deletedCount > 0 && deletedProductsFromAllcarts && deletedProductsFromAllcarts.modifiedCount > 0) {
-                return res.json({
-                    ok: true,
-                    message: `Product deleted`,
-                    deletedProducts: deletedProducts,
-                    deletedProductsFromAllcarts: deletedProductsFromAllcarts
-                });
+            const product = await ProductsService.getProductById(pid);
+            if(req.user.role === ROLES.PREMIUM){
+                if(product.owner !== req.user.email){
+                    return res.status(401).json({
+                        ok: false,
+                        message: `product not deleted`,
+                        error: "You can't delete products you don't own."
+                    });
+                }
+            }
+            if(req.user.role !== ROLES.USER) {
+                const deletedProducts = await ProductsService.deleteProduct(pid);
+                const deletedProductsFromAllcarts = await CartService.deleteProductFromAllCarts(pid);
+                if (deletedProducts && deletedProducts.deletedCount > 0 && deletedProductsFromAllcarts && deletedProductsFromAllcarts.acknowledged === true) {
+                    return res.json({
+                        ok: true,
+                        message: `Product deleted`,
+                        deletedProducts: deletedProducts,
+                        deletedProductsFromAllcarts: deletedProductsFromAllcarts
+                    });
+                }
             }
             return res.status(500).json({
                 ok: false,
                 message: `product not deleted`,
+                error: "You are not entittled to delete the product"
             });
         } catch (error) {
             Logger.error(
@@ -232,24 +245,36 @@ class ProductsController {
     updateProduct = async (req, res) => {
         try {
             const { pid } = req.params;
-            const newProps = req.body;
-            const productUpdated = await ProductsService.updateProduct(pid, newProps);
-            if (productUpdated && productUpdated.modifiedCount > 0) {
-                return res.json({
-                    ok: true,
-                    message: `product updated`
-                });
-
+            const product = await ProductsService.getProductById(pid);
+            if(req.user.role === ROLES.PREMIUM){
+                if(product.owner !== req.user.email){
+                    return res.status(401).json({
+                        ok: false,
+                        message: `product not updated`,
+                        error: "You can't update products you don't own."
+                    });
+                }
             }
-            return res.status(400).json({
-                ok: false,
-                message: `product not updated`,
-                error: `No se puede actualizar el producto con productId ${productId}`
-            });
-        } catch (error) {
-            Logger.error(
-                "🚀 ~ file: product.routes.js:43 ~ ProductRoute ~ this.router.put ~ error:",
-                error
+            if(req.user.role !== ROLES.USER) {
+                const newProps = req.body;
+                const productUpdated = await ProductsService.updateProduct(pid, newProps);
+                if (productUpdated && productUpdated.modifiedCount > 0) {
+                    return res.json({
+                        ok: true,
+                        message: `product updated`
+                    });
+                    
+                }
+            }
+                return res.status(401).json({
+                    ok: false,
+                    message: `product not updated`,
+                    error: `No se puede actualizar el producto con productId ${pid}. No tenes permisos para hacerlo`
+                });
+            } catch (error) {
+                Logger.error(
+                    "🚀 ~ file: product.routes.js:43 ~ ProductRoute ~ this.router.put ~ error:",
+                    error
             );
         }
     }
