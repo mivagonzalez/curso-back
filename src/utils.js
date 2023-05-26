@@ -25,7 +25,7 @@ const uploader = multer({
 
 const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 
-const arePasswordsEqual= (password, newPassword) => bcrypt.compareSync(password, newPassword);
+const arePasswordsEqual= (password, newPassword) => bcrypt.compareSync(newPassword, password);
 
 const isValidPassword = (user, password) => bcrypt.compareSync(password, user.password);
 
