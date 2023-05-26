@@ -44,7 +44,7 @@ class UserManager {
             if (!newPassword || typeof (newPassword) !== "string" || newPassword.length < 8) {
                 throw Error("El password ingresado es invalido");
             }
-            const user = await getUserById(userId);
+            const user = await this.getUserById(userId);
             if(!user) {
                 throw Error("El usuario ingresado no existe");
             }

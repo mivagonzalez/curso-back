@@ -126,7 +126,8 @@ class SessionController {
             const encriptedPassword = createHash(password);
             const updatedUser = await UserService.updateUserPassword(userId, encriptedPassword)
             if(updatedUser) {
-                return res.redirect('password-restored')
+                await RestorePasswordRequestService.deleteRequest(userId);
+                return res.redirect('/passwordRestored')
             }
             return res.status(400).json({
                 message: `Password was not updated`,

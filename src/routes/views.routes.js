@@ -23,9 +23,10 @@ class ViewsRoutes {
     this.router.get('/login', handlePolicies([policies.PUBLIC]), this.controller.getLogin);
     this.router.get("/register", handlePolicies([policies.PUBLIC]), this.controller.getRegister);
     this.router.get("/faillogin", handlePolicies([policies.PUBLIC]), this.controller.getFailLogin);
-    this.router.get("/restorePasswordRequest", handlePolicies([policies.PUBLIC]), this.controller.getRestorePassword);
+    this.router.get("/restorePasswordRequest", handlePolicies([policies.PUBLIC]), this.controller.getRestorePasswordMail);
     this.router.get("/restorePasswordMailSent", handlePolicies([policies.PUBLIC]), this.controller.getRestorePWMailSent);
-    this.router.get(`${this.path}restorePassword/:userId`, handlePolicies([policies.PUBLIC]), this.controller.restorePassword);
+    this.router.get(`${this.path}restorePassword/:userId`, handlePolicies([policies.PUBLIC]), this.controller.getRestorePassword);
+    this.router.get(`${this.path}passwordRestored`, handlePolicies([policies.PUBLIC]), this.controller.getPasswordRestored);
   }
 }
 

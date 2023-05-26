@@ -18,11 +18,20 @@ module.exports = class RestorePasswordRequestService {
 
   getRestorePasswordRequest = async userId => {
     try {
-      console.log(this.dao)
         const restorePasswordRequest = await this.dao.getRestorePasswordRequest(userId)
         return restorePasswordRequest;
     } catch (error) {
         Logger.error('Error getting restore password request in service', userId ,'Error:', error)
+        return null;
+    }
+  };
+  
+  deleteRequest = async userId => {
+    try {
+        const deletedRequest = await this.dao.deleteRequest(userId);
+        return deletedRequest;
+    } catch (error) {
+        Logger.error('Error deleting request for userId: ', userId ,'Error:', error)
         return null;
     }
   };

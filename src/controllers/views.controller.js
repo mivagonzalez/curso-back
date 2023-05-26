@@ -154,7 +154,6 @@ class ViewsController {
 
     getLogin = async (req, res) => {
         try {
-            await sendMail()
             return res.render('login');
         } catch (error) {
             Logger.error("Error al ingresar al login", error)
@@ -169,31 +168,38 @@ class ViewsController {
         res.render("fail-login");
     };
 
-    getRestorePassword = (req,res) => {
+    getRestorePasswordMail = (req, res) => {
         res.render("restore-password-mail");
     }
 
-    getRestorePWMailSent = (req,res) => {
+    getRestorePWMailSent = (req, res) => {
         res.render("restore-pw-mail-sent")
     }
 
-    restorePassword = async (req, res) => {
+    getRestorePassword = async (req, res) => {
         try {
             const { userId } = req.params;
             if (!userId || typeof (userId) !== "string" || userId.length < 5) {
                 throw Error("El userId ingresado es incorrecto");
             }
             const restorePasswordRequest = await RestorePasswordRequestService.getRestorePasswordRequest(userId)
-            if(restorePasswordRequest && restorePasswordRequest.expiresAt > Date.now()) {
-                return res.render("restore-password", {userId: userId});
+            if (restorePasswordRequest && restorePasswordRequest.expiresAt > Date.now()) {
+                return res.render("restore-password", { userId: userId });
             } else {
                 res.render("restore-password-expired")
             }
-            } catch (error) {
+        } catch (error) {
             Logger.error("🚀 ~ file: session.routes.js:115 createRestorePasswordRequest ~ error:", error);
         }
     }
 
+    getPasswordRestored = async (req, res) => {
+        try {
+            return res.render('password-restored')
+        } catch (error) {
+            Logger.error("🚀 ~ file: session.routes.js:115 createRestorePasswordRequest ~ error:", error);
+        }
+    }
 }
 
 module.exports = ViewsController;
