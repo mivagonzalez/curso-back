@@ -149,7 +149,7 @@ components:
       type: object
       properties:
         quantity:
-          type: Number
+          type: number
           description: Quantity
     updateProducts:
       description: Array de objetos a actualizar.

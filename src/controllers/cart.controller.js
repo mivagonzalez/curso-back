@@ -141,11 +141,18 @@ class CartController {
         try {
             const { cid, pid } = req.params;
             const { quantity } = req.body;
-            await CartService.updateProductQuantity(cid, pid, quantity);
-            const products = await CartService.getProductsByCart(cid);
-            return res.status(200).json({
-                message: `Quantity updated Successfully`,
-                products: products,
+            const updated = await CartService.updateProductQuantity(cid, pid, quantity);
+            if(updated) {
+                const products = await CartService.getProductsByCart(cid);
+                return res.status(200).json({
+                    message: `Quantity updated Successfully`,
+                    products: products,
+                });
+                
+            }
+            return res.status(400).json({
+                message: `Quantity not updated. Cart or product id are not correct`,
+                products: null,
             });
 
         } catch (error) {
