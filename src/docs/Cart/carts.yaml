@@ -1,0 +1,203 @@
+paths:
+  /api/v1/carts/{cid}:
+    get:
+      summary: Obtiene todos los productos de un carrito en especifico.
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: Id del carrito del que se desean obtener los productos
+        schema:
+          $type: String
+      responses:
+        "200":
+          description: El carrito se encontro correctamente en la base de datos.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Product'
+        "400":
+          description: No se encontro el carrito.
+    put:
+      summary: Actualiza los productos que se encuentran en un carrito. 
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: Id del carrito del que se desean obtener los productos
+        schema:
+          $type: String
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/updateProducts'
+      responses:
+        "200":
+          description: Productos actualizados con exito para el carrito solicitado
+          content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#components/schemas/Product'
+        "400":
+          description: No se encontro el carrito o no se pudieron actualizar los productos
+    delete:
+      summary: Elimina todos los productos de un carrito.
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: Id del carrito del que se desean obtener los productos
+        schema:
+          $type: String
+      responses:
+        "200":
+          description: Se eliminaron los productos del carrito. Always returns an empty array
+          content:
+              application/json:
+                schema:
+                  type: array
+                  items: {}
+  /api/v1/carts:
+    post:
+      summary: Crea un nuevo carrito
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: El nuevo carrito se creo con exito y se guardo en la base de datos
+          content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#components/schemas/Cart'        
+        "500":
+          description: Error interno. No se pudo crear el carrito o no se guardo en la base de datos.
+  /api/v1/carts/{cid}/product/{pid}: 
+    post:
+      summary: Agrega un producto al carrito.
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: Id del carrito del que se desean agregar los productos
+        schema:
+          $type: String
+      - name: pid
+        in: path
+        required: true
+        description: Id del producto que se desea agregar al carrito
+        schema:
+          $type: String
+      responses:
+        "200":
+          description: Se agrego el producto al carrito y se guardo en la base de datos
+          content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#components/schemas/Product'
+        "400":
+          description: No se pudo agregar el producto al carrito. El id del producto es incorrecto o el id del carrito es incorrecto
+        "401":
+          description: Usted no tiene permiso para agregar este producto al carrito
+    put:
+      summary: Actualiza la cantidad de un producto que hay en un carrito.
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: Id del carrito del que se desea editar los productos
+        schema:
+          $type: String
+      - name: pid
+        in: path
+        required: true
+        description: Id del producto que se desea editar del carrito
+        schema:
+          $type: String
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/updateQuantity'
+      responses:
+        "200":
+          description: Se actualizo la cantidad de productos en el carrito con exito
+          content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#components/schemas/Product'
+        "400":
+          description: No se pudo actualizar la cantidad de productos en el carrito. La cantidad enviada es incorrecta, el id del producto es incorrecto o el carrito id del carrito es incorrecto
+    delete:
+      summary: Elimina una unidad de un producto en particular de un carrito.
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: Id del carrito del que se desean eliminar los productos
+        schema:
+          $type: String
+      - name: pid
+        in: path
+        required: true
+        description: Id del producto que se desea eliminar del carrito
+        schema:
+          $type: String
+      responses:
+        "200":
+          description: Se elimino el producto del carrito correctamente.
+          content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#components/schemas/Product'
+        "400":
+          description: No se puedo eliminar el producto del carrito. No existe el producto, o el carrito.
+  /api/v1/carts/:cid/purchase:
+    post:
+      summary: Realiza la compra de los productos que se encuentran en un carrito.
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: Id del carrito del que se desean comprar los productos
+        schema:
+          $type: String
+      responses:
+        "200":
+          description: productos comprados correctamente.
+          content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#components/schemas/Ticket'
+        "400":
+          description: No hay productos asociados al carrito

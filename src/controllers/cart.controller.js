@@ -32,13 +32,13 @@ class CartController {
             const id = req.params.cid;
             const products = await CartService.getProductsByCart(id);
             if (products) {
-                return res.json({
+                return res.status(200).json({
                     message: `cart found successfully`,
                     products: products,
                 });
             }
             return res.status(400).json({
-                message: `products not found for cart ${id}`,
+                message: `cart not found ${id}`,
                 products: null,
             });
 
@@ -54,13 +54,13 @@ class CartController {
         try {
             const cart = await CartService.createCart() ?? null;
             if (!cart) {
-                return res.status(400).json({
+                return res.status(500).json({
                     message: `Couldn't create the Cart`,
                     cart: null
                 });
             }
 
-            return res.json({
+            return res.status(200).json({
                 message: `Cart created succesfully`,
                 course: cart,
             });
@@ -78,7 +78,7 @@ class CartController {
             const product = await ProductsService.getProductById(pid);
             if(req.user.role === ROLES.PREMIUM) {
                 if(product.owner === req.user.email) {
-                    return res.status(400).json({
+                    return res.status(401).json({
                         message: "Product not added",
                         error: `You cant add products you own to the cart`,
                         products: null,
@@ -161,7 +161,7 @@ class CartController {
             const { cid, pid } = req.params;
             await CartService.deleteProductFromCart(cid, pid);
             const products = await CartService.getProductsByCart(cid);
-            return res.status(400).json({
+            return res.status(200).json({
                 message: `product deleted Successfully`,
                 payload: products,
             });
@@ -169,7 +169,11 @@ class CartController {
             Logger.error(
                 "🚀 ~ file: cart.routes.js:43 ~ CartsRoutes ~ this.router.post.cid.product.pid ~ error:",
                 error
-            );
+                );
+                return res.status(400).json({
+                    message: `product not deleted Successfully`,
+                    payload: products,
+                });
         }
     };
     purchaseProducts = async (req, res) => {
@@ -262,12 +266,14 @@ class CartController {
 
     validateNewProducts = async (req, res, next) => {
         const newProducts = req.body;
-        if (!newProducts) {
+        if (!newProducts || !Array.isArray(newProducts) ) {
+            console.log( Array.isArray(newProducts))
             return res.status(400).json({
                 message: `array not passed`,
                 payload: null,
             });
         }
+        
         if (newProducts.length < 1) {
             return res.status(400).json({
                 message: `array is empty`,
@@ -275,6 +281,7 @@ class CartController {
             });
         }
         for (const product of newProducts) {
+            console.log(product.productId,product.quantity, isNaN(product.quantity), typeof (product.productId))
             if (!product.productId || !product.quantity || typeof (product.productId) !== 'string' || isNaN(product.quantity)) {
                 return res.status(400).json({
                     message: `Products don't have the required format: [{_id: ...(oid) , productId: ...(string) , quantity: ...(int) }]`,

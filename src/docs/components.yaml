@@ -1,0 +1,177 @@
+components:
+  schemas: 
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID único del cart generado por la base de datos.
+        cartId:
+          type: string
+          description: ID único del carrito.
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+          description: Lista de productos en el carrito.
+        totalPrice:
+          type: number
+          description: Precio total de todos los productos en el carrito.
+      required:
+        - cartId
+        - products
+    CartItem:
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/Product'
+        quantity:
+          type: number
+          description: Cantidad del producto en el carrito.
+      required:
+        - product
+        - quantity
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID único del Product generado por la base de datos.
+        productId:
+          type: string
+          description: ID único del producto.
+        title:
+          type: string
+          description: Título del producto.
+        description:
+          type: string
+          description: Descripción del producto.
+        code:
+          type: string
+          description: Código del producto.
+        price:
+          type: number
+          description: Precio del producto.
+        status:
+          type: boolean
+          description: Estado del producto.
+        stock:
+          type: number
+          description: Stock del producto.
+        category:
+          type: string
+          description: Categoría del producto.
+        thumbnails:
+          type: array
+          items:
+            type: string
+          description: Miniaturas del producto.
+        owner:
+          type: string
+          default: 'ADMIN'
+          description: Propietario del producto.
+      required:
+        - productId
+        - title
+        - description
+        - code
+        - price
+        - status
+        - stock
+        - category
+          
+    Ticket:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Unique code for the ticket.
+        purchase_datetime:
+          type: string
+          format: date-time
+          description: The date and time of the ticket purchase.
+        amount:
+          type: number
+          description: The amount of the ticket.
+        purchaser:
+          type: string
+          description: The purchaser of the ticket.
+      required:
+        - code
+        - purchase_datetime
+        - amount
+        - purchaser
+  requestBodies:
+    addProduct:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Título del producto.
+        description:
+          type: string
+          description: Descripción del producto.
+        code:
+          type: string
+          description: Código del producto.
+        price:
+          type: number
+          description: Precio del producto.
+        status:
+          type: boolean
+          description: Estado del producto.
+        stock:
+          type: number
+          description: Stock del producto.
+        category:
+          type: string
+          description: Categoría del producto.
+        thumbnails:
+          type: array
+          items:
+            type: string
+          description: Miniaturas del producto.
+        owner:
+          type: string
+          default: 'ADMIN'
+          description: Propietario del producto.
+          required:
+            - title
+            - description
+            - code
+            - price
+            - status
+            - stock
+            - category
+    updateQuantity:
+      description: Body para actualizar la cantidad de un producto en un carrito
+      required: true
+      type: object
+      properties:
+        quantity:
+          type: Number
+          description: Quantity
+    updateProducts:
+      description: Array de objetos a actualizar.
+      required: true
+      type: array
+      items:
+        type: object
+        properties:
+          productId:
+            type: string
+            description: ID del producto.
+          _id:
+            type: string
+            description: ID de MongoDB.
+          quantity:
+            type: number
+            description: Cantidad del producto.
+          product:
+            type: string
+            description: Id unico del producto generado por mongo. Ref a product.
+        required:
+          - productId
+          - _id
+          - quantity
+          - product

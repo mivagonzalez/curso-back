@@ -10,7 +10,9 @@ const { configConnection } = require('./db/mongo.config');
 const { ProductsService } = require('./services')
 const handleErrors = require('./middleware/error.middleware');
 const { Logger } = require('./helpers')
-
+const swaggerJsdoc = require('swagger-jsdoc')
+const swaggerUIExpress = require('swagger-ui-express');
+const swaggerOptions = require('./config/swagger.config')
 const messagesModel = require("./dao/models/messages.model");
 const cookieParser = require("cookie-parser");
 const mongoStore = require("connect-mongo");
@@ -58,6 +60,8 @@ class App {
       })
     );
     initializePassport();
+    const specs = swaggerJsdoc(swaggerOptions);
+    this.app.use('/apidocs',swaggerUIExpress.serve, swaggerUIExpress.setup(specs))
     this.app.use(handleErrors);
     this.app.use(passport.initialize());
     this.app.use(passport.session())
