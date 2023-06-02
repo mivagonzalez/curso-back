@@ -122,7 +122,7 @@ class ProductsController {
                 });
             }
 
-            return res.json({
+            return res.status(400).json({
                 message: `Product not created`,
                 product: null,
                 ok: false,
@@ -229,10 +229,10 @@ class ProductsController {
                     });
                 }
             }
-            return res.status(500).json({
+            return res.status(400).json({
                 ok: false,
                 message: `product not deleted`,
-                error: "You are not entittled to delete the product"
+                error: "Error al eliminar el producto. Posiblemente el producto ingresado no existe"
             });
         } catch (error) {
             Logger.error(

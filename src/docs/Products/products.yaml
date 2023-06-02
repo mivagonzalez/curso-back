@@ -1,0 +1,111 @@
+paths:
+  /api/v1/products:
+    get:
+      summary: Obtiene los productos de la base de datos.
+      tags:
+        - Products
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Cantidad máxima de productos a retornar
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Número de la página a retornar
+        - in: query
+          name: sort
+          schema:
+            type: string
+          description: string que indica como se quiere ordenar los productos, puede ser 'asc' o 'desc'
+        - in: query
+          name: query
+          schema:
+            type: object
+            additionalProperties: true
+          description: Filtros adicionales para la búsqueda. Puede ser 'stock' Si se desean obtener los productos que esten en stock. o un string que representa una categoria en especifico de productos 'category1'
+      responses:
+        "200":
+          description: El carrito se encontro correctamente en la base de datos.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Product'
+        "400":
+          description: No se encontro el carrito.
+    post:
+      summary: Crea un nuevo Producto
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/addProduct'  
+      responses:
+        "200":
+          description: El nuevo producto se creo con exito y se guardo en la base de datos
+          content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#components/schemas/Product'        
+        "400":
+          description: Alguno de los campos del producto es invalido, o no es del tipo correcto
+  /api/v1/products/{pid}:
+    delete:
+      summary: Elimina un producto de la base de datos.
+      tags:
+        - Products
+      parameters:
+      - name: pid
+        in: path
+        required: true
+        description: Id del producto que se desea eliminar
+        schema:
+          $type: String
+      responses:
+        "200":
+          description: Se elimino el producto correctamente.
+          content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/DeleteProductResponse'
+        "400":
+          description: Error al eliminar el producto. Posiblemente el producto ingresado no existe
+        "401":
+          description: Usted no tiene permisos para eliminar este producto
+    put:
+      summary: Actualiza un producto 
+      tags:
+        - Products
+      parameters:
+      - name: pid
+        in: path
+        required: true
+        description: Id del producto del que se desea actualizar
+        schema:
+          $type: String
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/updateProduct'
+      responses:
+        "200":
+          description: Producto actualizado con exito
+          content:
+              application/json:
+                schema:
+                    $ref: '#components/schemas/SimpleResponse'
+        "400":
+          description: No se encontro el carrito o no se pudieron actualizar los productos
+        "401":
+          description: No tenes permisos para actualizar este producto

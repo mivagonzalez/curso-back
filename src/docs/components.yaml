@@ -31,6 +31,36 @@ components:
       required:
         - product
         - quantity
+    PaginationProductsResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: 'success'
+        payload:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+        totalPages:
+          type: integer
+        prevPage:
+          type: integer
+        nextPage:
+          type: integer
+        page:
+          type: integer
+        hasPrevPage:
+          type: boolean
+        hasNextPage:
+          type: boolean
+        prevLink:
+          type: string
+          format: uri
+          nullable: true
+        nextLink:
+          type: string
+          format: uri
+          nullable: true
     Product:
       type: object
       properties:
@@ -79,7 +109,6 @@ components:
         - status
         - stock
         - category
-          
     Ticket:
       type: object
       properties:
@@ -101,8 +130,46 @@ components:
         - purchase_datetime
         - amount
         - purchaser
+    MongooseOperationResult:
+      type: object
+      properties:
+        n:
+          type: integer
+          description: El número de documentos seleccionados para la operación.
+        nModified:
+          type: integer
+          description: El número de documentos realmente modificados.
+        ok:
+          type: integer
+          description: Indicador de éxito de la operación (1 si la operación fue exitosa).
+    DeleteProductResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          description: Indica si la operación fue exitosa.
+        message:
+          type: string
+          description: Mensaje relacionado con la operación.
+        deletedProducts:
+          $ref: '#/components/schemas/Product'
+          description: Producto eliminado.
+          nullable: true
+        deletedProductsFromAllcarts:
+          $ref: '#/components/schemas/MongooseOperationResult'
+          description: Resultado de la operación model.updateMany.
+    SimpleResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          description: Indica si la operación fue exitosa.
+        message:
+          type: string
+          description: Mensaje relacionado con la operación.
   requestBodies:
     addProduct:
+    updateProduct:
       type: object
       properties:
         title:
@@ -131,18 +198,6 @@ components:
           items:
             type: string
           description: Miniaturas del producto.
-        owner:
-          type: string
-          default: 'ADMIN'
-          description: Propietario del producto.
-          required:
-            - title
-            - description
-            - code
-            - price
-            - status
-            - stock
-            - category
     updateQuantity:
       description: Body para actualizar la cantidad de un producto en un carrito
       required: true
@@ -151,7 +206,7 @@ components:
         quantity:
           type: number
           description: Quantity
-    updateProducts:
+    updateProductsInCart:
       description: Array de objetos a actualizar.
       required: true
       type: array

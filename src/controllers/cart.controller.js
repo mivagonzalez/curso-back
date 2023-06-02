@@ -274,7 +274,6 @@ class CartController {
     validateNewProducts = async (req, res, next) => {
         const newProducts = req.body;
         if (!newProducts || !Array.isArray(newProducts) ) {
-            console.log( Array.isArray(newProducts))
             return res.status(400).json({
                 message: `array not passed`,
                 payload: null,
@@ -288,7 +287,6 @@ class CartController {
             });
         }
         for (const product of newProducts) {
-            console.log(product.productId,product.quantity, isNaN(product.quantity), typeof (product.productId))
             if (!product.productId || !product.quantity || typeof (product.productId) !== 'string' || isNaN(product.quantity)) {
                 return res.status(400).json({
                     message: `Products don't have the required format: [{_id: ...(oid) , productId: ...(string) , quantity: ...(int) }]`,

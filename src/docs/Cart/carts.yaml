@@ -38,7 +38,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#components/requestBodies/updateProducts'
+              $ref: '#components/requestBodies/updateProductsInCart'
       responses:
         "200":
           description: Productos actualizados con exito para el carrito solicitado
