@@ -7,9 +7,9 @@
         </form>
         <Button id="viewCart" onclick="viewCart('{{cartId}}')">
             Carrito
-        <span id="cartCount">{{total_cart_products}}</span>
+            <span id="cartCount">{{total_cart_products}}</span>
         </Button>
-    
+
     </div>
     <h1>Buenos dias {{first_name}} {{last_name}}</h1>
     <h2>Productos Disponibles</h2>
@@ -47,7 +47,7 @@
         <a role="link" href={{this.prevPage}}>
             < </a>
                 {{/if}}
-                <a href="">{{this.currentPage}}</a>
+                <span>{{this.currentPage}}</span>
                 {{#if this.hasNextPage}}
                 <a role="link" aria-disabled="true" href={{this.nextPage}}>></a>
                 {{/if}}

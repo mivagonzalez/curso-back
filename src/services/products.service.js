@@ -60,7 +60,7 @@ module.exports = class ProductService {
       let result = await this.dao.insertMany(productData);
       return result;
     } catch (error) {
-        Logger.error('Error inserting many products',JSON.stringify(productData),'Error:', error)
+        Logger.error(`Error inserting many products,  ${error}`,JSON.stringify(productData),'Error:', error)
         return null;
     }
   };

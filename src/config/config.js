@@ -5,6 +5,7 @@ config({
 });
 
 const {
+  LOCAL_TEST_DB_NAME,
   API_VERSION,
   NODE_ENV,
   PORT,
@@ -51,5 +52,6 @@ module.exports = {
   MAIL_USER,
   MAIL_PORT,
   MAIL_SERVICE,
-  MAIL_PASSWORD
+  MAIL_PASSWORD,
+  LOCAL_TEST_DB_NAME
 };

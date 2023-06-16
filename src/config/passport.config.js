@@ -25,7 +25,7 @@ const initializePassport = () => {
               if (!user) {
                 const newCart = await CartService.addCart();
                 if(!newCart) {
-                    Logger.error("Cant create a new cart",error)
+                    Logger.error("Cant create a new cart")
                     return done(null, false);
                 }
                 const userDTO = new UserDTO({ email: profile.emails[0].value, password: "", first_name: profile._json.name, last_name: "", age: 0, address: "", cart: newCart._id, role:"user"})
@@ -46,7 +46,7 @@ const initializePassport = () => {
             try {
                 const user = await UserService.getUser(username);
                 if(!user) {
-                    Logger.error("user doesn't exist",error)
+                    Logger.error("user doesn't exist")
                     return done(null, false);
                 }
                 if(!isValidPassword(user, password)){

@@ -6,6 +6,26 @@ class ProductManager {
     constructor() {
         this.products = [];
     }
+    insertMany = async (products) => {
+        try {
+            return await productsModel.insertMany(products);
+
+        } catch (error) {
+            Logger.error("🚀Error inserting many products", error)
+            CustomError.createError(ERRORS.CREATION_ERROR.name,'','cant insert many products', ERRORS.CREATION_ERROR.code)
+        }
+
+    };
+
+    deleteAll = async () => {
+        try {
+            await productsModel.deleteMany({});
+        } catch (error) {
+            Logger.error("🚀Error deleting all products", error)
+            CustomError.createError(ERRORS.CREATION_ERROR.name,'','cant delete all products', ERRORS.CREATION_ERROR.code)
+        }
+
+    };
 
     getProductByFields = async(fields = {}) => {
         try {

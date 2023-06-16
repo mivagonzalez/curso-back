@@ -156,7 +156,8 @@ class ProductsController {
             const sortQueryParam = sort && `&sort=${sort}` || '';
             
             const products = await ProductsService.getProducts(limit, page, sort, queryObject);
-            if(!products || products.length === 0){
+
+            if(!products || products.length === 0 || products.docs.length === 0){
                 return res.status(400).json({
                     status: 'error',
                     payload: null,
@@ -281,7 +282,8 @@ class ProductsController {
 
     insertion = async (req, res) => {
         try {
-            let result = await ProductsService.insertion(productData);
+            const newProducts = productData.map(product => new ProductDTO(product))
+            let result = await ProductsService.insertion(newProducts);
             return res.json({
                 message: "all the products are inserted succesfully",
                 students: result,
