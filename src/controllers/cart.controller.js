@@ -62,7 +62,7 @@ class CartController {
 
             return res.status(200).json({
                 message: `Cart created succesfully`,
-                course: cart,
+                cart: cart,
             });
         } catch (error) {
             Logger.error(

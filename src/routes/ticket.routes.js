@@ -10,10 +10,10 @@ class TicketRoutes {
   controller = new TicketController()
 
   constructor() {
-    this.initCoursesRoutes();
+    this.initTicketRoutes();
   }
 
-  initCoursesRoutes() {
+  initTicketRoutes() {
     this.router.get(`${this.path}`, authMdw, handlePolicies([policies.USER, policies.PREMIUM]), this.controller.getTicket);
     this.router.post(`${this.path}`, authMdw, handlePolicies([policies.USER, policies.PREMIUM]), this.controller.createTicket);
     

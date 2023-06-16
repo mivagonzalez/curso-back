@@ -10,10 +10,10 @@ class ProductRoutes {
     controller = new ProductsController();
 
     constructor() {
-        this.initCoursesRoutes();
+        this.initProductsRoutes();
     }
 
-    initCoursesRoutes() {
+    initProductsRoutes() {
         this.router.param(`pid`, this.controller.validatePIDParam)
         this.router.get(`${this.path}`,authMdw, this.controller.validateGetProductsQueryParams, handlePolicies([policies.ADMIN, policies.PREMIUM, policies.USER]), this.controller.getProducts);
         this.router.post(`${this.path}`,authMdw, this.controller.validateBodyForAddProduct, handlePolicies([policies.ADMIN, policies.PREMIUM]), this.controller.addProduct);

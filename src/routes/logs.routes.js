@@ -10,10 +10,10 @@ class LogsRoutes {
     controller = new LogsController();
 
     constructor() {
-        this.initCoursesRoutes();
+        this.initLogsRoutes();
     }
 
-    initCoursesRoutes() {
+    initLogsRoutes() {
         this.router.get(this.path, handlePolicies([policies.PUBLIC]), this.controller.createLogs);
     }
 }

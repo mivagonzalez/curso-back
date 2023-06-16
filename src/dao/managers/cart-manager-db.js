@@ -39,7 +39,7 @@ class CartManager {
         try {
             return await cartsModel.find({});
         } catch (error) {
-            Logger.error("🚀 ~ file: carts.manager.js:21 ~ CoursesManager ~ getCarts ~ error:",error)
+            Logger.error("🚀 ~ file: carts.manager.js:21 ~ CartManager ~ getCarts ~ error:",error)
             CustomError.createError(
                 'Get Carts Error',
                 'Error trying to get carts ',

@@ -31,6 +31,12 @@ describe('Products Router', () => {
           });
     });
 
+    after(async function() {
+        await requester
+          .get('/api/v1/session/logout')
+          .set('Cookie', cookie);
+    });
+
     it('get products devuelve null, por que no hay productos', async () => {
         const result = await requester.get('/api/v1/products').set('Cookie', cookie)
         expect(result.body.payload).to.be.equals(null)

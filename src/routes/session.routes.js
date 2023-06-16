@@ -11,10 +11,10 @@ class SessionRoutes {
   controller = new SessionController();
 
   constructor() {
-      this.initCoursesRoutes();
+      this.initSessionRoutes();
   }
 
-  initCoursesRoutes() {
+  initSessionRoutes() {
     this.router.get(`${this.path}/logout`, authMdw, handlePolicies([policies.ADMIN, policies.USER, policies.PREMIUM]), this.controller.logout);
     this.router.get(`${this.path}/faillogin`, handlePolicies([policies.PUBLIC]), this.controller.faillogin)
     this.router.get(`${this.path}/current`, authMdw, handlePolicies([policies.ADMIN, policies.PREMIUM, policies.USER]), this.controller.current)

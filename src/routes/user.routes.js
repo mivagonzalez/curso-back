@@ -11,10 +11,10 @@ class UserRoutes {
   controller = new UserController();
 
   constructor() {
-      this.initCoursesRoutes();
+      this.initUserRoutes();
   }
 
-  initCoursesRoutes() {
+  initUserRoutes() {
     this.router.get(`${this.path}/current`, authMdw, handlePolicies([policies.ADMIN, policies.PREMIUM, policies.USER]), this.controller.current)
     this.router.get(`${this.path}/premium/:uid`, authMdw, handlePolicies([policies.ADMIN]), this.controller.updateRole)
   }

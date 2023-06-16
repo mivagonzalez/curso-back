@@ -52,7 +52,7 @@ class App {
         store: mongoStore.create({
           mongoUrl: configConnection.url,
           mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
-          ttl: 60 * 3600,
+          ttl: 60 * 60,
         }),
         secret: SESSION_SECRET,
         resave: false,

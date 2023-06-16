@@ -41,7 +41,9 @@ class SessionController {
     };
 
     register = async (req, res) => {
-        res.redirect('/login')
+        delete req.user.password
+        req.session.user = req.user;
+        res.redirect('/products')
     }
 
     failRegister = async (req, res) => {

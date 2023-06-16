@@ -74,7 +74,10 @@ const initializePassport = () => {
                     Logger.error("Cant create a new cart");
                     return done(null, false);
                 }
-                
+                if(!first_name || !last_name|| !email|| !age|| !password|| !address){
+                    Logger.error("You must send all fields to register");
+                    return done(null, false);
+                }
                 const userDTO = new UserDTO({ email, password, first_name, last_name, age, address, cart: newCart._id, role})
                 const newUser = await UserService.addUser(userDTO);
                 if(!newUser) {

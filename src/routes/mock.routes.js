@@ -10,10 +10,10 @@ class MockRoutes {
     controller = new MocksController();
 
     constructor() {
-        this.initCoursesRoutes();
+        this.initMockRoutes();
     }
 
-    initCoursesRoutes() {
+    initMockRoutes() {
         this.router.get(`${this.path}mockingproducts`,authMdw, handlePolicies([policies.PUBLIC]), this.controller.getMockProducts);
     }
 }

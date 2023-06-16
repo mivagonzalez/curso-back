@@ -10,10 +10,10 @@ class CartsRoute {
   controller = new CartController()
 
   constructor() {
-    this.initCoursesRoutes();
+    this.initCartsRoutes();
   }
 
-  initCoursesRoutes() {
+  initCartsRoutes() {
     this.router.param("cid", this.controller.validateCIDParam);
     this.router.param("pid", this.controller.validatePIDParam);
     this.router.get(`${this.path}/:cid`, authMdw, handlePolicies([policies.USER, policies.PREMIUM]), this.controller.getProductsByCart);
