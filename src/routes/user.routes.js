@@ -17,6 +17,8 @@ class UserRoutes {
   initUserRoutes() {
     this.router.get(`${this.path}/current`, authMdw, handlePolicies([policies.ADMIN, policies.PREMIUM, policies.USER]), this.controller.current)
     this.router.get(`${this.path}/premium/:uid`, authMdw, handlePolicies([policies.ADMIN]), this.controller.updateRole)
+    router.post('/:uid/documents', authMdw, handlePolicies([policies.ADMIN]), upload.array('documents'), this.controller.uploadDocuments)
+
   }
 }
 

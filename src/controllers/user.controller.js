@@ -4,7 +4,10 @@ const { CurrentUserDTO } = require('../dto')
 const { Logger, ROLES } = require('../helpers')
 
 class UserController {
+    uploadDocuments = async (req,res)=> {
 
+    }
+    
     current = async (req, res) => {
         if (!req.user) {
             return res.status(400).send({ status: "error", error: "You need to be logged in to see this" });

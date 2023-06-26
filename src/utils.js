@@ -7,11 +7,19 @@ const { Logger } = require('./helpers')
 faker.locale = "es";
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(`${__dirname}/public/uploads/`));
+  destination: (req, file, cb) => {
+      let dest = 'documents';
+      if(file.mimetype.includes('image')) {
+          if(file.fieldname === 'profile') {
+              dest = 'profiles';
+          } else if(file.fieldname === 'product') {
+              dest = 'products';
+          }
+      }
+      cb(null, path.join(`${__dirname}/uploads`, dest));
   },
-  filename: function (req, file, cb) {
-    cb(null, `${Date.now()}-${file.originalname}`);
+  filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname));
   },
 });
 

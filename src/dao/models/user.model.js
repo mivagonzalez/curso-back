@@ -10,6 +10,15 @@ const schema = new mongoose.Schema({
     unique: true,
     index: true
   },
+  documents: {
+    type: [
+      {
+        name: String,
+        reference: String,
+      }
+    ],
+    default: [],
+  },
   age: Number,
   address: String,
   password: String,
@@ -17,7 +26,11 @@ const schema = new mongoose.Schema({
   cart:{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Carts"
-  }
+  },
+  last_connection: {
+    type: String,
+    required: true
+  },
 });
 
 const userModel = mongoose.model(collection, schema);

@@ -73,6 +73,19 @@ class UserManager {
         }
     }
 
+    updateOne = async (userId, user) => {
+        try {
+            const user = await this.getUserById(userId);
+            if(!user) {
+                throw Error("El usuario ingresado no existe");
+            }
+            return await userModel.findOneAndUpdate({_id: userId}, {role: newRole},{new: true})
+        } catch (error) {
+            Logger.error("🚀 ~ file: User.manager.js:21 ~ UserManager ~ addUser=async ~ error:", error);
+
+            CustomError.createError(ERRORS.CREATION_ERROR.name,'','Can not change Role', ERRORS.CREATION_ERROR.code)
+        }
+    }
 
 
 };
