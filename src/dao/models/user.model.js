@@ -28,8 +28,8 @@ const schema = new mongoose.Schema({
     ref: "Carts"
   },
   last_connection: {
-    type: String,
-    required: true
+    type: mongoose.Schema.Types.Date,
+    default: () => Date.now()
   },
 });
 

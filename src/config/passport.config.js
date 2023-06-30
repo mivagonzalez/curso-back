@@ -53,6 +53,11 @@ const initializePassport = () => {
                     Logger.error("invalid password");
                     return done(null, false);
                 }
+                const updatedUser = await UserService.updateLastLogIn(user._id);
+                if (!updatedUser) {
+                    Logger.error("Failed to update last login time");
+                    return done(null, false);
+                }
                 return done(null, user);
             } catch (error) {
                 return done(error);                

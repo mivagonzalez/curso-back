@@ -10,7 +10,8 @@ class UserManager {
             throw Error("El email ingresado es incorrecto");
         }
         try {
-            return await userModel.findOne({ email }).populate('cart');
+            const user =  await userModel.findOne({ email }).populate('cart');
+            return user
         } catch (error) {
             Logger.error("🚀 ~ file: User.manager.js:21 ~ UserManager ~ getUser=async ~ error:", error);
             CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not get user with the provided email ', ERRORS.INVALID_PARAMETER_ERROR.code)
@@ -18,7 +19,7 @@ class UserManager {
     }
 
     getUserById = async (id = '') => {
-        if (!id || typeof (id) !== "string" || id.length < 5) {
+        if (!id || (typeof (id) !== "string" && typeof(id) !== "object") || id.length < 5) {
             throw Error("El id ingresado es incorrecto");
         }
         try {
@@ -73,17 +74,12 @@ class UserManager {
         }
     }
 
-    updateOne = async (userId, user) => {
+    updateLastLogIn = async (userId) => {
         try {
-            const user = await this.getUserById(userId);
-            if(!user) {
-                throw Error("El usuario ingresado no existe");
-            }
-            return await userModel.findOneAndUpdate({_id: userId}, {role: newRole},{new: true})
+            return await userModel.updateOne({ _id: userId }, { $set: { last_connection: Date.now() }});
         } catch (error) {
-            Logger.error("🚀 ~ file: User.manager.js:21 ~ UserManager ~ addUser=async ~ error:", error);
-
-            CustomError.createError(ERRORS.CREATION_ERROR.name,'','Can not change Role', ERRORS.CREATION_ERROR.code)
+            Logger.error("🚀 ~ file: User.manager.js:21 ~ UserManager ~ updateLastLogIn=async ~ error:", error);
+            CustomError.createError(ERRORS.CREATION_ERROR.name,'','Can not set last connection', ERRORS.CREATION_ERROR.code)
         }
     }
 

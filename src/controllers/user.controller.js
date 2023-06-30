@@ -5,7 +5,20 @@ const { Logger, ROLES } = require('../helpers')
 
 class UserController {
     uploadDocuments = async (req,res)=> {
+        
+        const user = await UserService.getUserById(req.user._id);
+        console.log(req.files)
 
+        if(!user) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+
+        const documents = req.files.documents ? req.files.documents.map(file => ({ name: file.originalname, reference: file.path })) : [];
+        const profiles = req.files.profile ? req.files.profile.map(file => ({ name: file.originalname, reference: file.path })) : [];
+        const products = req.files.product ? req.files.product.map(file => ({ name: file.originalname, reference: file.path })) : [];
+        const allFiles = [...documents, ...profiles, ...products];
+        const updatedDocuments = [...user.documents, ...allFiles];
+        console.log(updatedDocuments)
     }
     
     current = async (req, res) => {

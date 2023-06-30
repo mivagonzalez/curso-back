@@ -10,18 +10,22 @@ module.exports = class UserService {
       const user = await this.dao.getUser(email);
       return user;
     } catch (error) {
-        Logger.error('Error getting user user' ,'Error:', error)
+        Logger.error('Error getting user on getuser' ,'Error:', error)
         return null;
     }
   };
 
+  updateLastLogIn = async (userId) => {
+    try {
+      return await this.dao.updateLastLogIn(userId);
+    } catch (error) {
+        Logger.error('Error setting last login on service' ,'Error:', error)
+        return null;
+    }
+  }
 
   getUserById = async id => {
     try {
-      if (!id || typeof (id) !== "string" || id.length < 5) {
-        Logger.error("El id ingresado es incorrecto");
-        return null
-    }
       const user = await this.dao.getUserById(id);
       return user;
     } catch (error) {
