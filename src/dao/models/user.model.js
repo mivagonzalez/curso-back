@@ -31,6 +31,10 @@ const schema = new mongoose.Schema({
     type: mongoose.Schema.Types.Date,
     default: () => Date.now()
   },
+  is_validated: {
+    type: mongoose.Schema.Types.Boolean,
+    default: false
+  }
 });
 
 const userModel = mongoose.model(collection, schema);

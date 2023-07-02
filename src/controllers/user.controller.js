@@ -5,20 +5,39 @@ const { Logger, ROLES } = require('../helpers')
 
 class UserController {
     uploadDocuments = async (req,res)=> {
-        
-        const user = await UserService.getUserById(req.user._id);
-        console.log(req.files)
+        const { uid } = req.params;
+        if (!uid || typeof (uid) != 'string' || uid.length < 5) {
+            return res.status(400).json({
+                error: `id type is not correct for uid`,
+            });
+        }
+        if(!req.user._id.equals(uid)) {
+            return res.status(403).json({ error: 'No está autorizado para realizar esta acción.' });
+        }
+        const user = await UserService.getUserById(uid);
 
         if(!user) {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
-
+        if (!req.files.documents && !req.files.profile && !req.files.product) {
+            return res.status(400).json({ error: 'No se recibio ningun archivo' });
+        }
         const documents = req.files.documents ? req.files.documents.map(file => ({ name: file.originalname, reference: file.path })) : [];
         const profiles = req.files.profile ? req.files.profile.map(file => ({ name: file.originalname, reference: file.path })) : [];
         const products = req.files.product ? req.files.product.map(file => ({ name: file.originalname, reference: file.path })) : [];
         const allFiles = [...documents, ...profiles, ...products];
         const updatedDocuments = [...user.documents, ...allFiles];
-        console.log(updatedDocuments)
+        const updateResult = await UserService.updateDocuments(uid, updatedDocuments);
+
+        if(!updateResult) {
+            return res.status(404).json({ error: 'No se pudieron subir los documentos' });
+        }
+
+        return res.status(200).json({
+            error: `Documentos subidos exitosamente`,
+            docs: updatedDocuments,
+        });
+
     }
     
     current = async (req, res) => {
@@ -31,7 +50,7 @@ class UserController {
             if (user) {
                 const userDto = new CurrentUserDTO(user)
                 return res.status(200).json({
-                    message: `User Found successfully`,
+                    error: `User Found successfully`,
                     user: userDto,
                 });
             }
@@ -54,7 +73,7 @@ class UserController {
         const { uid } = req.params;
         if (!uid || typeof (uid) != 'string') {
             return res.status(400).json({
-                message: `id type is not correct for uid`,
+                error: `id type is not correct for uid`,
                 products: null,
             });
         }
@@ -63,10 +82,16 @@ class UserController {
             const user = await UserService.getUserById(uid);
             if (user && user.role !== ROLES.ADMIN) {
                 const newRole = user.role === ROLES.USER ? ROLES.PREMIUM : ROLES.USER
+                if(newRole === ROLES.PREMIUM && !user.is_validated) {
+                    return res.status(400).json({
+                        error: `El usuario no ha terminado de procesar su documentacion.`,
+                        user: user
+                    });
+                }
                 const updatedUserRole = await UserService.updateRole(uid, newRole);
                 if(updatedUserRole) {
                     return res.status(200).json({
-                        message: `User role updated successfully`,
+                        error: `User role updated successfully`,
                         user: updatedUserRole,
                     });
                 }

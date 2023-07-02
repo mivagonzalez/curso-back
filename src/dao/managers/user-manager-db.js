@@ -1,8 +1,6 @@
 const userModel = require("../models/user.model");
 const {ERRORS, CustomError } = require('../../services/errors/errors')
 const { Logger, ROLES } = require('../../helpers');
-
-
 class UserManager {
 
     getUser = async (email = '') => {
@@ -83,7 +81,35 @@ class UserManager {
         }
     }
 
+    updateDocuments = async (userId, docs) => {
+        try {
+            if (!userId ) {
+                throw Error("No se envio ningun userId");
+            }
+            if (!docs ) {
+                return null;
+            }
+            const user = await this.getUserById(userId);
+            if(!user) {
+                throw Error("El usuario ingresado no existe");
+            }
+            const requiredDocumentsNames = ['Identificacion', 'Comprobante de domicilio', 'Comprobante de estado de cuenta'];
+            const uploadedDocuments = docs.filter(doc => doc.reference.includes('\\documents\\'));
+            const uploadedDocumentNames = uploadedDocuments.map(doc => doc.name);
+            const allRequiredDocumentsUploaded = requiredDocumentsNames.every(requiredName => 
+                uploadedDocumentNames.some(uploadedName => uploadedName.includes(requiredName)));
+            
+            let docsToUpdate = {
+                documents: docs,
+                is_validated: allRequiredDocumentsUploaded
+            }
 
+            return await userModel.updateOne({ _id: userId }, { $set: docsToUpdate},{ new: true })
+        } catch (error) {
+            Logger.error("🚀 Error on updateDocuments on user manager: ", error);
+            CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not updateDocuments', ERRORS.INVALID_PARAMETER_ERROR.code)
+        }
+    }
 };
 
 module.exports = UserManager;

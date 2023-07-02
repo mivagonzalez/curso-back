@@ -23,6 +23,16 @@ module.exports = class UserService {
         return null;
     }
   }
+  
+  
+  updateDocuments = async (userId, updatedDocs) => {
+    try {
+      return await this.dao.updateDocuments(userId, updatedDocs);
+    } catch (error) {
+        Logger.error('Error updating documents in service' ,'Error:', error)
+        return null;
+    }
+  }
 
   getUserById = async id => {
     try {
