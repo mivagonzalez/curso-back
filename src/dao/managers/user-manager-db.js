@@ -1,7 +1,31 @@
 const userModel = require("../models/user.model");
 const {ERRORS, CustomError } = require('../../services/errors/errors')
 const { Logger, ROLES } = require('../../helpers');
+const { sendMail } = require('../../helpers')
+
+sendDeleteInactiveUserMail = async (email, username, lastConnection) => {
+    const subject = "Usuario eliminado por Inactividad";
+    const html = `
+    <div>
+      <h1>Eliminamos tu ususario por inactividad</h1>
+      <p>Detectamos que no accedias a tu cuenta ${username} desde ${lastConnection}</p>
+      <p>Es por esto que eliminamos tu cuenta por inactividad</p>
+      <p>Muchas gracias!</p>
+    </div>
+    `;
+    return await sendMail(email,subject,html);
+  }
 class UserManager {
+
+    getAllUsers = async () => {
+        try {
+            const users =  await userModel.find();
+            return users;
+        } catch (error) {
+            Logger.error("🚀 Error getting all users in manager", error);
+            CustomError.createError(ERRORS.DATABASE_ERROR.name,'','Can not get all users', ERRORS.DATABASE_ERROR.code)
+        }
+    }
 
     getUser = async (email = '') => {
         if (!email || typeof (email) !== "string" || email.length < 5) {
@@ -108,6 +132,30 @@ class UserManager {
         } catch (error) {
             Logger.error("🚀 Error on updateDocuments on user manager: ", error);
             CustomError.createError(ERRORS.INVALID_PARAMETER_ERROR.name,'','Can not updateDocuments', ERRORS.INVALID_PARAMETER_ERROR.code)
+        }
+    }
+
+    deleteInactiveUsers = async () => {
+        try {
+            const twoDaysAgo = new Date();
+            twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+            const users = await userModel.find({
+                last_connection: {
+                    $lt: twoDaysAgo,
+                }
+            });
+            for (const user of users) {
+                await sendDeleteInactiveUserMail(user.email,user.email,user.last_connection)
+                const deleted = await userModel.deleteOne(user._id);
+                if(!deleted) {
+                    return false
+                }
+            }
+            return true;
+        } catch (error) {
+            Logger.error("🚀 ~ file: User.manager.js:21 ~ UserManager ~ addUser=async ~ error:", error);
+            CustomError.createError(ERRORS.CREATION_ERROR.name,'','Can not change Role', ERRORS.CREATION_ERROR.code)
+            return false;
         }
     }
 };

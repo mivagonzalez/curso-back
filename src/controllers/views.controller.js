@@ -1,6 +1,5 @@
 const { ProductsService, CartService, UserService, RestorePasswordRequestService } = require('../services')
 const { Logger } = require('../helpers')
-const { sendMail } = require('../helpers')
 
 class ViewsController {
 

@@ -5,6 +5,16 @@ module.exports = class UserService {
     this.dao = dao;
   }
 
+  getAllUsers = async () => {
+    try {
+      const users = await this.dao.getAllUsers();
+      return users;
+    } catch (error) {
+        Logger.error('Error getting all users on service' ,'Error:', error)
+        return null;
+    }
+  };
+  
   getUser = async email => {
     try {
       const user = await this.dao.getUser(email);
@@ -23,7 +33,6 @@ module.exports = class UserService {
         return null;
     }
   }
-  
   
   updateDocuments = async (userId, updatedDocs) => {
     try {
@@ -68,6 +77,15 @@ module.exports = class UserService {
       return await this.dao.updateRole(userId, newRole);
     } catch (error) {
       Logger.error('Error updating role', error)
+      return null;
+    }
+  }
+
+  deleteInactiveUsers = async () => {
+    try {
+      return await this.dao.deleteInactiveUsers();
+    } catch (error) {
+      Logger.error('Error deleting inactive users', error)
       return null;
     }
   }

@@ -16,6 +16,8 @@ class UserRoutes {
   }
 
   initUserRoutes() {
+    this.router.delete(this.path, authMdw, handlePolicies([policies.ADMIN]), this.controller.deleteInactiveusers)
+    this.router.get(this.path, authMdw, handlePolicies([policies.ADMIN]), this.controller.getAllUsers)
     this.router.get(`${this.path}/current`, authMdw, handlePolicies([policies.ADMIN, policies.PREMIUM, policies.USER]), this.controller.current)
     this.router.get(`${this.path}/premium/:uid`, authMdw, handlePolicies([policies.ADMIN]), this.controller.updateRole)
     this.router.post(`${this.path}/:uid/documents`, authMdw, handlePolicies([policies.ADMIN, policies.PREMIUM, policies.USER]), uploader.fields([{ name: 'profile', maxCount: 1 }, { name: 'product', maxCount: 1 }, { name: 'documents', maxCount: 10 }]), this.controller.uploadDocuments)

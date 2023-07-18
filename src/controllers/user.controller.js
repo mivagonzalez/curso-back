@@ -4,6 +4,28 @@ const { CurrentUserDTO } = require('../dto')
 const { Logger, ROLES } = require('../helpers')
 
 class UserController {
+
+    getAllUsers = async (_, res) => {
+        try {
+            const users = await UserService.getAllUsers();
+            return res.status(200).json({
+                users: users,
+                ok: true,
+                message: "Usuarios obtenidos correctamente"
+            })
+        } catch (error) {
+            Logger.error(
+                "🚀 Error getting all users in controller",
+                error
+                );
+            return res.status(400).json({
+                ok: false,
+                message: "No se pudieron obtener los usuarios correctamente",
+                error: error
+            })
+        }
+    }
+
     uploadDocuments = async (req,res)=> {
         const { uid } = req.params;
         if (!uid || typeof (uid) != 'string' || uid.length < 5) {
@@ -105,7 +127,31 @@ class UserController {
         }
     };
 
-   
+    deleteInactiveusers = async (req,res) => {
+        try {
+            const deleted = await UserService.deleteInactiveUsers();
+            if (deleted) {
+                return res.status(200).json({
+                    ok: true,
+                    message: "Usuarios eliminados correctamente"
+                })
+            }
+            return res.status(400).json({
+                ok: false,
+                message: "Usuarios no eliminados"
+            })
+        } catch (error) {
+            Logger.error(
+                "🚀 Error getting all users in controller",
+                error
+                );
+            return res.status(400).json({
+                ok: false,
+                message: "Usuarios no eliminados",
+                error: error
+            })
+        }
+    }
 }
 
 module.exports = UserController;
