@@ -15,6 +15,8 @@ class ViewsRoutes {
   }
 
   initViewsRoutes() {
+    this.router.get(`${this.path}admin`, authMdw, handlePolicies([policies.ADMIN]), this.controller.getUsers)
+    this.router.get(`${this.path}admin/user/:uid`, authMdw, handlePolicies([policies.ADMIN]), this.controller.getUser)
     this.router.param('cid', this.controller.validateCIDParam)
     this.router.get(`${this.path}carts/:cid`,authMdw, handlePolicies([policies.USER,policies.PREMIUM, policies.ADMIN]), this.controller.getCart);
     this.router.get(`${this.path}products`, authMdw, handlePolicies([policies.USER,policies.PREMIUM, policies.ADMIN]), this.controller.getProducts);

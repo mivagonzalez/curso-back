@@ -62,6 +62,15 @@ module.exports = class UserService {
         return null;
     }
   };
+  
+  deleteUser = async userId => {
+    try {
+      return await this.dao.deleteUser(userId);
+    } catch (error) {
+        Logger.error('Error deleting user user','Error:', error)
+        return null;
+    }
+  };
 
   updateUserPassword = async (userId, newPassword) => {
     try {

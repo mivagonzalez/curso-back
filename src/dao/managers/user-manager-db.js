@@ -135,6 +135,19 @@ class UserManager {
         }
     }
 
+    deleteUser = async (userId) => {
+        try {
+            console.log(userId)
+            const deleted = await userModel.deleteOne({_id: userId});
+            console.log(deleted)
+            return deleted
+        } catch (error) {
+            Logger.error("🚀 ~ file: User.manager.js:21 ~ UserManager ~ addUser=async ~ error:", error);
+            CustomError.createError(ERRORS.DATABASE_ERROR.name,'','Can not delete user', ERRORS.DATABASE_ERROR.code)
+            return null;
+        }
+    }
+
     deleteInactiveUsers = async () => {
         try {
             const twoDaysAgo = new Date();

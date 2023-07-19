@@ -99,3 +99,26 @@ body {
     align-items: center;
     justify-content: center;
 }
+
+.userBox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: lightsteelblue;
+    height: 200px;
+    width: 400px;
+}
+
+.userInfo{
+    display: flex;
+    flex-direction: column;
+}
+
+.userMenu {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 69%;
+    column-gap: 20px;
+}

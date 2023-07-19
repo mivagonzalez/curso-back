@@ -1,7 +1,7 @@
 
 const { UserService, RestorePasswordRequestService } = require('../services');
 const { CurrentUserDTO } = require('../dto')
-const { Logger } = require('../helpers')
+const { Logger, ROLES } = require('../helpers')
 const { createHash, arePasswordsEqual } = require('../utils')
 class SessionController {
 
@@ -57,6 +57,9 @@ class SessionController {
             }
             delete req.user.password
             req.session.user = req.user;
+            if(req.user.role === ROLES.ADMIN) {
+                return res.redirect('/admin');
+            }
             return res.redirect('/products');
         } catch (error) {
             Logger.error(

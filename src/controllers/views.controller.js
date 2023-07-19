@@ -1,5 +1,5 @@
 const { ProductsService, CartService, UserService, RestorePasswordRequestService } = require('../services')
-const { Logger } = require('../helpers')
+const { Logger, ROLES } = require('../helpers')
 
 class ViewsController {
 
@@ -103,6 +103,50 @@ class ViewsController {
             total_cart_products: total_cart_products
         }
         return res.render('products', testProduct);
+    };
+
+    getUsers = async (req, res) => {
+        const users = await UserService.getAllUsers();
+        const currentUser = await UserService.getUser(req.user.email);
+        const mappedUsers = users.map((user) => {
+            debugger
+            return {
+                id: user._id,
+                firstName: user.first_name || user.email,
+                lastName: user.last_name || '',
+                age: user.age || '',
+                role: user.role,
+                email: user.email
+            };
+        });
+        const data = {
+            users: mappedUsers,
+            first_name: req.session?.user?.first_name || currentUser.first_name,
+            last_name: req.session?.user?.last_name || currentUser.last_name,
+            email: req.session?.user?.email || currentUser.email,
+            style: 'index',
+        }
+        
+        return res.render('admin-console', data);
+    };
+
+    getUser = async (req, res) => {
+        const { uid } = req.params;
+        const user = await UserService.getUserById(uid);
+
+        const data = {
+            id: user._id,
+            firstName: user.first_name || user.email,
+            lastName: user.last_name || '',
+            age: user.age || '',
+            role: user.role,
+            userEmail: user.email,
+            email: req.user.email,
+            canModifyRole: user.role === ROLES.PREMIUM || (user.role === ROLES.USER && user.is_validated),
+            canDelete: user.role !== ROLES.ADMIN && user._id !== req.user._id,
+            style: 'index'
+        };        
+        return res.render('user-admin', data);
     };
 
     getRealTimeProducts = async (_, res) => {

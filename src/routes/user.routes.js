@@ -16,6 +16,7 @@ class UserRoutes {
   }
 
   initUserRoutes() {
+    this.router.delete(`${this.path}/:uid`, authMdw, handlePolicies([policies.ADMIN]), this.controller.deleteUser)
     this.router.delete(this.path, authMdw, handlePolicies([policies.ADMIN]), this.controller.deleteInactiveusers)
     this.router.get(this.path, authMdw, handlePolicies([policies.ADMIN]), this.controller.getAllUsers)
     this.router.get(`${this.path}/current`, authMdw, handlePolicies([policies.ADMIN, policies.PREMIUM, policies.USER]), this.controller.current)

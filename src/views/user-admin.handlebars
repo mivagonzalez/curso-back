@@ -1,0 +1,33 @@
+<section class="productsSection">
+    <div id="productsToolbar">
+        <form action="/api/v1/session/logout" method="get">
+            <label>You are currently logged in as {{email}}</label>
+            <br />
+            <button type="submit">logout</button>
+        </form>
+    </div>
+    <h2>Usuario {{userEmail}}</h2>
+    <div class="userBox">
+        <div class="userInfo">
+            <span>Usuario: {{userEmail}}</span>
+            <span>Nombre: {{firstName}}</span>
+            <span>Aliellido: {{lastName}}</span>
+            <span>Edad: {{age}}</span>
+            <span>Rol: {{role}}</span>
+        </div>
+        <div class="userMenu">
+            {{#if canModifyRole}}
+                <button type="button" onclick="modifyRole('{{id}}')">
+                    Modificar Rol
+                </button>
+            {{/if}}
+
+            {{#if canDelete}}
+                <button type="button" onclick="deleteUser('{{id}}')">
+                    Eliminar usuario
+                </button>
+            {{/if}}
+        </div>
+    </div>
+</section>
+<script src="/js/users.js"></script>

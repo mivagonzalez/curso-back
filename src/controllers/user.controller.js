@@ -113,7 +113,7 @@ class UserController {
                 const updatedUserRole = await UserService.updateRole(uid, newRole);
                 if(updatedUserRole) {
                     return res.status(200).json({
-                        error: `User role updated successfully`,
+                        message: `User role updated successfully`,
                         user: updatedUserRole,
                     });
                 }
@@ -140,6 +140,48 @@ class UserController {
                 ok: false,
                 message: "Usuarios no eliminados"
             })
+        } catch (error) {
+            Logger.error(
+                "🚀 Error getting all users in controller",
+                error
+                );
+            return res.status(400).json({
+                ok: false,
+                message: "Usuarios no eliminados",
+                error: error
+            })
+        }
+    }
+    
+    deleteUser = async (req,res) => {
+        try {
+            const { uid } = req.params;
+            if(req.user._id === uid ) {
+                console.log(req.user._id === uid)
+                return res.status(400).json({
+                    ok: false,
+                    message: "Usuarios no eliminados. No puede eliminar su propio usuario",
+                })
+            }
+            const user = await UserService.getUserById(uid);
+            if(user.role === ROLES.ADMIN) {
+                return res.status(400).json({
+                    ok: false,
+                    message: "No puede eliminar el ususario de un administrador",
+                })
+            }
+            const deleted = UserService.deleteUser(uid)
+            if(! deleted) {
+                return res.status(400).json({
+                    ok: false,
+                    message: "No se pudo eliminar el usuario",
+                })
+            }
+            return res.status(200).json({
+                ok: true,
+                message: "usuario Eliminado",
+            })
+
         } catch (error) {
             Logger.error(
                 "🚀 Error getting all users in controller",

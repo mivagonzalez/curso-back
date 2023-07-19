@@ -7,7 +7,8 @@ const GithubStrategy = require("passport-github2");
 const { API_VERSION } = require('../config/config');
 const localStrategy = local.Strategy;
 const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, PORT, HOST } = require("../config/config");
-const { Logger } = require('../helpers')
+const { Logger, ROLES } = require('../helpers')
+
 const initializePassport = () => {
 
     passport.use(
