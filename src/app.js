@@ -135,7 +135,6 @@ class App {
       Logger.debug(`======= ENV: ${this.env} =======`);
       Logger.debug(`🚀 App listening on the port ${this.port}`);
       Logger.debug(`=================================`);
-
     });
     this.listenWs(httpServer);
 
