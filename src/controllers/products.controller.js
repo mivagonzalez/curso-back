@@ -4,7 +4,19 @@ const { CartService } = require('../services')
 const { API_VERSION } = require('../config/config');
 const { ProductDTO } = require('../dto')
 const { Logger, ROLES } = require('../helpers')
+const { sendMail } = require('../helpers')
 
+sendProductDeleted = async (product) => {
+    const subject = "Producto Eliminado";
+    const html = `
+    <div>
+      <h1>Tu producto fue eliminado</h1>
+      <p>Eliminamos el producto ${product.title} codigo: ${product.code} de la base de datos</p>
+      <p>Muchas gracias!</p>
+    </div>
+    `;
+    return await sendMail(product.owner,subject,html);
+  }
 class ProductsController {
 
     validateNewPropsForUpdateProducts = async (req, res, next) => {
@@ -222,7 +234,10 @@ class ProductsController {
                 const deletedProducts = await ProductsService.deleteProduct(pid);
                 const deletedProductsFromAllcarts = await CartService.deleteProductFromAllCarts(pid);
                 if (deletedProducts && deletedProducts.deletedCount > 0 && deletedProductsFromAllcarts && deletedProductsFromAllcarts.acknowledged === true) {
-                    return res.json({
+                    if(product.owner && product.owner !== "admin"){
+                        await sendProductDeleted(product)
+                    }
+                    return res.status(200).json({
                         ok: true,
                         message: `Product deleted`,
                         deletedProducts: deletedProducts,
