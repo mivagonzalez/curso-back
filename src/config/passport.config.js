@@ -69,6 +69,7 @@ const initializePassport = () => {
     passport.use('register', new localStrategy(
         {passReqToCallback: true, usernameField: 'email'}, async (req, username, pw, done) => {
             const { first_name, last_name, email, age, password, address, role = ROLES.USER } = req.body;
+            console.log(req.body)
             try {
                 let user = await UserService.getUser(username);
                 if(user) {
@@ -80,6 +81,7 @@ const initializePassport = () => {
                     Logger.error("Cant create a new cart");
                     return done(null, false);
                 }
+                console.log(first_name, last_name, email,age,password, address)
                 if(!first_name || !last_name|| !email|| !age|| !password|| !address){
                     Logger.error("You must send all fields to register");
                     return done(null, false);
