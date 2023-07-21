@@ -15,6 +15,7 @@ class ViewsRoutes {
   }
 
   initViewsRoutes() {
+    this.router.get(`${this.path}ticket/:ticketId`, authMdw, handlePolicies([policies.USER,policies.PREMIUM]), this.controller.getTicket)
     this.router.get(`${this.path}admin`, authMdw, handlePolicies([policies.ADMIN]), this.controller.getUsers)
     this.router.get(`${this.path}admin/user/:uid`, authMdw, handlePolicies([policies.ADMIN]), this.controller.getUser)
     this.router.param('cid', this.controller.validateCIDParam)

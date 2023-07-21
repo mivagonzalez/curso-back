@@ -157,7 +157,6 @@ class UserController {
         try {
             const { uid } = req.params;
             if(req.user._id === uid ) {
-                console.log(req.user._id === uid)
                 return res.status(400).json({
                     ok: false,
                     message: "Usuarios no eliminados. No puede eliminar su propio usuario",

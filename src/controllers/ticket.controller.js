@@ -38,8 +38,18 @@ class TicketController {
 
     getTicket = async (req, res) => {
         try {
-            const {email} = req.query;
-            const ticket = await TicketService.getTicket({purchaser: email });
+            const {email, ticketId} = req.query;
+            let queryObject = {};
+            if (ticketId) {
+                queryObject= {
+                    _id : ticketId
+                }
+            }else if(email) {
+                queryObject= {
+                    purchaser: email
+                }
+            }
+            const ticket = await TicketService.getTicket(queryObject);
             if (ticket) {
                 return res.status(200).json({
                     message: `Ticket found Successfully`,

@@ -1,0 +1,22 @@
+<section class="productsSection">
+    <div id="productsToolbar">
+        <form action="/api/v1/session/logout" method="get">
+            <label>You are currently logged in as {{email}}</label>
+            <br />
+            <button type="submit">logout</button>
+        </form>
+    </div>
+    <h1>Ticket de Compra</h1>
+    <div class="userBox">
+        <div class="userInfo">
+            <span>code: {{code}}</span>
+            <span>fecha: {{date}}</span>
+            <span>total: {{amount}}</span>
+            <span>comprador: {{purchaser}}</span>
+        </div>
+    </div>
+
+    <a type="button" href="/products">
+        Volver al catalogo de productos
+    </a>
+</section>

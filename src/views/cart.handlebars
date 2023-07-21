@@ -4,7 +4,7 @@
             <label>You are currently logged in as {{email}}</label>
             <br />
             <button type="submit">logout</button>
-        </form>    
+        </form>
     </div>
     <h1>Buenos dias {{first_name}} {{last_name}}</h1>
     <h2>Productos en el Carrito</h2>
@@ -27,4 +27,11 @@
         {{/each}}
     </ul>
     {{/if}}
+    <button type="button" onclick="purchaseProducts('{{cid}}')">
+        Comprar Productos
+    </button>
+    <a type="button" href="/products">
+        Volver al catalogo de productos
+    </a>
 </section>
+<script src="/js/purchase.js"></script>

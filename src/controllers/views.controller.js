@@ -1,4 +1,4 @@
-const { ProductsService, CartService, UserService, RestorePasswordRequestService } = require('../services')
+const { ProductsService, TicketService, CartService, UserService, RestorePasswordRequestService } = require('../services')
 const { Logger, ROLES } = require('../helpers')
 
 class ViewsController {
@@ -31,6 +31,7 @@ class ViewsController {
             };
         });
         let cart = {
+            cid:findUser.cart.cartId,
             style: 'index',
             products: mappedProducts,
             first_name: req.session?.user?.first_name || findUser.first_name,
@@ -147,6 +148,22 @@ class ViewsController {
             style: 'index'
         };        
         return res.render('user-admin', data);
+    };
+
+    getTicket = async (req, res) => {
+        const { ticketId } = req.params;
+        const user = await UserService.getUserById(req.user._id);
+        const ticket = await TicketService.getTicket({_id: ticketId});
+
+        const data = {
+            email: user.email,
+            code: ticket.code,
+            date: ticket.purchase_datetime,
+            amount: ticket.amount,
+            purchaser: ticket.purchaser,
+            style: 'index'
+        };        
+        return res.render('ticket', data);
     };
 
     getRealTimeProducts = async (_, res) => {

@@ -190,7 +190,6 @@ class CartController {
             let unavaliableProducts = [];
             let ticket = null;
             let boughtProducts = []
-
             const cartProducts = await CartService.getProductsByCart(cid);
             if(!cartProducts) {
                 return res.status(400).json({
