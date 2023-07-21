@@ -166,6 +166,14 @@ class ViewsController {
         return res.render('ticket', data);
     };
 
+    init = async (req, res) => {
+        
+        return res.status(200).json({
+            message: "Bienvenidos a mi Api, para logearte, por favor ingresa a la ruta /login",
+            ok: true
+        })
+    };
+
     getRealTimeProducts = async (_, res) => {
         try {
             const products = await ProductsService.getProducts();
